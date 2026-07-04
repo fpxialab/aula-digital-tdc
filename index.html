@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html,body { margin:0; background:#f3f2ef; font-family:'Quicksand',system-ui,sans-serif; font-weight:500; color:#1c1b22; }
+  *{ box-sizing:border-box; }
+  a{ text-decoration:none; color:inherit; }
+</style>
+</helmet>
+
+<div style="max-width:1060px; margin:0 auto; padding:26px 22px 60px;">
+
+  <!-- ================= HOME ================= -->
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <div data-screen-label="Portada módulo">
+
+      <div style="background:#0c3f57; color:#fff; border-radius:20px; padding:28px 30px; position:relative; overflow:hidden;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:24px; flex-wrap:wrap;">
+          <div style="min-width:260px;">
+            <div style="font-size:11px; font-weight:700; letter-spacing:.14em; color:rgba(255,255,255,.5);">AULA DIGITAL · FPxIA · MÓD. {{ modCode }}</div>
+            <div style="font-family:'Quicksand',sans-serif; font-weight:800; font-size:34px; line-height:1.05; margin:9px 0 4px; letter-spacing:-.02em;">{{ modName }}</div>
+            <div style="font-size:13.5px; color:rgba(255,255,255,.72); font-weight:500;">{{ modSub }}</div>
+            <p style="font-size:13.5px; line-height:1.55; color:rgba(255,255,255,.8); margin:14px 0 18px; max-width:480px;">{{ modDesc }}</p>
+            <a href="{{ moodleUrl }}" target="_blank" style="display:inline-flex; align-items:center; gap:7px; background:#c2540e; color:#fff; font-weight:700; font-size:13.5px; padding:12px 20px; border-radius:11px;" style-hover="background:#a8480b;" style-focus="outline:none; box-shadow:0 0 0 3px rgba(194,84,14,.35);">Ir a Moodle ↗</a>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:9px; min-width:180px;">
+            <div style="font-size:11px; font-weight:700; letter-spacing:.06em; color:rgba(255,255,255,.45);">ACCESOS RÁPIDOS</div>
+            <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.08); padding:10px 13px; border-radius:11px; font-size:13px; font-weight:600;">{{ ico.hGuia }} Guías del alumnado</div>
+            <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.08); padding:10px 13px; border-radius:11px; font-size:13px; font-weight:600;">{{ ico.hActs }} Actividades</div>
+            <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.08); padding:10px 13px; border-radius:11px; font-size:13px; font-weight:600;">{{ ico.hLink }} Recursos</div>
+            <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.08); padding:10px 13px; border-radius:11px; font-size:13px; font-weight:600;">{{ ico.hRub }} Rúbricas</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; margin:26px 4px 14px; flex-wrap:wrap;">
+        <div style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:20px;">Situaciones de aprendizaje</div>
+      </div>
+      <div style="font-size:12px; color:#6b6976; margin:0 4px 16px; display:flex; align-items:center; gap:9px; flex-wrap:wrap;">
+        <span style="display:inline-flex; gap:3px;">
+          <span style="width:11px; height:11px; border-radius:3px; background:#a9d8ee;"></span>
+          <span style="width:11px; height:11px; border-radius:3px; background:#6cb9e0;"></span>
+          <span style="width:11px; height:11px; border-radius:3px; background:#3a97d1;"></span>
+          <span style="width:11px; height:11px; border-radius:3px; background:#1f74b0;"></span>
+        </span>
+        <span>El color de cada SA va de más claro (1er trimestre) a más intenso (avanzada).</span>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px;">
+        <sc-for list="{{ saList }}" as="sa" hint-placeholder-count="4">
+          <a href="#" onClick="{{ sa.open }}" style="display:flex; flex-direction:column; gap:11px; background:#fff; border:1px solid #e7e5df; border-radius:16px; padding:17px 17px 16px; cursor:pointer; transition:.15s;" style-hover="border-color:#7fc3dd; box-shadow:0 8px 22px rgba(12,63,87,.10); transform:translateY(-2px);" style-focus="outline:none; border-color:#0e7ea8; box-shadow:0 0 0 3px rgba(14,126,168,.22);">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+              <span style="font-family:'Quicksand',sans-serif; font-weight:800; font-size:13px; color:#fff; background:{{ sa.numGrad }}; width:42px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:9px;">{{ sa.code }}</span>
+              <span style="font-size:10.5px; font-weight:700; padding:4px 9px; border-radius:999px; color:{{ sa.stFg }}; background:{{ sa.stBg }};">{{ sa.stLabel }}</span>
+            </div>
+            <div style="font-family:'Quicksand',sans-serif; font-weight:600; font-size:16px; line-height:1.2; min-height:38px;">{{ sa.titleShort }}</div>
+            <div style="font-size:11.5px; color:#9a98a4;">Trimestre {{ sa.trimestre }} · {{ sa.horas }} h</div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <sc-for list="{{ sa.chips }}" as="ch" hint-placeholder-count="4">
+                <span style="{{ ch.style }}">{{ ch.el }} {{ ch.label }}</span>
+              </sc-for>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+
+      <div style="margin-top:20px; font-size:11.5px; color:#9a98a4; display:flex; align-items:center; gap:7px;">{{ ico.lock }} Mostrando solo material del alumnado publicado · el resto (programación, libro de calificaciones, packs internos) queda oculto.</div>
+    </div>
+  </sc-if>
+
+  <!-- ================= DETALLE SA ================= -->
+  <sc-if value="{{ isSa }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Detalle SA">
+
+      <a href="#" onClick="{{ goHome }}" style="display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:#0e7ea8; margin-bottom:16px; border-radius:7px; padding:2px 4px;" style-hover="color:#0a5f78;" style-focus="outline:none; box-shadow:0 0 0 3px rgba(14,126,168,.22);">← Volver al módulo</a>
+
+      <div style="background:#fff; border:1px solid #e7e5df; border-radius:18px; padding:22px 24px; display:flex; align-items:flex-start; justify-content:space-between; gap:18px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:15px;">
+          <div style="width:56px; height:56px; flex-shrink:0; border-radius:15px; display:flex; align-items:center; justify-content:center; font-family:'Quicksand',sans-serif; font-weight:700; font-size:15px; color:#fff; background:{{ cur.numGrad }}; box-shadow:0 7px 18px rgba(12,63,87,.20);">{{ cur.code }}</div>
+          <div>
+            <div style="font-size:11.5px; color:#9a98a4; font-weight:600;">{{ modName }}<span style="color:#cfcdd6;"> › </span><span style="color:#0e7ea8;">{{ cur.code }}</span></div>
+            <div style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:23px; line-height:1.2; margin-top:5px;">{{ cur.title }}</div>
+          </div>
+        </div>
+        <span style="font-size:11px; font-weight:700; padding:5px 11px; border-radius:999px; color:{{ cur.stFg }}; background:{{ cur.stBg }}; white-space:nowrap;">{{ cur.stLabel }}</span>
+      </div>
+
+      <!-- QUÉ VAMOS A APRENDER -->
+      <div style="margin-top:22px; background:#fff; border:1px solid #e7e5df; border-radius:14px; padding:18px 20px;">
+        <div style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:14px; margin-bottom:11px;">Qué vamos a aprender</div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <sc-for list="{{ cur.learn }}" as="pt" hint-placeholder-count="4">
+            <div style="display:flex; gap:9px; align-items:flex-start; font-size:13px; color:#3a3850; line-height:1.5;">
+              <span style="color:#0e7ea8; font-weight:800; flex-shrink:0;">›</span><span>{{ pt }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- 1 · GUÍA -->
+      <div style="margin-top:22px;">
+        <div style="display:flex; align-items:center; gap:9px; margin-bottom:10px;">
+          <span style="width:22px; height:22px; flex-shrink:0; border-radius:50%; background:#0e7ea8; color:#fff; font-size:11.5px; font-weight:700; display:flex; align-items:center; justify-content:center;">1</span>
+          <span style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:15px;">Guía del alumnado</span>
+        </div>
+        <div style="background:#fff; border:1px solid #e7e5df; border-radius:14px; padding:15px 16px; display:flex; align-items:center; gap:14px;">
+          <span style="width:38px; height:38px; flex-shrink:0; border-radius:10px; background:#eef1f6; display:flex; align-items:center; justify-content:center;">{{ ico.guiaLg }}</span>
+          <div style="flex:1; min-width:0;">
+            <div style="font-size:14px; font-weight:700;">Guía del alumnado · {{ cur.code }}</div>
+            <div style="font-size:11.5px; color:#9a98a4;">{{ cur.guiaMeta }}</div>
+          </div>
+          <sc-if value="{{ cur.hasGuia }}" hint-placeholder-val="{{ false }}">
+            <a href="{{ cur.guiaUrl }}" target="_blank" style="display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:#0e7ea8; background:#e2f2f8; padding:9px 15px; border-radius:9px;" style-hover="background:#c7e6f0;" style-focus="outline:none; box-shadow:0 0 0 3px rgba(14,126,168,.25);">{{ ico.download }} {{ cur.guiaAccion }}</a>
+          </sc-if>
+          <sc-if value="{{ cur.noGuia }}" hint-placeholder-val="{{ true }}">
+            <span style="font-size:11.5px; font-weight:600; color:#9a6a17; background:#fdf1dc; padding:8px 12px; border-radius:9px;">Pendiente en el catálogo</span>
+          </sc-if>
+        </div>
+      </div>
+
+      <!-- 2 · ACTIVIDADES -->
+      <div style="margin-top:24px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;">
+          <div style="display:flex; align-items:center; gap:9px;">
+            <span style="width:22px; height:22px; flex-shrink:0; border-radius:50%; background:#0e7ea8; color:#fff; font-size:11.5px; font-weight:700; display:flex; align-items:center; justify-content:center;">2</span>
+            <span style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:15px;">Actividades prácticas</span>
+          </div>
+          <span style="font-size:11px; color:#9a98a4;">evaluadas con la rúbrica de la SA</span>
+        </div>
+
+        <sc-if value="{{ cur.noActs }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#fff; border:1px dashed #d9d6cd; border-radius:14px; padding:16px; font-size:12.5px; color:#9a98a4;">Aún no hay actividades publicadas para esta SA.</div>
+        </sc-if>
+
+        <div style="display:flex; flex-direction:column; gap:11px;">
+          <sc-for list="{{ cur.acts }}" as="a" hint-placeholder-count="3">
+            <div style="background:#fff; border:1px solid #e7e5df; border-radius:14px; padding:15px 16px;">
+              <div style="display:flex; gap:13px; align-items:flex-start;">
+                <div style="width:42px; height:42px; border-radius:11px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-family:'Quicksand',sans-serif; font-weight:700; font-size:12px; color:#fff; background:{{ a.tipoDot }};">{{ a.codigo }}</div>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:14.5px; font-weight:700; line-height:1.3;">{{ a.titulo }}</div>
+                  <div style="margin-top:6px;">
+                    <span style="display:inline-flex; align-items:center; gap:4px; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:999px; color:{{ a.tipoFg }}; background:{{ a.tipoBg }};">{{ a.tipoLabel }}</span>
+                  </div>
+                  <div style="display:flex; gap:6px; margin-top:9px; flex-wrap:wrap; align-items:center;">
+                    <span style="display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; color:#5b5966; background:#f4f3f7; padding:5px 9px; border-radius:7px;">{{ ico.docSm }} {{ a.formatLabel }}</span>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex; gap:8px; margin-top:13px; flex-wrap:wrap;">
+                <a href="{{ a.fichaUrl }}" target="_blank" style="flex:1; min-width:120px; display:inline-flex; align-items:center; justify-content:center; gap:6px; background:#0c3f57; color:#fff; font-weight:700; font-size:12.5px; padding:10px; border-radius:9px;" style-hover="background:#082e3f;" style-focus="outline:none; box-shadow:0 0 0 3px rgba(12,63,87,.30);">{{ ico.downloadW }} Descargar ficha</a>
+                <a href="{{ cur.rubUrl }}" target="_blank" style="flex:1; min-width:110px; display:inline-flex; align-items:center; justify-content:center; gap:6px; border:1px solid #c7e6f0; background:#eaf6fa; color:#0e7ea8; font-weight:700; font-size:12.5px; padding:10px; border-radius:9px;" style-hover="background:#cfeaf3;" style-focus="outline:none; box-shadow:0 0 0 3px rgba(14,126,168,.25);">{{ ico.rubSm }} Ver rúbrica</a>
+                <a href="{{ cur.moodleEntregaUrl }}" target="_blank" style="flex:1; min-width:110px; display:inline-flex; align-items:center; justify-content:center; gap:6px; background:#c2540e; color:#fff; font-weight:700; font-size:12.5px; padding:10px; border-radius:9px;" style-hover="background:#a8480b;" style-focus="outline:none; box-shadow:0 0 0 3px rgba(194,84,14,.35);">{{ ico.uploadW }} Entregar</a>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- 3 · RECURSOS -->
+      <div style="margin-top:24px;">
+        <div style="display:flex; align-items:center; gap:9px; margin-bottom:10px;">
+          <span style="width:22px; height:22px; flex-shrink:0; border-radius:50%; background:#0e7ea8; color:#fff; font-size:11.5px; font-weight:700; display:flex; align-items:center; justify-content:center;">3</span>
+          <span style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:15px;">Recursos</span>
+        </div>
+
+        <sc-if value="{{ cur.noMateriales }}" hint-placeholder-val="{{ false }}">
+          <span style="display:flex; align-items:center; justify-content:center; width:100%; background:#eef0f3; color:#8b909c; font-weight:700; font-size:12.5px; padding:13px; border-radius:11px;">Sin recursos por ahora</span>
+        </sc-if>
+
+        <sc-if value="{{ cur.showTabs }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; gap:10px; margin-bottom:16px;">
+            <button onClick="{{ showPdfTab }}" style="flex:1; border:0; cursor:pointer; font-family:inherit; font-weight:700; font-size:14.5px; padding:18px; border-radius:14px; color:{{ cur.pdfTabFg }}; background:{{ cur.pdfTabBg }}; transition:.15s;">Recursos descargables</button>
+            <button onClick="{{ showInterTab }}" style="flex:1; border:0; cursor:pointer; font-family:inherit; font-weight:700; font-size:14.5px; padding:18px; border-radius:14px; color:{{ cur.interTabFg }}; background:{{ cur.interTabBg }}; transition:.15s;">Recursos interactivos</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ cur.showPdfList }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; flex-direction:column; gap:11px;">
+            <sc-for list="{{ cur.pdfs }}" as="mat" hint-placeholder-count="2">
+              <div style="background:#fff; border:1px solid #e7e5df; border-radius:14px; padding:15px 16px; display:flex; align-items:center; gap:14px;">
+                <span style="width:34px; height:34px; flex-shrink:0; border-radius:9px; background:{{ mat.tipoBg }}; color:{{ mat.tipoFg }}; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">{{ mat.n }}</span>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:14px; font-weight:700; line-height:1.3;">{{ mat.titulo }}</div>
+                </div>
+                <a href="{{ mat.url }}" target="_blank" style="display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:#0e7ea8; background:#e2f2f8; padding:9px 15px; border-radius:9px; white-space:nowrap;" style-hover="background:#c7e6f0;" style-focus="outline:none; box-shadow:0 0 0 3px rgba(14,126,168,.25);">{{ mat.accionEl }} {{ mat.accion }}</a>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ cur.showInterList }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; flex-direction:column; gap:11px;">
+            <sc-for list="{{ cur.interactivos }}" as="mat" hint-placeholder-count="2">
+              <div style="background:#fff; border:1px solid #e7e5df; border-radius:14px; padding:15px 16px; display:flex; align-items:center; gap:14px;">
+                <span style="width:34px; height:34px; flex-shrink:0; border-radius:9px; background:{{ mat.tipoBg }}; color:{{ mat.tipoFg }}; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">{{ mat.n }}</span>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:14px; font-weight:700; line-height:1.3;">{{ mat.titulo }}</div>
+                </div>
+                <a href="{{ mat.url }}" target="_blank" style="display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:#0e7ea8; background:#e2f2f8; padding:9px 15px; border-radius:9px; white-space:nowrap;" style-hover="background:#c7e6f0;" style-focus="outline:none; box-shadow:0 0 0 3px rgba(14,126,168,.25);">{{ mat.accionEl }} {{ mat.accion }}</a>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+
+      <!-- 4 · RÚBRICA -->
+      <div style="margin-top:24px;">
+        <div style="display:flex; align-items:center; gap:9px; margin-bottom:10px;">
+          <span style="width:22px; height:22px; flex-shrink:0; border-radius:50%; background:#0e7ea8; color:#fff; font-size:11.5px; font-weight:700; display:flex; align-items:center; justify-content:center;">4</span>
+          <span style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:15px;">Rúbrica de evaluación</span>
+        </div>
+        <div style="background:#fff; border:1px solid #e7e5df; border-radius:14px; padding:15px 16px; display:flex; align-items:center; gap:14px;">
+          <span style="width:38px; height:38px; flex-shrink:0; border-radius:10px; background:#eef1f6; display:flex; align-items:center; justify-content:center;">{{ ico.rubLg }}</span>
+          <div style="flex:1; min-width:0;">
+            <div style="font-size:14px; font-weight:700;">Rúbrica {{ cur.code }} · AC1</div>
+            <div style="font-size:11.5px; color:#9a98a4;">{{ cur.rubMeta }}</div>
+          </div>
+          <sc-if value="{{ cur.hasRub }}" hint-placeholder-val="{{ false }}">
+            <a href="{{ cur.rubUrl }}" target="_blank" style="display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:#0e7ea8; background:#e2f2f8; padding:9px 15px; border-radius:9px;" style-hover="background:#c7e6f0;" style-focus="outline:none; box-shadow:0 0 0 3px rgba(14,126,168,.25);">{{ ico.download }} {{ cur.rubAccion }}</a>
+          </sc-if>
+          <sc-if value="{{ cur.noRub }}" hint-placeholder-val="{{ true }}">
+            <span style="font-size:11.5px; font-weight:600; color:#9a6a17; background:#fdf1dc; padding:8px 12px; border-radius:9px;">Pendiente en el catálogo</span>
+          </sc-if>
+        </div>
+      </div>
+
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  // ====== ÚNICO punto de configuración del origen de archivos ======
+  // Vacío = los "archivo" del catálogo son rutas relativas a la carpeta donde
+  // vive este .dc.html (colócalo dentro de la carpeta
+  // "0443 Tratamiento Documentación Contable" para que los enlaces funcionen).
+  BASE = "";
+
+  state = { catalog: null, screen: 'home', sa: null, matTab: null };
+
+  componentDidMount() {
+    fetch('catalogo-publico-0443.json')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d) this.setState({ catalog: d }); })
+      .catch(() => {});
+  }
+
+  resolveUrl(archivo) {
+    if (!archivo) return '#';
+    if (/^https?:\/\//.test(archivo)) return archivo;
+    return this.BASE + archivo.split('/').map(encodeURIComponent).join('/');
+  }
+
+  // ====== Set de iconos lineales monocromos ======
+  icon(name, size, color, stroke) {
+    size = size || 18; color = color || 'currentColor'; stroke = stroke || 1.8;
+    const paths = {
+      guia:    ['M4 19.5A2.5 2.5 0 0 1 6.5 17H20','M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z'],
+      acts:    ['M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z','M14 2v6h6','M9 13h6','M9 17h6'],
+      rub:     ['M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2','M9 3.5h6a1 1 0 0 1 1 1V6a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1z','m9.5 14 1.8 1.8 3.5-3.6'],
+      doc:     ['M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z','M14 2v6h6'],
+      link:    ['M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71','M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'],
+      video:   ['m10 8 6 4-6 4z'],
+      download:['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4','m7 10 5 5 5-5','M12 15V3'],
+      upload:  ['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4','m17 8-5-5-5 5','M12 3v12'],
+      lock:    ['M5 11.5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z','M8 9.5V7a4 4 0 0 1 8 0v2.5'],
+    };
+    const circles = { video:[12,12,10] };
+    const kids = (paths[name] || []).map((d, i) => React.createElement('path', { key: 'p' + i, d: d }));
+    if (circles[name]) {
+      const c = circles[name];
+      kids.unshift(React.createElement('circle', { key: 'c', cx: c[0], cy: c[1], r: c[2] }));
+    }
+    return React.createElement('svg', {
+      width: size, height: size, viewBox: '0 0 24 24', fill: 'none',
+      stroke: color, strokeWidth: stroke, strokeLinecap: 'round', strokeLinejoin: 'round',
+      style: { display: 'block', flexShrink: 0 },
+    }, kids);
+  }
+
+  renderVals() {
+    const data = this.state.catalog;
+    const mod = data ? data.modulo : null;
+    const sasRaw = data ? (data.situaciones_aprendizaje || []) : [];
+
+    const st = {
+      disponible:   { stLabel:'Disponible',   stFg:'#0e9f6e', stBg:'#e3f6ee' },
+      proximamente: { stLabel:'Próximamente', stFg:'#8b909c', stBg:'#eef0f3' },
+    };
+    const blues = [
+      ['#a9d8ee','#6cb9e0'], ['#6cb9e0','#3a97d1'], ['#3a97d1','#1f74b0'], ['#1f74b0','#0c3f57'],
+    ];
+    const grad = (i) => { const c = blues[i % blues.length]; return 'linear-gradient(135deg, ' + c[0] + ', ' + c[1] + ')'; };
+
+    const tipoMap = {
+      actividad: { label:'Actividad', fg:'#0e7490', bg:'#e2f2f8', dot:'#0e7490' },
+      practica:  { label:'Práctica',  fg:'#0e9f6e', bg:'#e3f6ee', dot:'#0e9f6e' },
+      refuerzo:  { label:'Refuerzo',  fg:'#7c3aed', bg:'#f1ecfd', dot:'#7c3aed' },
+      calificable:{ label:'Calificable', fg:'#c2540e', bg:'#fdf1dc', dot:'#c2540e' },
+    };
+
+    const chip = (label, iconName, on) => ({
+      label, on,
+      el: this.icon(iconName, 13, on ? '#5b5966' : '#bfbdc7'),
+      style: 'display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; padding:4px 8px; border-radius:6px; '
+           + (on ? 'color:#5b5966; background:#f4f3f7;' : 'color:#bfbdc7; background:#f8f8fa;'),
+    });
+
+    const saList = sasRaw.map((sa, i) => {
+      const hasGuia = !!(sa.recursos && sa.recursos.guia_alumno && sa.recursos.guia_alumno.archivo);
+      const visibleActs = (sa.actividades || []).filter(a => a.visible);
+      const hasActs = visibleActs.length > 0;
+      const hasRub = !!(sa.recursos && sa.recursos.rubrica && sa.recursos.rubrica.archivo);
+      const hasMateriales = (sa.materiales || []).length > 0;
+      return {
+        id: sa.id, code: 'SA' + sa.numero, titleShort: sa.titulo_corto || sa.titulo,
+        trimestre: sa.trimestre, horas: sa.horas,
+        ...(st[sa.estado] || st.proximamente),
+        numGrad: grad(i),
+        chips: [
+          chip('Guía', 'guia', hasGuia),
+          chip('Actividades', 'acts', hasActs),
+          chip('Recursos', 'link', hasMateriales),
+          chip('Rúbrica', 'rub', hasRub),
+        ],
+        open: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ screen:'sa', sa: sa.id, matTab:null }); },
+      };
+    });
+
+    // ---- Detalle de la SA seleccionada ----
+    let cur = null;
+    if (this.state.sa) {
+      const i = sasRaw.findIndex(s => s.id === this.state.sa);
+      const sa = sasRaw[i];
+      const r = sa.recursos || {};
+      const guia = r.guia_alumno || {};
+      const rub = r.rubrica || {};
+      const inter = r.recurso_interactivo || {};
+      const visibleActs = (sa.actividades || []).filter(a => a.visible);
+
+      const tipoMatMap = {
+        pdf:         { label:'PDF',         fg:'#0a5f78', bg:'#e2f2f8', icon:'doc' },
+        interactivo: { label:'Interactivo', fg:'#7c3aed', bg:'#f1ecfd', icon:'link' },
+      };
+      const materialesRaw = sa.materiales || [];
+      const mkMaterial = (mtl) => {
+        const titulo = mtl.titulo || mtl.title || mtl.nombre || 'Recurso';
+        const tipo = (mtl.tipo || mtl.type || 'pdf').toLowerCase();
+        const tm = tipoMatMap[tipo] || tipoMatMap.pdf;
+        const archivo = mtl.archivo || mtl.url || mtl.file || null;
+        const accion = mtl.accion || mtl.action || (tipo === 'interactivo' ? 'Abrir' : 'Descargar');
+        return {
+          titulo, tipo, tipoLabel: tm.label, tipoFg: tm.fg, tipoBg: tm.bg,
+          iconEl: this.icon(tm.icon, 18, '#0c3f57'), iconBg: '#eef1f6',
+          accionEl: this.icon(tipo === 'interactivo' ? 'link' : 'download', 13, '#0e7ea8'),
+          accion, url: this.resolveUrl(archivo),
+        };
+      };
+      const pdfs = materialesRaw.filter(m => (m.tipo || m.type || 'pdf').toLowerCase() === 'pdf').map(mkMaterial).map((m, k) => ({ ...m, n: k + 1 }));
+      const interactivos = materialesRaw.filter(m => (m.tipo || m.type || '').toLowerCase() === 'interactivo').map(mkMaterial).map((m, k) => ({ ...m, n: k + 1 }));
+
+      cur = {
+        code: 'SA' + sa.numero, title: sa.titulo,
+        numGrad: grad(i),
+        ...(st[sa.estado] || st.proximamente),
+        learn: sa.que_vamos_a_aprender || [],
+        hasGuia: !!guia.archivo, noGuia: !guia.archivo,
+        guiaUrl: this.resolveUrl(guia.archivo),
+        guiaMeta: guia.archivo ? (guia.subtitulo || 'Documento disponible') : 'Aún no está en el catálogo público',
+        guiaAccion: guia.accion || 'Descargar',
+        noActs: visibleActs.length === 0,
+        acts: visibleActs.map(a => ({
+          codigo: a.codigo, titulo: a.titulo,
+          ...(tipoMap[a.tipo] || tipoMap.actividad),
+          tipoLabel: (tipoMap[a.tipo] || tipoMap.actividad).label,
+          tipoFg: (tipoMap[a.tipo] || tipoMap.actividad).fg,
+          tipoBg: (tipoMap[a.tipo] || tipoMap.actividad).bg,
+          tipoDot: (tipoMap[a.tipo] || tipoMap.actividad).dot,
+          fichaUrl: this.resolveUrl(a.archivo),
+          formatLabel: 'Ficha (' + ((a.archivo || '').split('.').pop() || 'pdf').toUpperCase() + ')',
+        })),
+        pdfs, interactivos,
+        hasPdfs: pdfs.length > 0, hasInteractivos: interactivos.length > 0,
+        noMateriales: materialesRaw.length === 0,
+        showTabs: pdfs.length > 0 && interactivos.length > 0,
+        showPdfList: (pdfs.length > 0 && interactivos.length === 0) || (pdfs.length > 0 && interactivos.length > 0 && this.state.matTab === 'pdf'),
+        showInterList: (interactivos.length > 0 && pdfs.length === 0) || (pdfs.length > 0 && interactivos.length > 0 && this.state.matTab === 'interactivo'),
+        soloPdfs: pdfs.length > 0 && interactivos.length === 0,
+        soloInter: interactivos.length > 0 && pdfs.length === 0,
+        pdfTabFg: this.state.matTab === 'pdf' ? '#ffffff' : '#0e7ea8',
+        pdfTabBg: this.state.matTab === 'pdf' ? '#0e7ea8' : '#e2f2f8',
+        interTabFg: this.state.matTab === 'interactivo' ? '#ffffff' : '#7c3aed',
+        interTabBg: this.state.matTab === 'interactivo' ? '#7c3aed' : '#f1ecfd',
+        hasRub: !!rub.archivo, noRub: !rub.archivo,
+        rubUrl: this.resolveUrl(rub.archivo),
+        rubMeta: rub.archivo ? (rub.subtitulo || 'Documento disponible') : 'Aún no está en el catálogo público',
+        rubAccion: rub.accion || 'Ver',
+        hasMoodleEntrega: !!sa.moodle_entrega_url, noMoodleEntrega: !sa.moodle_entrega_url,
+        moodleEntregaUrl: sa.moodle_entrega_url || '#',
+      };
+    }
+
+    const ico = {
+      hGuia:  this.icon('guia', 17, 'rgba(255,255,255,.88)'),
+      hActs:  this.icon('acts', 17, 'rgba(255,255,255,.88)'),
+      hRub:   this.icon('rub',  17, 'rgba(255,255,255,.88)'),
+      hLink:  this.icon('link', 17, 'rgba(255,255,255,.88)'),
+      lock:   this.icon('lock', 13, '#9a98a4'),
+      guiaLg: this.icon('guia', 22, '#0c3f57'),
+      rubLg:  this.icon('rub',  22, '#0c3f57'),
+      linkLg: this.icon('link', 22, '#0c3f57'),
+      download: this.icon('download', 14, '#0e7ea8'),
+      downloadW: this.icon('download', 14, '#ffffff'),
+      uploadW: this.icon('upload', 14, '#ffffff'),
+      uploadGrey: this.icon('upload', 14, '#8b909c'),
+      docSm: this.icon('doc', 12, '#5b5966'),
+      rubSm: this.icon('rub', 14, '#0e7ea8'),
+    };
+
+    const m = mod || {};
+    return {
+      isHome: this.state.screen === 'home',
+      isSa: this.state.screen === 'sa',
+      modCode: m.codigo || '0443',
+      modName: m.nombre || 'Tratamiento de la Documentación Contable',
+      modSub: [m.ciclo, m.curso ? (m.curso + 'º') : null, m.centro].filter(Boolean).join(' · ') || m.ano_academico || '',
+      modDesc: m.descripcion || '',
+      hasMoodle: !!m.moodle_url, noMoodle: !m.moodle_url, moodleUrl: m.moodle_url || '#',
+      ico,
+      saList,
+      cur: cur || { code:'', title:'', numGrad:'#0e7ea8', learn:[], acts:[], noActs:true, pdfs:[], interactivos:[], hasPdfs:false, hasInteractivos:false, noMateriales:true, stLabel:'', stFg:'#000', stBg:'#fff', guiaMeta:'', rubMeta:'', hasGuia:false, noGuia:true, hasRub:false, noRub:true, guiaUrl:'#', rubUrl:'#', hasMoodleEntrega:false, moodleEntregaUrl:'#' },
+      goHome: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ screen:'home', sa:null }); },
+      showPdfTab: () => this.setState(s => ({ matTab: s.matTab === 'pdf' ? null : 'pdf' })),
+      showInterTab: () => this.setState(s => ({ matTab: s.matTab === 'interactivo' ? null : 'interactivo' })),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

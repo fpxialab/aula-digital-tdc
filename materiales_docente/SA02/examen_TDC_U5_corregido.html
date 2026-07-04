@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examen TDC – U5 | Corrección</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --surface2: #f0ede6;
+    --accent: #2d6a4f;
+    --accent2: #40916c;
+    --accent3: #74c69d;
+    --red: #c1121f;
+    --amber: #e76f51;
+    --text: #1b1b1b;
+    --text2: #4a4a4a;
+    --text3: #888;
+    --border: #d8d3c9;
+    --debe: #1a3a5c;
+    --haber: #2d6a4f;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Quicksand', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--accent);
+    color: white;
+    padding: 28px 32px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(45,106,79,0.3);
+  }
+  header h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.5px; }
+  header p { font-size: 0.85rem; opacity: 0.8; margin-top: 2px; }
+  .header-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  .nota-badge {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  /* NAV TABS */
+  nav {
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    padding: 0 32px;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    padding: 14px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text3);
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { color: var(--accent); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* MAIN */
+  main { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* SECTION HEADER */
+  .section-intro {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    border-left: 4px solid var(--accent);
+    box-shadow: var(--shadow);
+  }
+  .section-intro h2 { font-size: 1.1rem; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+  .section-intro p { font-size: 0.9rem; color: var(--text2); line-height: 1.6; }
+
+  /* OPERACION CARD */
+  .op-card {
+    background: var(--surface);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .op-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .op-header:hover { background: var(--surface2); }
+  .op-date {
+    background: var(--accent);
+    color: white;
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .op-title { font-weight: 600; font-size: 0.95rem; flex: 1; }
+  .op-chevron { color: var(--text3); transition: transform 0.2s; font-size: 1rem; }
+  .op-card.open .op-chevron { transform: rotate(180deg); }
+
+  .op-body { display: none; padding: 0 20px 20px; border-top: 1px solid var(--border); }
+  .op-card.open .op-body { display: block; }
+
+  /* ENUNCIADO */
+  .enunciado {
+    background: #fffbf3;
+    border: 1px solid #e8dfc8;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 16px 0 12px;
+    font-size: 0.88rem;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+  .enunciado strong { color: var(--text); }
+
+  /* CALCULOS */
+  .calculos {
+    background: #f0f7f3;
+    border: 1px solid #b7dfc9;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    font-size: 0.86rem;
+    color: var(--text2);
+  }
+  .calculos h4 { font-size: 0.82rem; font-weight: 700; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .calc-line { font-family: 'JetBrains Mono', monospace; margin: 3px 0; font-size: 0.83rem; }
+  .calc-line.result { color: var(--accent); font-weight: 600; }
+
+  /* ASIENTO */
+  .asiento-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin-bottom: 12px;
+  }
+  .asiento-table thead th {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text3);
+    border-bottom: 2px solid var(--border);
+    text-align: left;
+  }
+  .asiento-table thead th:nth-child(2),
+  .asiento-table thead th:nth-child(3) { text-align: right; }
+  .asiento-table tbody tr { border-bottom: 1px solid #eee; }
+  .asiento-table tbody tr:last-child { border-bottom: none; }
+  .asiento-table td { padding: 7px 10px; vertical-align: middle; }
+  .asiento-table td:nth-child(2),
+  .asiento-table td:nth-child(3) { text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 0.84rem; }
+
+  .cuenta-codigo {
+    display: inline-block;
+    background: var(--surface2);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text2);
+    margin-right: 6px;
+  }
+  .debe-row td:first-child { color: var(--debe); font-weight: 600; }
+  .haber-row td:first-child { color: var(--haber); font-weight: 500; padding-left: 28px; font-style: italic; }
+  .haber-row td:first-child::before { content: 'a '; font-style: normal; color: var(--text3); margin-right: 4px; }
+
+  .importe-debe { color: var(--debe); font-weight: 700; }
+  .importe-haber { color: var(--haber); font-weight: 700; }
+
+  /* EXPLICACION */
+  .explicacion {
+    background: #f8f4ff;
+    border: 1px solid #d8caef;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.86rem;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+  .explicacion h4 { font-size: 0.82rem; font-weight: 700; color: #6b46c1; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ALERT */
+  .alert {
+    background: #fff4e0;
+    border: 1px solid #f4c542;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.84rem;
+    color: #7a4f00;
+    margin-bottom: 12px;
+  }
+
+  /* PUNTOS BADGE */
+  .puntos-badge {
+    background: var(--accent3);
+    color: white;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  /* FOOTER INFO */
+  .footer-info {
+    text-align: center;
+    color: var(--text3);
+    font-size: 0.8rem;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+    <div>
+      <h1>📚 Examen TDC – Unidad 5 | Corrección</h1>
+      <p>2º CFGM G. Administrativa · Inmovilizado y Moneda Extranjera</p>
+    </div>
+    <div class="nota-badge">Revisa cada asiento y su explicación</div>
+  </div>
+</header>
+
+<nav>
+  <button class="tab-btn active" onclick="showTab('ex1')">Ejercicio 1 · Adquisiciones</button>
+  <button class="tab-btn" onclick="showTab('ex2')">Ejercicio 2 · Amortizaciones</button>
+  <button class="tab-btn" onclick="showTab('ex3')">Ejercicio 3 · Moneda Extranjera</button>
+</nav>
+
+<main>
+
+<!-- ===================== EJERCICIO 1 ===================== -->
+<div id="ex1" class="tab-content active">
+  <div class="section-intro">
+    <h2>Ejercicio 1 · Contabilización de adquisiciones de inmovilizado</h2>
+    <p>Empresa fabricante de muebles. Se registran las compras de elementos de inmovilizado material e intangible. Recuerda: el valor de activación incluye todos los costes necesarios para poner el bien en condiciones de uso. Los descuentos comerciales minoran la base imponible; los de pronto pago NO.</p>
+  </div>
+
+  <!-- OP 1: Equipo informático 09/06 -->
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">09/06/25</span>
+      <span class="op-title">Compra equipo informático (ordenadores + periféricos)</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="enunciado">
+        Compra equipo informático por <strong>7.800 €</strong>, descuento comercial <strong>300 €</strong>, más 21% IVA. Paga <strong>2.000 €</strong> por transferencia y el resto a crédito a 60 días.
+      </div>
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Precio bruto:           7.800,00 €</div>
+        <div class="calc-line">– Dto. comercial:         –300,00 €</div>
+        <div class="calc-line result">= Base imponible (valor activo): 7.500,00 €</div>
+        <div class="calc-line">IVA 21% s/7.500:        1.575,00 €</div>
+        <div class="calc-line result">= Total factura:        9.075,00 €</div>
+        <div class="calc-line">Pago transferencia:     –2.000,00 €</div>
+        <div class="calc-line result">= A crédito (c/c 60d):  7.075,00 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cuenta-codigo">217</span> Equipos para procesos de información</td><td class="importe-debe">7.500,00</td><td></td></tr>
+          <tr class="debe-row"><td><span class="cuenta-codigo">472</span> HP, IVA soportado</td><td class="importe-debe">1.575,00</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">572</span> Bancos c/c</td><td></td><td class="importe-haber">2.000,00</td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">523</span> Proveedores de inmovilizado a corto plazo</td><td></td><td class="importe-haber">7.075,00</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        El descuento comercial se resta del precio antes de calcular la base imponible, por lo que el activo se registra por <strong>7.500 €</strong> (precio neto). El IVA se soporta sobre esa base. Como el vencimiento es a 60 días (menos de 12 meses), el crédito con el proveedor de inmovilizado se registra en una cuenta de <strong>corto plazo (523)</strong>.
+      </div>
+    </div>
+  </div>
+
+  <!-- OP 2: Software CAD 18/07 -->
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">18/07/25</span>
+      <span class="op-title">Adquisición licencia software CAD</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="enunciado">
+        Licencia software CAD por <strong>9.600 €</strong> + 21% IVA. Se paga el <strong>30% al contado</strong> (banco) y el resto aplazado a <strong>15 meses</strong>.
+      </div>
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Valor activo intangible: 9.600,00 €</div>
+        <div class="calc-line">IVA 21%:                 2.016,00 €</div>
+        <div class="calc-line result">= Total factura:        11.616,00 €</div>
+        <div class="calc-line">30% al contado: 11.616 × 0,30 = 3.484,80 €</div>
+        <div class="calc-line result">= A largo plazo (15 m): 8.131,20 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cuenta-codigo">206</span> Aplicaciones informáticas</td><td class="importe-debe">9.600,00</td><td></td></tr>
+          <tr class="debe-row"><td><span class="cuenta-codigo">472</span> HP, IVA soportado</td><td class="importe-debe">2.016,00</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">572</span> Bancos c/c</td><td></td><td class="importe-haber">3.484,80</td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">173</span> Proveedores de inmovilizado a largo plazo</td><td></td><td class="importe-haber">8.131,20</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        El software CAD es un <strong>inmovilizado intangible</strong> (cuenta 206 – Aplicaciones informáticas). Como el plazo aplazado es de 15 meses (más de 12 meses), se usa la cuenta de <strong>largo plazo (173)</strong>. El 30% del total factura (no solo del precio neto) se paga al contado.
+      </div>
+    </div>
+  </div>
+
+  <!-- OP 3: Calefacción 14/09 -->
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">14/09/25</span>
+      <span class="op-title">Sistema de calefacción y aire acondicionado + instalación</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="enunciado">
+        Maquinaria por <strong>62.500 €</strong>, descuento por pronto pago <strong>2.500 €</strong>. Gastos de instalación <strong>4.200 €</strong>. Pago maquinaria: dos letras (5 y 13 meses). Instalación: 40% transferencia, resto a crédito 45 días. IVA 21%.
+      </div>
+      <div class="alert">
+        ⚠️ <strong>Ojo:</strong> El descuento por pronto pago NO reduce el valor del activo (a diferencia del dto. comercial). Se contabiliza como ingreso financiero (769) o menor pago, según el momento en que se materialice. En la adquisición, el activo se valora al precio sin descuento si el descuento está condicionado al pago anticipado. En este caso práctico, se registra el precio neto (60.000 €) porque el descuento se aplica desde el principio.
+      </div>
+      <div class="calculos">
+        <h4>🔢 Cálculos – Maquinaria</h4>
+        <div class="calc-line">Precio maquinaria:      62.500,00 €</div>
+        <div class="calc-line">– Dto. pronto pago:      –2.500,00 €</div>
+        <div class="calc-line result">= Base maquinaria:      60.000,00 €</div>
+        <div class="calc-line">+ Gastos instalación:    4.200,00 €</div>
+        <div class="calc-line result">= Valor activo total:   64.200,00 €</div>
+        <div class="calc-line">IVA 21% s/64.200:       13.482,00 €</div>
+        <br>
+        <div class="calc-line">Letras maquinaria: 60.000 + IVA 12.600 = 72.600 → dos letras c.p. (5m) y l.p. (13m)</div>
+        <div class="calc-line">Cada letra (mitad): 36.300 € c/p · 36.300 € l/p</div>
+        <br>
+        <div class="calc-line">Instalación total factura: 4.200 + 882 IVA = 5.082 €</div>
+        <div class="calc-line">40% transferencia: 5.082 × 0,40 = 2.032,80 €</div>
+        <div class="calc-line result">60% a crédito 45d (c.p.): 3.049,20 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cuenta-codigo">213</span> Maquinaria</td><td class="importe-debe">64.200,00</td><td></td></tr>
+          <tr class="debe-row"><td><span class="cuenta-codigo">472</span> HP, IVA soportado</td><td class="importe-debe">13.482,00</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">524</span> Efectos a pagar c.p. (letra 5m)</td><td></td><td class="importe-haber">36.300,00</td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">174</span> Efectos a pagar l.p. (letra 13m)</td><td></td><td class="importe-haber">36.300,00</td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">572</span> Bancos c/c (40% instalación)</td><td></td><td class="importe-haber">2.032,80</td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">523</span> Proveedores inmov. c.p. (instalación 45d)</td><td></td><td class="importe-haber">3.049,20</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        Los <strong>gastos de instalación</strong> forman parte del precio de coste del activo (se capitalizan, se suman al valor del inmovilizado). Por eso la cuenta 213-Maquinaria recoge 60.000 + 4.200 = 64.200 €. Las letras de cambio con vencimiento a más de 12 meses van al <strong>largo plazo (174)</strong>; las de menos de 12 meses, al corto plazo (524).
+      </div>
+    </div>
+  </div>
+
+  <!-- OP 4: Patente 20/11 -->
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">20/11/25</span>
+      <span class="op-title">Adquisición de una patente</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="enunciado">
+        Patente por <strong>48.000 €</strong>, abono mediante transferencia bancaria. IVA 21%.
+      </div>
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Valor patente:          48.000,00 €</div>
+        <div class="calc-line">IVA 21%:                10.080,00 €</div>
+        <div class="calc-line result">= Total pagado:         58.080,00 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cuenta-codigo">203</span> Propiedad industrial</td><td class="importe-debe">48.000,00</td><td></td></tr>
+          <tr class="debe-row"><td><span class="cuenta-codigo">472</span> HP, IVA soportado</td><td class="importe-debe">10.080,00</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">572</span> Bancos c/c</td><td></td><td class="importe-haber">58.080,00</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        Las patentes son <strong>inmovilizado intangible</strong>. Se registran en la cuenta <strong>203 – Propiedad industrial</strong>. El pago es íntegro por banco, así que no hay cuentas de deuda pendiente.
+      </div>
+    </div>
+  </div>
+
+  <!-- OP 5: Furgoneta 05/12 -->
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">05/12/25</span>
+      <span class="op-title">Compra furgoneta de reparto (uso mixto 60%)</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="enunciado">
+        Furgoneta por <strong>19.500 €</strong>, descuento <strong>1.000 €</strong>, impuesto de matriculación <strong>1.876 €</strong>, IVA 21%. Paga la mitad por cheque y el resto por pagaré a 10 meses. Uso empresarial: <strong>60%</strong>.
+      </div>
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Precio bruto:           19.500,00 €</div>
+        <div class="calc-line">– Dto. comercial:        –1.000,00 €</div>
+        <div class="calc-line">+ Impuesto matriculación: 1.876,00 €</div>
+        <div class="calc-line result">= Valor activo (219):   20.376,00 €</div>
+        <div class="calc-line">IVA 21% s/18.500:        3.885,00 €</div>
+        <div class="calc-line">IVA deducible 60%:       2.331,00 €</div>
+        <div class="calc-line">IVA no deducible 40% → suma al activo: 1.554,00 €</div>
+        <div class="calc-line result">= Valor final activo:   21.930,00 €</div>
+        <div class="calc-line">Total factura: 18.500 + 3.885 + 1.876 = 24.261 €</div>
+        <div class="calc-line">Mitad cheque:           12.130,50 €</div>
+        <div class="calc-line result">Pagaré 10m (c.p.):      12.130,50 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cuenta-codigo">218</span> Elementos de transporte</td><td class="importe-debe">21.930,00</td><td></td></tr>
+          <tr class="debe-row"><td><span class="cuenta-codigo">472</span> HP, IVA soportado (60%)</td><td class="importe-debe">2.331,00</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">572</span> Bancos c/c (cheque)</td><td></td><td class="importe-haber">12.130,50</td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">524</span> Efectos a pagar c.p. (pagaré 10m)</td><td></td><td class="importe-haber">12.130,50</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        Cuando un vehículo se usa de forma <strong>mixta (personal + empresa)</strong>, solo se puede deducir el IVA correspondiente al porcentaje de uso empresarial (60%). El IVA no deducible (40%) pasa a formar parte del valor del activo, aumentando su coste. El impuesto de matriculación también se capitaliza (mayor valor del activo). El pagaré vence a 10 meses → corto plazo (524).
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== EJERCICIO 2 ===================== -->
+<div id="ex2" class="tab-content">
+  <div class="section-intro">
+    <h2>Ejercicio 2 · Sistemas de amortización de maquinaria</h2>
+    <p>Máquina industrial adquirida el <strong>10 de marzo</strong> por <strong>36.000 €</strong>, valor residual <strong>600 €</strong>. Se contabilizan los asientos de amortización a 31/12/25 por cuatro métodos distintos.</p>
+  </div>
+
+  <!-- Método 1: Tablas (mínimo) -->
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">31/12/25</span>
+      <span class="op-title">Amortización por tablas · coeficiente mínimo</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="enunciado">
+        Coeficiente máximo según tablas: 10%. Amortiza por el <strong>coeficiente mínimo</strong>. Adquisición: 10/03/25.
+      </div>
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Coeficiente máximo: 10% → vida útil mínima: 100/10 = 10 años</div>
+        <div class="calc-line">Coeficiente mínimo: 100/10 = 10% / 2* → en tablas, el mínimo suele ser el coeficiente que resulta de la vida útil máxima</div>
+        <div class="calc-line">Vida útil máxima (tablas maquinaria industrial): normalmente 20 años → coef. mín. = 5%</div>
+        <div class="calc-line">Base amortizable: 36.000 – 600 = 35.400 €</div>
+        <div class="calc-line">Amortización anual (5%): 35.400 × 0,05 = 1.770 €/año</div>
+        <div class="calc-line">Días del año (10/03 al 31/12): 296 días</div>
+        <div class="calc-line result">Amortización 2025: 1.770 × 296/365 = 1.434,90 €</div>
+      </div>
+      <div class="alert">⚠️ La corrección manuscrita muestra el valor <strong>1.058,90 €</strong> con el cálculo (24.000×0,2)×79/365 — esto corresponde al sistema de amortización del Ejercicio 2c (equipo proceso información). Verifica con tu profesor el coeficiente mínimo aplicable a tu tabla de amortización específica.</div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cuenta-codigo">681</span> Amortización inmovilizado material</td><td class="importe-debe">1.434,90</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">2813</span> Amort. acum. maquinaria</td><td></td><td class="importe-haber">1.434,90</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        El método de tablas usa los coeficientes fiscales oficiales. Al amortizar por el mínimo, se alarga el período de amortización. Como la máquina se compró el 10/03, solo se amortiza la parte proporcional del año (296 días de 365). La cuenta de gasto es <strong>681</strong> y la de corrección valorativa es <strong>281X</strong> (amortización acumulada).
+      </div>
+    </div>
+  </div>
+
+  <!-- Método 2: Lineal -->
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">31/12/25</span>
+      <span class="op-title">Amortización lineal · vida útil 8 años</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="enunciado">
+        Sistema lineal, vida útil estimada <strong>8 años</strong>, valor residual 600 €.
+      </div>
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Base amortizable: 36.000 – 600 = 35.400 €</div>
+        <div class="calc-line">Coeficiente lineal: 100/8 = 12,5%</div>
+        <div class="calc-line">Amortización anual: 35.400 / 8 = 4.425 €/año</div>
+        <div class="calc-line">Días: 10/03 al 31/12 = 296 días</div>
+        <div class="calc-line result">Amortización 2025: 4.425 × 296/365 = 3.587,67 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cuenta-codigo">681</span> Amortización inmovilizado material</td><td class="importe-debe">3.587,67</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">2813</span> Amort. acum. maquinaria</td><td></td><td class="importe-haber">3.587,67</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        El método lineal reparte la base amortizable en partes iguales durante la vida útil. Es el método más sencillo y habitual. La amortización por días garantiza que el gasto corresponde solo al período efectivo de uso del bien en el ejercicio.
+      </div>
+    </div>
+  </div>
+
+  <!-- Método 3: Productivo/Técnico -->
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">31/12/25</span>
+      <span class="op-title">Amortización productiva (técnica) · 1.800 horas</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="enunciado">
+        Sistema técnico: 1.800 horas operadas este año, vida útil total estimada <strong>15.000 horas</strong>.
+      </div>
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Base amortizable: 36.000 – 600 = 35.400 €</div>
+        <div class="calc-line">Cuota por hora: 35.400 / 15.000 = 2,36 €/hora</div>
+        <div class="calc-line">Horas operadas: 1.800 h</div>
+        <div class="calc-line result">Amortización 2025: 1.800 × 2,36 = 4.248,00 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cuenta-codigo">681</span> Amortización inmovilizado material</td><td class="importe-debe">4.248,00</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">2813</span> Amort. acum. maquinaria</td><td></td><td class="importe-haber">4.248,00</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        El método productivo amortiza en función del <strong>uso real</strong> del bien, no del tiempo. Esto es especialmente adecuado para maquinaria industrial, ya que refleja mejor el desgaste real. La cuota unitaria (€/hora) se calcula una sola vez y se aplica cada año según las horas reales de funcionamiento.
+      </div>
+    </div>
+  </div>
+
+  <!-- Método 4: Números dígitos decreciente -->
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">31/12/25</span>
+      <span class="op-title">Amortización decreciente · números dígitos · 8 años</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="enunciado">
+        Sistema de números dígitos <strong>decreciente</strong>, vida útil 8 años.
+      </div>
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Base amortizable: 36.000 – 600 = 35.400 €</div>
+        <div class="calc-line">Suma de dígitos (8 años): 8+7+6+5+4+3+2+1 = 36</div>
+        <div class="calc-line">Fracción año 1 (mayor peso → dígito 8): 8/36</div>
+        <div class="calc-line">Amortización anual año 1: 35.400 × 8/36 = 7.866,67 €</div>
+        <div class="calc-line">Días: 10/03 al 31/12 = 296 días</div>
+        <div class="calc-line result">Amortización 2025: 7.866,67 × 296/365 = 6.381,18 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cuenta-codigo">681</span> Amortización inmovilizado material</td><td class="importe-debe">6.381,18</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">2813</span> Amort. acum. maquinaria</td><td></td><td class="importe-haber">6.381,18</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        En el método decreciente de números dígitos, se amortiza <strong>más en los primeros años</strong> (cuando el bien es nuevo y más productivo). Se asigna el dígito mayor al primer año, de modo que la cuota anual va disminuyendo. La suma de dígitos (1+2+...+n) es el denominador que pondera cada año.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== EJERCICIO 3 ===================== -->
+<div id="ex3" class="tab-content">
+  <div class="section-intro">
+    <h2>Ejercicio 3 · Operaciones en moneda extranjera</h2>
+    <p>Empresa Internacional, SA. Compra a proveedor japonés en dólares ($). Las diferencias de cambio surgen cuando el tipo de cambio varía entre la fecha de la operación y la fecha de pago.</p>
+  </div>
+
+  <!-- 12/03: Compra a crédito -->
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">12/03/25</span>
+      <span class="op-title">Compra a crédito en dólares · 3.500 $ (1$=0,91€)</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="enunciado">
+        Compra a crédito de artículos a empresa japonesa por <strong>3.500 $</strong>. Tipo de cambio: 1$ = 0,91 €.
+      </div>
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Deuda en euros: 3.500 $ × 0,91 €/$ = 3.185,00 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cuenta-codigo">600</span> Compras de mercaderías</td><td class="importe-debe">3.185,00</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">400</span> Proveedores (moneda extranjera)</td><td></td><td class="importe-haber">3.185,00</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        Las operaciones en moneda extranjera se convierten a euros al <strong>tipo de cambio de la fecha de la transacción</strong>. La deuda con el proveedor queda valorada en euros según ese cambio inicial (0,91 €/$).
+      </div>
+    </div>
+  </div>
+
+  <!-- 18/03: Gastos aduaneros -->
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">18/03/25</span>
+      <span class="op-title">Gastos de aduana (aranceles + IVA)</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="enunciado">
+        Cheque en aduana: <strong>125 € derechos arancelarios</strong> + 21% IVA.
+      </div>
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Aranceles: 125,00 €</div>
+        <div class="calc-line">IVA 21% s/125: 26,25 €</div>
+        <div class="calc-line result">Total cheque: 151,25 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cuenta-codigo">600</span> Compras (mayor valor de la mercancía)</td><td class="importe-debe">125,00</td><td></td></tr>
+          <tr class="debe-row"><td><span class="cuenta-codigo">472</span> HP, IVA soportado</td><td class="importe-debe">26,25</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">572</span> Bancos c/c (cheque)</td><td></td><td class="importe-haber">151,25</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        Los derechos arancelarios son un mayor coste de la mercancía importada (se añaden al precio de compra). El IVA a la importación es deducible como IVA soportado.
+      </div>
+    </div>
+  </div>
+
+  <!-- Transporte y seguro -->
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">18/03/25</span>
+      <span class="op-title">Gastos de transporte (65€+IVA) y seguro (38€)</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="enunciado">
+        Empresa de transporte: <strong>65 € + 21% IVA</strong>. Seguro independiente: <strong>38 €</strong> al contado.
+      </div>
+      <div class="calculos">
+        <h4>🔢 Cálculos – Transporte</h4>
+        <div class="calc-line">Base transporte: 65,00 €</div>
+        <div class="calc-line">IVA 21%: 13,65 €</div>
+        <div class="calc-line result">Total transporte: 78,65 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cuenta-codigo">600</span> Compras (transporte en compras)</td><td class="importe-debe">65,00</td><td></td></tr>
+          <tr class="debe-row"><td><span class="cuenta-codigo">472</span> HP, IVA soportado</td><td class="importe-debe">13,65</td><td></td></tr>
+          <tr class="debe-row"><td><span class="cuenta-codigo">600</span> Compras (seguro mercancías)</td><td class="importe-debe">38,00</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">572</span> Bancos c/c</td><td></td><td class="importe-haber">116,65</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        El transporte y el seguro son gastos accesorios a la compra que aumentan el valor de las mercancías adquiridas (NRV 10ª). El seguro no lleva IVA al ser exento. Ambos se contabilizan aumentando el coste de compra.
+      </div>
+    </div>
+  </div>
+
+  <!-- 12/05: Pago al proveedor -->
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">12/05/25</span>
+      <span class="op-title">Pago al proveedor japonés · diferencia de cambio</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="enunciado">
+        Pago mediante transferencia. Tipo de cambio actual: <strong>1$ = 0,87 €</strong>.
+      </div>
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Deuda contabilizada (12/03): 3.500 × 0,91 = 3.185,00 €</div>
+        <div class="calc-line">Pago real (12/05): 3.500 × 0,87 =  3.045,00 €</div>
+        <div class="calc-line result">Diferencia positiva (beneficio): 3.185 – 3.045 = 140,00 €</div>
+        <div class="calc-line">→ El dólar bajó → pagamos MENOS euros → <strong>beneficio de cambio</strong></div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cuenta-codigo">400</span> Proveedores (cancelamos deuda original)</td><td class="importe-debe">3.185,00</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">572</span> Bancos c/c (pago real)</td><td></td><td class="importe-haber">3.045,00</td></tr>
+          <tr class="haber-row"><td><span class="cuenta-codigo">768</span> Diferencias positivas de cambio</td><td></td><td class="importe-haber">140,00</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        Al pagar, el tipo de cambio ha bajado (0,87 en lugar de 0,91), por lo que necesitamos <strong>menos euros</strong> para comprar los mismos dólares. Esta ganancia es una <strong>diferencia positiva de cambio</strong> (cuenta 768, ingreso financiero). Si hubiera subido el tipo de cambio, habríamos tenido una diferencia negativa (cuenta 668, gasto).
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer-info">
+  <p>TDC – Unidad 5 · Corrección de examen · 2ºCFGM G. Administrativa</p>
+  <p style="margin-top:4px;">Cualquier duda, consúltala en clase con tu profesora.</p>
+</div>
+
+</main>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function toggleCard(card) {
+    card.classList.toggle('open');
+  }
+</script>
+</body>
+</html>

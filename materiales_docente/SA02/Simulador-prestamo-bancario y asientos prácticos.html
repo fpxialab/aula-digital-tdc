@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Préstamo Bancario — SA6</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root {
+  --bg:#faf7ff;--card:#ffffff;--primary:#6c5ce7;--primaryLight:#a29bfe;
+  --secondary:#00cec9;--accent:#fd79a8;--text:#2d3436;--textLight:#636e72;
+  --debe:#e17055;--haber:#00b894;--highlight:#ffeaa7;--border:#dfe6e9;
+  --tableHead:#6c5ce7;--tableAlt:#f8f7ff;--success:#00b894;--error:#d63031;--warning:#fdcb6e;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Quicksand',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:20px 16px;}
+.container{max-width:960px;margin:0 auto;}
+.header{background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:20px;padding:28px 32px;margin-bottom:24px;color:#fff;box-shadow:0 8px 32px rgba(108,92,231,0.25);}
+.header .subtitle{font-size:13px;opacity:0.85;font-weight:600;letter-spacing:1px;margin-bottom:4px;}
+.header h1{font-size:26px;font-weight:700;margin:0;}
+.header p{margin:8px 0 0;font-size:14px;opacity:0.9;}
+.card{background:var(--card);border-radius:16px;padding:24px 28px;box-shadow:0 4px 20px rgba(108,92,231,0.08);border:1px solid var(--border);margin-bottom:20px;}
+.tab-bar{display:flex;gap:4px;margin-bottom:24px;flex-wrap:wrap;}
+.tab-btn{padding:10px 20px;border:none;border-radius:12px;cursor:pointer;font-family:'Quicksand',sans-serif;font-weight:500;font-size:14px;transition:all 0.3s;background:#f0ecff;color:var(--primary);}
+.tab-btn.active{font-weight:700;background:var(--primary);color:#fff;box-shadow:0 4px 12px rgba(108,92,231,0.3);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.form-grid label{font-size:13px;font-weight:600;color:var(--textLight);display:block;margin-bottom:4px;}
+.form-grid input,.form-grid select{width:100%;padding:10px 12px;border-radius:10px;border:2px solid var(--border);font-family:'Quicksand',sans-serif;font-size:15px;font-weight:600;color:var(--text);outline:none;transition:border 0.3s;}
+.form-grid input:focus,.form-grid select:focus{border-color:var(--primary);}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:20px;}
+.summary-card{text-align:center;padding:16px;}
+.summary-card .label{font-size:12px;font-weight:600;color:var(--textLight);margin-bottom:4px;}
+.summary-card .value{font-size:18px;font-weight:700;}
+.amort-table{width:100%;border-collapse:collapse;font-size:13px;}
+.amort-table thead tr{background:var(--tableHead);color:#fff;}
+.amort-table th{padding:8px 10px;font-weight:600;text-align:right;}
+.amort-table th:first-child,.amort-table th:nth-child(2){text-align:left;}
+.amort-table td{padding:6px 10px;}
+.amort-table .alt{background:var(--tableAlt);}
+.amort-table .year-end{background:#fff3e0;border-bottom:2px solid var(--accent);}
+.amort-table .row-form{background:rgba(255,234,167,0.4);font-weight:600;}
+.amort-table .right{text-align:right;}
+.amort-table .interest{color:var(--accent);}
+.amort-table .amort-col{color:var(--primary);}
+.amort-table .pending{font-weight:600;}
+.badge{display:inline-block;background:rgba(0,206,201,0.15);color:var(--secondary);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;margin-left:6px;}
+.asiento-card{background:#fdfcff;border:2px solid rgba(162,155,254,0.25);border-radius:16px;padding:20px 24px;margin-bottom:16px;box-shadow:0 2px 12px rgba(108,92,231,0.05);}
+.asiento-fecha{font-size:13px;color:var(--textLight);margin-bottom:8px;font-weight:600;}
+.asiento-table{width:100%;border-collapse:collapse;font-size:14px;}
+.asiento-table th{text-align:left;padding:6px 8px;border-bottom:2px solid var(--border);font-weight:600;}
+.asiento-table .th-debe{color:var(--debe);width:14%;}
+.asiento-table .th-cuenta-d{width:38%;}
+.asiento-table .th-haber{color:var(--haber);width:14%;text-align:right;}
+.asiento-table .th-cuenta-h{width:34%;padding-left:16px;}
+.asiento-table td{padding:5px 8px;}
+.asiento-table .debe-val{font-weight:600;color:var(--debe);}
+.asiento-table .haber-val{font-weight:600;color:var(--haber);text-align:right;}
+.asiento-table .cuenta-h{padding-left:16px;}
+.asiento-note{margin-top:10px;font-size:13px;color:var(--textLight);font-style:italic;background:rgba(255,234,167,0.4);padding:8px 12px;border-radius:8px;}
+.section-title{color:var(--primary);font-size:17px;font-weight:700;margin:24px 0 12px;}
+.info-text{font-size:14px;color:var(--textLight);margin-bottom:12px;}
+.dots-separator{text-align:center;padding:16px;color:var(--textLight);font-size:14px;}
+.btn-toggle{padding:10px 20px;border:none;border-radius:12px;cursor:pointer;font-family:'Quicksand',sans-serif;font-weight:600;font-size:14px;background:var(--primary);color:#fff;margin-bottom:16px;transition:all 0.3s;}
+.btn-toggle.active{background:rgba(253,121,168,0.15);color:var(--accent);}
+.quiz-card{border-left:4px solid rgba(162,155,254,0.25);}
+.quiz-card.correct{border-left-color:var(--success);}
+.quiz-card.wrong{border-left-color:var(--error);}
+.quiz-question{font-weight:600;font-size:15px;margin-bottom:12px;}
+.quiz-options{display:flex;gap:10px;flex-wrap:wrap;}
+.quiz-opt{padding:10px 18px;border-radius:10px;cursor:pointer;font-family:'Quicksand',sans-serif;font-weight:600;font-size:13px;transition:all 0.3s;border:2px solid var(--border);background:#fff;color:var(--text);}
+.quiz-opt.selected{border-color:var(--primary);background:rgba(108,92,231,0.1);color:var(--primary);}
+.quiz-opt.correct-answer{border-color:var(--success);background:rgba(0,184,148,0.1);color:var(--success);}
+.quiz-opt.wrong-answer{border-color:var(--error);background:rgba(214,48,49,0.08);color:var(--error);}
+.quiz-opt:disabled{cursor:default;}
+.btn-check{padding:14px 32px;border:none;border-radius:14px;cursor:pointer;font-family:'Quicksand',sans-serif;font-weight:700;font-size:16px;background:var(--primary);color:#fff;box-shadow:0 4px 12px rgba(108,92,231,0.3);margin-top:20px;}
+.btn-check:disabled{background:var(--border);cursor:not-allowed;box-shadow:none;}
+.btn-reset{padding:14px 24px;border:2px solid var(--primary);border-radius:14px;cursor:pointer;font-family:'Quicksand',sans-serif;font-weight:700;font-size:15px;background:#fff;color:var(--primary);}
+.score-card{text-align:center;flex:1;}
+.score-number{font-size:36px;font-weight:700;}
+.score-text{font-size:15px;font-weight:600;color:var(--textLight);}
+.result-row{display:flex;gap:12px;margin-top:20px;align-items:center;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+.footer{text-align:center;padding:24px 0 8px;font-size:12px;color:var(--textLight);}
+
+/* ─── Ejercicios tab styles ─── */
+.ej-nav{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+.ej-nav-btn{padding:8px 16px;border:2px solid var(--border);border-radius:10px;cursor:pointer;font-family:'Quicksand',sans-serif;font-weight:600;font-size:13px;background:#fff;color:var(--textLight);transition:all 0.3s;}
+.ej-nav-btn.active{border-color:var(--primary);background:var(--primary);color:#fff;}
+.ej-nav-btn.done{border-color:var(--success);color:var(--success);}
+.ej-nav-btn.done.active{background:var(--success);color:#fff;}
+.ej-enunciado{background:linear-gradient(135deg,rgba(108,92,231,0.06),rgba(0,206,201,0.06));border-left:4px solid var(--primary);padding:16px 20px;border-radius:0 12px 12px 0;margin-bottom:20px;font-size:14px;line-height:1.6;}
+.ej-enunciado strong{color:var(--primary);}
+.ej-cuadro-mini{font-size:12px;margin-top:10px;background:rgba(255,255,255,0.7);padding:10px;border-radius:8px;overflow-x:auto;}
+.ej-cuadro-mini table{width:100%;border-collapse:collapse;}
+.ej-cuadro-mini th{background:var(--primary);color:#fff;padding:4px 8px;font-size:11px;text-align:right;}
+.ej-cuadro-mini th:first-child,.ej-cuadro-mini th:nth-child(2){text-align:left;}
+.ej-cuadro-mini td{padding:3px 8px;border-bottom:1px solid var(--border);font-size:11px;text-align:right;}
+.ej-cuadro-mini td:first-child,.ej-cuadro-mini td:nth-child(2){text-align:left;}
+.ej-cuadro-mini .cuadro-hidden{display:none;}
+.ej-cuadro-mini.expanded .cuadro-hidden{display:table-row;}
+.asiento-builder{margin-bottom:16px;}
+.ab-title{font-weight:700;font-size:15px;color:var(--primary);margin-bottom:10px;}
+.ab-row{display:grid;grid-template-columns:120px 1fr 120px 1fr;gap:8px;margin-bottom:8px;align-items:center;}
+.ab-row select{padding:7px 8px;border-radius:8px;border:2px solid var(--border);font-family:'Quicksand',sans-serif;font-size:13px;font-weight:600;width:100%;}
+.ab-row input{padding:7px 8px;border-radius:8px;border:2px solid var(--border);font-family:'Quicksand',sans-serif;font-size:13px;font-weight:600;width:100%;text-align:right;}
+.ab-row .lbl{font-size:12px;font-weight:600;text-align:center;}
+.ab-row select.ok{border-color:var(--success);background:rgba(0,184,148,0.05);}
+.ab-row select.err{border-color:var(--error);background:rgba(214,48,49,0.05);}
+.ab-row input.ok{border-color:var(--success);background:rgba(0,184,148,0.05);}
+.ab-row input.err{border-color:var(--error);background:rgba(214,48,49,0.05);}
+.feedback-box{padding:10px 14px;border-radius:10px;font-size:13px;font-weight:600;margin-top:8px;}
+.feedback-box.ok{background:rgba(0,184,148,0.1);color:var(--success);border:1px solid var(--success);}
+.feedback-box.err{background:rgba(214,48,49,0.08);color:var(--error);border:1px solid var(--error);}
+.feedback-box.hint{background:rgba(253,203,110,0.2);color:#856404;border:1px solid var(--warning);}
+.btn-ej{padding:10px 24px;border:none;border-radius:12px;cursor:pointer;font-family:'Quicksand',sans-serif;font-weight:700;font-size:14px;transition:all 0.3s;margin-right:8px;margin-top:12px;}
+.btn-ej-primary{background:var(--primary);color:#fff;}
+.btn-ej-secondary{background:#fff;color:var(--primary);border:2px solid var(--primary);}
+.btn-ej-success{background:var(--success);color:#fff;}
+.btn-pdf{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;padding:14px 28px;border:none;border-radius:14px;cursor:pointer;font-family:'Quicksand',sans-serif;font-weight:700;font-size:16px;box-shadow:0 4px 16px rgba(108,92,231,0.3);margin-top:16px;}
+.progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin:12px 0;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--secondary));border-radius:4px;transition:width 0.5s;}
+.nombre-row{display:flex;gap:12px;align-items:center;margin-bottom:16px;}
+.nombre-row label{font-size:14px;font-weight:600;color:var(--textLight);}
+.nombre-row input{padding:10px 14px;border-radius:10px;border:2px solid var(--border);font-family:'Quicksand',sans-serif;font-size:15px;font-weight:600;flex:1;max-width:400px;}
+
+@media(max-width:700px){.form-grid{grid-template-columns:1fr 1fr;}.summary-grid{grid-template-columns:1fr 1fr;}.header h1{font-size:22px;}.ab-row{grid-template-columns:100px 1fr 100px 1fr;}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="subtitle">SA6 — PÍLDORA INTERACTIVA</div>
+    <h1>Simulador de Préstamo Bancario</h1>
+    <p>Empresa: <strong>AlcoySoft, S.L.</strong> — Genera cuadros de amortización, visualiza asientos y practica</p>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab(0)">Cuadro de amortización</button>
+    <button class="tab-btn" onclick="switchTab(1)">Asientos paso a paso</button>
+    <button class="tab-btn" onclick="switchTab(2)">Test rápido</button>
+    <button class="tab-btn" onclick="switchTab(3)">Ejercicios prácticos</button>
+  </div>
+
+  <div id="tab0" class="tab-content active">
+    <div class="card">
+      <h3 style="color:var(--primary);margin-bottom:16px;font-size:18px">Configura el préstamo</h3>
+      <div class="form-grid">
+        <div><label>Importe (€)</label><input type="number" id="principal" value="30000" min="1000" max="500000" step="1000" onchange="update()"></div>
+        <div><label>Tipo interés anual (%)</label><input type="number" id="rate" value="4" min="0.5" max="15" step="0.25" onchange="update()"></div>
+        <div><label>Plazo (meses)</label><input type="number" id="months" value="24" min="6" max="120" step="1" onchange="update()"></div>
+      </div>
+      <div class="form-grid" style="margin-top:12px">
+        <div><label>Mes inicio</label>
+          <select id="startMonth" onchange="update()">
+            <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
+            <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+            <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+            <option value="10" selected>Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+          </select>
+        </div>
+        <div><label>Año inicio</label><input type="number" id="startYear" value="2025" min="2020" max="2030" onchange="update()"></div>
+        <div><label>Gastos formalización (€)</label><input type="number" id="formCosts" value="250" min="0" max="5000" step="25" onchange="update()"></div>
+      </div>
+    </div>
+    <div class="summary-grid" id="summaryGrid"></div>
+    <div class="card" style="overflow-x:auto">
+      <h3 style="color:var(--primary);margin-bottom:12px;font-size:16px">Cuadro de amortización — Sistema francés</h3>
+      <table class="amort-table" id="amortTable"></table>
+    </div>
+  </div>
+
+  <div id="tab1" class="tab-content">
+    <div class="card" style="background:linear-gradient(135deg,rgba(108,92,231,0.04),rgba(0,206,201,0.04))">
+      <p class="info-text" id="asientosInfo"></p>
+    </div>
+    <div id="asientosContent"></div>
+  </div>
+
+  <div id="tab2" class="tab-content">
+    <div class="card" style="background:linear-gradient(135deg,rgba(0,206,201,0.06),rgba(108,92,231,0.06))">
+      <h3 style="color:var(--primary);margin:0 0 8px;font-size:18px">Comprueba lo que sabes</h3>
+      <p class="info-text" style="margin:0">Responde a las 7 preguntas sobre los asientos de un préstamo bancario.</p>
+    </div>
+    <div id="quizContent"></div>
+    <div id="quizActions"></div>
+  </div>
+
+  <div id="tab3" class="tab-content">
+    <div id="ejerciciosContent"></div>
+  </div>
+
+  <div class="footer">SA6 — Operaciones de tesorería y financiación | TDC | CFGM Gestión Administrativa</div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   SHARED STATE & HELPERS
+   ════════════════════════════════════════════════════════════════ */
+let data={rows:[],cuota:0};
+let showAllEntries=false;
+let quizAnswers={};
+let quizChecked=false;
+const modalidad='post';
+
+const fmt=n=>n.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2});
+const pad2=n=>String(n).padStart(2,"0");
+const monthNames=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+function lastDayOfMonth(m,y){return new Date(y,m,0).getDate();}
+function rd2(n){return Math.round(n*100)/100;}
+
+function generateTable(P,annRate,nMonths,sMonth,sYear){
+  const r=annRate/100/12;
+  const cuota=r>0?P*r/(1-Math.pow(1+r,-nMonths)):P/nMonths;
+  const rows=[];let pending=P,m=sMonth,y=sYear;
+  for(let i=0;i<nMonths;i++){
+    const interest=pending*r;const amort=cuota-interest;
+    const totalAmort=i===0?amort:rows[i-1].totalAmort+amort;
+    pending-=amort;if(pending<0.01)pending=0;
+    rows.push({n:i+1,month:m,year:y,day:lastDayOfMonth(m,y),
+      cuota:rd2(cuota),interest:rd2(interest),amort:rd2(amort),totalAmort:rd2(totalAmort),pending:rd2(pending)});
+    m++;if(m>12){m=1;y++;}
+  }
+  return{cuota:rd2(cuota),rows};
+}
+
+function amortInYear(rows,year){return rd2(rows.filter(r=>r.year===year).reduce((s,r)=>s+r.amort,0));}
+function amortUntilDec31(rows,startYear){return rd2(rows.filter(r=>r.year===startYear).reduce((s,r)=>s+r.amort,0));}
+
+function getVals(){
+  return{principal:+document.getElementById("principal").value,rate:+document.getElementById("rate").value,
+    months:+document.getElementById("months").value,startMonth:+document.getElementById("startMonth").value,
+    startYear:+document.getElementById("startYear").value,formCosts:+document.getElementById("formCosts").value,modalidad};
+}
+
+/* ════════════════════════════════════════════════════════════════
+   TAB SWITCHING
+   ════════════════════════════════════════════════════════════════ */
+function switchTab(idx){
+  document.querySelectorAll('.tab-content').forEach((el,i)=>el.classList.toggle('active',i===idx));
+  document.querySelectorAll('.tab-btn').forEach((el,i)=>el.classList.toggle('active',i===idx));
+  if(idx===1)renderAsientos();
+  if(idx===2)renderQuiz();
+  if(idx===3)renderEjercicios();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   TAB 1: CUADRO DE AMORTIZACIÓN (unchanged)
+   ════════════════════════════════════════════════════════════════ */
+function update(){
+  const v=getVals();
+  data=generateTable(v.principal,v.rate,v.months,v.startMonth,v.startYear);
+  renderSummary(v);renderAmortTable(v);
+}
+function renderSummary(v){
+  const totalInt=data.rows.reduce((s,r)=>s+r.interest,0);
+  const items=[
+    {label:"Cuota mensual",value:fmt(data.cuota)+" €",color:"var(--primary)"},
+    {label:"Total intereses",value:fmt(totalInt)+" €",color:"var(--accent)"},
+    {label:"Total a devolver",value:fmt(data.cuota*v.months)+" €",color:"var(--debe)"},
+    {label:"Gastos form.",value:fmt(v.formCosts)+" €",color:"var(--textLight)"},
+  ];
+  document.getElementById("summaryGrid").innerHTML=items.map(s=>`<div class="card summary-card"><div class="label">${s.label}</div><div class="value" style="color:${s.color}">${s.value}</div></div>`).join("");
+}
+function renderAmortTable(v){
+  let h=`<thead><tr><th style="text-align:left">N.º</th><th style="text-align:left">Fecha</th><th>Mensualidad</th><th>Interés</th><th>Amortización</th><th>Amort. acum.</th><th>Pendiente</th></tr></thead><tbody>`;
+  h+=`<tr class="row-form"><td>0</td><td>01/${pad2(v.startMonth)}/${v.startYear}</td><td colspan="4" style="text-align:center;font-style:italic">Formalización</td><td class="right">${fmt(v.principal)}</td></tr>`;
+  data.rows.forEach((r,i)=>{
+    const cls=r.month===12?'year-end':(i%2===0?'alt':'');
+    const badge=r.month===1&&r.n>1?`<span class="badge">Año ${r.year}</span>`:'';
+    h+=`<tr class="${cls}"><td>${r.n}</td><td>${pad2(r.day)}/${pad2(r.month)}/${r.year} ${badge}</td><td class="right">${fmt(r.cuota)}</td><td class="right interest">${fmt(r.interest)}</td><td class="right amort-col">${fmt(r.amort)}</td><td class="right">${fmt(r.totalAmort)}</td><td class="right pending">${fmt(r.pending)}</td></tr>`;
+  });
+  h+='</tbody>';document.getElementById("amortTable").innerHTML=h;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   TAB 2: ASIENTOS PASO A PASO (unchanged)
+   ════════════════════════════════════════════════════════════════ */
+function asientoHTML(fecha,entries,note){
+  let h='<div class="asiento-card">';
+  if(fecha)h+=`<div class="asiento-fecha">${fecha}</div>`;
+  h+='<table class="asiento-table"><thead><tr><th class="th-debe">Debe</th><th class="th-cuenta-d">Cuenta</th><th class="th-haber" style="text-align:right">Haber</th><th class="th-cuenta-h">Cuenta</th></tr></thead><tbody>';
+  entries.forEach(e=>{h+=`<tr><td class="debe-val">${e.debe?fmt(e.debe):''}</td><td style="font-weight:${e.debe?600:400}">${e.debe?'('+e.codD+') '+e.cD:''}</td><td class="haber-val">${e.haber?fmt(e.haber):''}</td><td class="cuenta-h" style="font-weight:${e.haber?600:400}">${e.haber?'('+e.codH+') '+e.cH:''}</td></tr>`;});
+  h+='</tbody></table>';if(note)h+=`<div class="asiento-note">${note}</div>`;h+='</div>';return h;
+}
+function renderAsientos(){
+  const v=getVals();data=generateTable(v.principal,v.rate,v.months,v.startMonth,v.startYear);
+  const rows=data.rows;const isLong=v.months>12;
+  document.getElementById("asientosInfo").innerHTML=`Asientos generados automáticamente. <strong>AlcoySoft, S.L.</strong> — Préstamo <strong>postpagable</strong> de <strong>${fmt(v.principal)} €</strong> al <strong>${v.rate}%</strong> anual, <strong>${v.months} meses</strong>.`;
+  let html='',stepN=0;
+  stepN++;html+=`<div class="section-title">${stepN}. Formalización del préstamo</div>`;
+  if(isLong){
+    const cpAmt=amortUntilDec31(rows,v.startYear),lpAmt=rd2(v.principal-cpAmt);const e1=[];
+    e1.push({debe:v.principal-v.formCosts,codD:"572",cD:"Bancos, c/c"});
+    if(v.formCosts>0)e1.push({debe:v.formCosts,codD:"669",cD:"Otros gastos financieros"});
+    if(lpAmt>0)e1.push({haber:lpAmt,codH:"170",cH:"Deudas a l/p con ent. crédito"});
+    if(cpAmt>0)e1.push({haber:cpAmt,codH:"520",cH:"Deudas a c/p con ent. crédito"});
+    const nCP=rows.filter(r=>r.year===v.startYear).length;
+    html+=asientoHTML(`01/${pad2(v.startMonth)}/${v.startYear}`,e1,`Préstamo a ${v.months} meses. Se separa: ${fmt(cpAmt)} € a c/p (520) — ${nCP} cuota(s) hasta 31/12/${v.startYear} — y ${fmt(lpAmt)} € a l/p (170).${v.formCosts>0?' Gastos form.: '+fmt(v.formCosts)+' €.':''}`);
+  }else{
+    const e1=[{debe:v.principal-v.formCosts,codD:"572",cD:"Bancos, c/c"}];
+    if(v.formCosts>0)e1.push({debe:v.formCosts,codD:"669",cD:"Otros gastos financieros"});
+    e1.push({haber:v.principal,codH:"520",cH:"Deudas a c/p con ent. crédito"});
+    html+=asientoHTML(`01/${pad2(v.startMonth)}/${v.startYear}`,e1,`Préstamo a ${v.months} meses — todo a c/p (520).`);
+  }
+  stepN++;html+=`<div class="section-title">${stepN}. Pago de cuotas mensuales</div>`;
+  html+=`<p class="info-text">Cada cuota = amortización + intereses.</p>`;
+  html+=`<button class="btn-toggle ${showAllEntries?'active':''}" onclick="toggleEntries()">${showAllEntries?'Ocultar':'Mostrar todos'}</button><span style="font-size:13px;color:var(--textLight);margin-left:8px">(${rows.length} cuotas)</span>`;
+  const cA=r=>asientoHTML(`${pad2(r.day)}/${pad2(r.month)}/${r.year} — Cuota ${r.n}`,[{debe:r.amort,codD:"520",cD:"Deudas a c/p con ent. crédito"},{debe:r.interest,codD:"662",cD:"Intereses de deudas"},{haber:r.cuota,codH:"572",cH:"Bancos, c/c"}]);
+  if(showAllEntries){rows.forEach(r=>{html+=cA(r);});}else{rows.slice(0,3).forEach(r=>{html+=cA(r);});if(rows.length>4)html+=`<div class="dots-separator">… ${rows.length-4} cuotas intermedias …</div>`;if(rows.length>3)html+=cA(rows[rows.length-1]);}
+  if(isLong){
+    const allYrs=[...new Set(rows.map(r=>r.year))].sort();if(!allYrs.includes(v.startYear))allYrs.unshift(v.startYear);
+    let re=[];allYrs.forEach(yr=>{const nxt=rows.filter(r=>r.year===yr+1);if(!nxt.length)return;const amt=rd2(nxt.reduce((s,r)=>s+r.amort,0));if(amt>0.01)re.push({year:yr,amount:amt,nextYear:yr+1,nCuotas:nxt.length});});
+    if(re.length){stepN++;html+=`<div class="section-title">${stepN}. Reclasificación a cierre</div><p class="info-text">A 31/12 se reclasifica el principal que vence el año siguiente de (170) a (520).</p>`;
+      re.forEach(r=>{html+=asientoHTML(`31/12/${r.year}`,[{debe:r.amount,codD:"170",cD:"Deudas a l/p con ent. crédito"},{haber:r.amount,codH:"520",cH:"Deudas a c/p con ent. crédito"}],`${fmt(r.amount)} € — ${r.nCuotas} cuota(s) de ${r.nextYear}.`);});
+    }
+  }
+  const pYrs=[...new Set(rows.map(r=>r.year))].sort();if(!pYrs.includes(v.startYear))pYrs.unshift(v.startYear);
+  let pe=[];pYrs.forEach(yr=>{
+    const yRows=rows.filter(r=>r.year===yr);
+    if(!yRows.length&&yr===v.startYear){const d=daysFromDateToDec31(v.startMonth,yr);if(d>0){const a=rd2(v.principal*(v.rate/100)*d/365);if(a>0.01)pe.push({year:yr,amount:a,pending:v.principal,days:d});}return;}
+    if(!yRows.length)return;const last=yRows[yRows.length-1];if(last.month===12&&last.n===rows.length)return;
+    if(last.pending<0.01)return;const ld=new Date(yr,last.month-1,last.day),d31=new Date(yr,11,31),dd=Math.round((d31-ld)/(864e5));
+    if(dd<=0)return;const a=rd2(last.pending*(v.rate/100)*dd/365);if(a>0.01)pe.push({year:yr,amount:a,pending:last.pending,days:dd});
+  });
+  if(pe.length){stepN++;html+=`<div class="section-title">${stepN}. Periodificación de intereses</div><p class="info-text">Intereses devengados no pagados a 31/12.</p>`;
+    pe.forEach(p=>{html+=asientoHTML(`31/12/${p.year}`,[{debe:p.amount,codD:"662",cD:"Intereses de deudas"},{haber:p.amount,codH:"527",cH:"Int. a c/p deudas ent. crédito"}],`${p.days} días sobre ${fmt(p.pending)} € al ${v.rate}% = ${fmt(p.amount)} €.`);});
+  }
+  document.getElementById("asientosContent").innerHTML=html;
+}
+function daysFromDateToDec31(m,y){return Math.round((new Date(y,11,31)-new Date(y,m-1,1))/(864e5));}
+function toggleEntries(){showAllEntries=!showAllEntries;renderAsientos();}
+
+/* ════════════════════════════════════════════════════════════════
+   TAB 3: TEST RÁPIDO (unchanged)
+   ════════════════════════════════════════════════════════════════ */
+const quizQuestions=[
+  {id:"q1",text:"Al formalizar un préstamo a largo plazo en octubre, la parte a corto plazo (520) corresponde a:",options:["Las cuotas de los próximos 12 meses","Las cuotas que vencen hasta el 31/12 de ese año"],correct:"Las cuotas que vencen hasta el 31/12 de ese año"},
+  {id:"q2",text:"Los gastos de formalización (669) se anotan en:",options:["Debe","Haber"],correct:"Debe"},
+  {id:"q3",text:"Al pagar una cuota mensual, la cuenta (662) Intereses de deudas va al:",options:["Debe","Haber"],correct:"Debe"},
+  {id:"q4",text:"La reclasificación a 31/12 consiste en pasar deuda de:",options:["(520) a (170) — de corto a largo","(170) a (520) — de largo a corto"],correct:"(170) a (520) — de largo a corto"},
+  {id:"q5",text:"La periodificación de intereses a 31/12 utiliza la cuenta:",options:["(662) Intereses de deudas","(527) Intereses a c/p de deudas con ent. crédito"],correct:"(527) Intereses a c/p de deudas con ent. crédito"},
+  {id:"q6",text:"En la periodificación, la cuenta (527) se anota en:",options:["Debe","Haber"],correct:"Haber"},
+  {id:"q7",text:"Al formalizar un préstamo en octubre, ¿qué cuotas van a corto plazo (520)?",options:["Las de los próximos 12 meses","Solo las que vencen hasta el 31/12 de ese año"],correct:"Solo las que vencen hasta el 31/12 de ese año"},
+];
+function renderQuiz(){
+  let h='';quizQuestions.forEach((q,qi)=>{const ans=quizAnswers[q.id],ok=quizChecked&&ans===q.correct,bad=quizChecked&&ans&&ans!==q.correct;
+    h+=`<div class="card quiz-card ${quizChecked?(ok?'correct':(bad?'wrong':'')):''}"><div class="quiz-question">${qi+1}. ${q.text}</div><div class="quiz-options">`;
+    q.options.forEach(opt=>{const sel=ans===opt,shC=quizChecked&&opt===q.correct;let c='quiz-opt';if(shC)c+=' correct-answer';else if(sel&&quizChecked&&!ok)c+=' wrong-answer';else if(sel)c+=' selected';
+      h+=`<button class="${c}" ${quizChecked?'disabled':''} onclick="selectAnswer('${q.id}',\`${opt}\`)">${opt}${quizChecked&&shC?' ✓':''}${quizChecked&&sel&&!ok?' ✗':''}</button>`;});
+    h+='</div></div>';});
+  let a='';if(!quizChecked){a=`<button class="btn-check" ${quizQuestions.every(q=>quizAnswers[q.id])?'':'disabled'} onclick="checkQuiz()">Comprobar</button>`;}
+  else{const sc=quizQuestions.filter(q=>quizAnswers[q.id]===q.correct).length,t=quizQuestions.length,p=sc===t;
+    a=`<div class="result-row"><div class="card score-card" style="background:${p?'linear-gradient(135deg,rgba(0,184,148,0.1),rgba(0,184,148,0.03))':'linear-gradient(135deg,rgba(253,203,110,0.2),rgba(253,203,110,0.08))'};border:2px solid ${p?'var(--success)':'var(--warning)'}"><div class="score-number" style="color:${p?'var(--success)':'var(--primary)'}">${sc}/${t}</div><div class="score-text">${sc===t?'¡Perfecto!':sc>=5?'¡Muy bien! Repasa los fallos.':'Vuelve a la pestaña de asientos.'}</div></div><button class="btn-reset" onclick="resetQuiz()">Reiniciar</button></div>`;}
+  document.getElementById("quizContent").innerHTML=h;document.getElementById("quizActions").innerHTML=a;
+}
+function selectAnswer(qId,opt){if(quizChecked)return;quizAnswers[qId]=opt;renderQuiz();}
+function checkQuiz(){quizChecked=true;renderQuiz();}
+function resetQuiz(){quizAnswers={};quizChecked=false;renderQuiz();}
+
+/* ════════════════════════════════════════════════════════════════
+   TAB 4: EJERCICIOS PRÁCTICOS
+   ════════════════════════════════════════════════════════════════ */
+const CUENTAS = [
+  {cod:"170",name:"Deudas a l/p con ent. crédito"},
+  {cod:"520",name:"Deudas a c/p con ent. crédito"},
+  {cod:"527",name:"Int. a c/p deudas ent. crédito"},
+  {cod:"572",name:"Bancos, c/c"},
+  {cod:"662",name:"Intereses de deudas"},
+  {cod:"669",name:"Otros gastos financieros"},
+];
+const CUENTA_OPTS = '<option value="">— Elige cuenta —</option>' + CUENTAS.map(c=>`<option value="${c.cod}">(${c.cod}) ${c.name}</option>`).join('');
+
+// 5 exercises with different data
+const EJERCICIOS = [
+  { id:1, title:"Ejercicio 1 — Básico", desc:"MediSur, S.L.", principal:20000, rate:3, months:18, startMonth:10, startYear:2025, formCosts:0,
+    asientos:["form","cuota1","reclas_2025"] },
+  { id:2, title:"Ejercicio 2 — Con gastos de formalización", desc:"TextilNord, S.A.", principal:50000, rate:5, months:24, startMonth:7, startYear:2025, formCosts:400,
+    asientos:["form","cuota1","reclas_2025"] },
+  { id:3, title:"Ejercicio 3 — Cuotas y periodificación", desc:"AlcoySoft, S.L.", principal:30000, rate:4, months:24, startMonth:4, startYear:2025, formCosts:250,
+    asientos:["form","cuota1","cuota2","periodif_2025"] },
+  { id:4, title:"Ejercicio 4 — Completo (varios cierres)", desc:"InnoBético, S.L.", principal:40000, rate:6, months:36, startMonth:3, startYear:2025, formCosts:500,
+    asientos:["form","cuota1","reclas_2025","periodif_2025","reclas_2026","periodif_2026"] },
+  { id:5, title:"Ejercicio 5 — Avanzado", desc:"TechAlcoy, S.A.", principal:60000, rate:4.5, months:30, startMonth:9, startYear:2025, formCosts:350,
+    asientos:["form","cuota1","cuota2","reclas_2025","periodif_2025","reclas_2026"] },
+];
+
+let ejState = {}; // {ejId: {asientos: {asientoKey: {checked, correct, attempts, userAnswers}}, done}}
+let currentEj = 0;
+let studentName = '';
+
+function initEjState() {
+  EJERCICIOS.forEach(ej => {
+    if (!ejState[ej.id]) {
+      ejState[ej.id] = { done: false, asientos: {} };
+      ej.asientos.forEach(a => { ejState[ej.id].asientos[a] = { checked: false, correct: false, attempts: 0, userAnswers: {} }; });
+    }
+  });
+}
+
+function getEjSolution(ej) {
+  const d = generateTable(ej.principal, ej.rate, ej.months, ej.startMonth, ej.startYear);
+  const rows = d.rows;
+  const isLong = ej.months > 12;
+  const cpAmt = amortUntilDec31(rows, ej.startYear);
+  const lpAmt = rd2(ej.principal - cpAmt);
+  const sol = {};
+
+  // Formalizacion
+  if (isLong) {
+    sol.form = { fecha:`01/${pad2(ej.startMonth)}/${ej.startYear}`, lines: [] };
+    sol.form.lines.push({ side:'debe', cod:'572', amt: rd2(ej.principal - ej.formCosts) });
+    if (ej.formCosts > 0) sol.form.lines.push({ side:'debe', cod:'669', amt: ej.formCosts });
+    if (lpAmt > 0) sol.form.lines.push({ side:'haber', cod:'170', amt: lpAmt });
+    if (cpAmt > 0) sol.form.lines.push({ side:'haber', cod:'520', amt: cpAmt });
+  } else {
+    sol.form = { fecha:`01/${pad2(ej.startMonth)}/${ej.startYear}`, lines: [] };
+    sol.form.lines.push({ side:'debe', cod:'572', amt: rd2(ej.principal - ej.formCosts) });
+    if (ej.formCosts > 0) sol.form.lines.push({ side:'debe', cod:'669', amt: ej.formCosts });
+    sol.form.lines.push({ side:'haber', cod:'520', amt: ej.principal });
+  }
+
+  // Cuotas
+  sol.cuota1 = { fecha:`${pad2(rows[0].day)}/${pad2(rows[0].month)}/${rows[0].year}`, lines:[
+    {side:'debe',cod:'520',amt:rows[0].amort},{side:'debe',cod:'662',amt:rows[0].interest},{side:'haber',cod:'572',amt:rows[0].cuota}
+  ]};
+  if (rows.length > 1) {
+    sol.cuota2 = { fecha:`${pad2(rows[1].day)}/${pad2(rows[1].month)}/${rows[1].year}`, lines:[
+      {side:'debe',cod:'520',amt:rows[1].amort},{side:'debe',cod:'662',amt:rows[1].interest},{side:'haber',cod:'572',amt:rows[1].cuota}
+    ]};
+  }
+
+  // Reclasificaciones for each year-end
+  if (isLong) {
+    const allYears = [...new Set(rows.map(r => r.year))].sort();
+    if (!allYears.includes(ej.startYear)) allYears.unshift(ej.startYear);
+    allYears.forEach(yr => {
+      const nextYrRows = rows.filter(r => r.year === yr + 1);
+      if (nextYrRows.length === 0) return;
+      const rAmt = rd2(nextYrRows.reduce((s,r) => s + r.amort, 0));
+      if (rAmt > 0.01) {
+        sol[`reclas_${yr}`] = { fecha:`31/12/${yr}`, lines:[
+          {side:'debe',cod:'170',amt:rAmt},{side:'haber',cod:'520',amt:rAmt}
+        ]};
+      }
+    });
+  }
+
+  // Periodificaciones for each year-end
+  const pYears = [...new Set(rows.map(r => r.year))].sort();
+  if (!pYears.includes(ej.startYear)) pYears.unshift(ej.startYear);
+  pYears.forEach(yr => {
+    const yR = rows.filter(r => r.year === yr);
+    if (!yR.length && yr === ej.startYear) {
+      const dd = daysFromDateToDec31(ej.startMonth, yr);
+      if (dd > 0) {
+        const pAmt = rd2(ej.principal * (ej.rate/100) * dd / 365);
+        if (pAmt > 0.01) sol[`periodif_${yr}`] = { fecha:`31/12/${yr}`, lines:[
+          {side:'debe',cod:'662',amt:pAmt},{side:'haber',cod:'527',amt:pAmt}
+        ]};
+      }
+      return;
+    }
+    if (!yR.length) return;
+    const last = yR[yR.length - 1];
+    if (last.month === 12 && last.n === rows.length) return;
+    if (last.pending < 0.01) return;
+    const ld = new Date(yr, last.month - 1, last.day);
+    const d31 = new Date(yr, 11, 31);
+    const dd = Math.round((d31 - ld) / 864e5);
+    if (dd > 0) {
+      const pAmt = rd2(last.pending * (ej.rate/100) * dd / 365);
+      if (pAmt > 0.01) sol[`periodif_${yr}`] = { fecha:`31/12/${yr}`, lines:[
+        {side:'debe',cod:'662',amt:pAmt},{side:'haber',cod:'527',amt:pAmt}
+      ]};
+    }
+  });
+
+  return { sol, rows: d.rows, cuota: d.cuota };
+}
+
+function miniCuadro(rows, maxRows) {
+  const show = rows.slice(0, maxRows || 6);
+  const principal = rows.length > 0 ? rd2(rows[0].pending + rows[0].amort) : 0;
+  let h = `<div class="ej-cuadro-mini"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-weight:700;font-size:12px;color:var(--primary)">Cuadro de amortización</span><button onclick="this.parentElement.parentElement.classList.toggle(\'expanded\')" style="border:none;background:var(--primary);color:#fff;padding:3px 10px;border-radius:6px;font-family:Quicksand;font-weight:600;font-size:11px;cursor:pointer">▼ Ver completo</button></div><table><thead><tr><th>N.º</th><th>Fecha</th><th>Mensualidad</th><th>Interés</th><th>Amortización</th><th>Amort. acum.</th><th>Pendiente</th></tr></thead><tbody>`;
+  h += `<tr style="font-weight:600"><td>0</td><td>Formalización</td><td colspan="4"></td><td style="text-align:right">${fmt(principal)}</td></tr>`;
+  rows.forEach((r,i) => {
+    const hidden = i >= show.length ? ' class="cuadro-hidden"' : '';
+    const bg = i%2===0 ? ' style="background:var(--tableAlt)"' : '';
+    h += `<tr${hidden}${!hidden?bg:''}><td>${r.n}</td><td>${pad2(r.day)}/${pad2(r.month)}/${r.year}</td><td style="text-align:right">${fmt(r.cuota)}</td><td style="text-align:right">${fmt(r.interest)}</td><td style="text-align:right">${fmt(r.amort)}</td><td style="text-align:right">${fmt(r.totalAmort)}</td><td style="text-align:right">${fmt(r.pending)}</td></tr>`;
+  });
+  h += '</tbody></table></div>';
+  return h;
+}
+
+function getAsientoLabel(aKey) {
+  if (aKey === 'form') return 'Formalización del préstamo';
+  if (aKey === 'cuota1') return 'Pago de la 1ª cuota';
+  if (aKey === 'cuota2') return 'Pago de la 2ª cuota';
+  if (aKey.startsWith('reclas_')) return `Reclasificación a 31/12/${aKey.split('_')[1]}`;
+  if (aKey.startsWith('periodif_')) return `Periodificación de intereses a 31/12/${aKey.split('_')[1]}`;
+  return aKey;
+}
+
+function buildAsientoInput(ejId, aKey, nLines, fecha) {
+  const st = ejState[ejId].asientos[aKey];
+  let h = `<div class="asiento-builder" id="ab-${ejId}-${aKey}">`;
+  h += `<div class="ab-title">${getAsientoLabel(aKey)} <span style="font-weight:500;font-size:12px;color:var(--textLight)">(${fecha})</span></div>`;
+  for (let i = 0; i < nLines; i++) {
+    const dCod = st.userAnswers[`d_cod_${i}`] || '';
+    const dAmt = st.userAnswers[`d_amt_${i}`] || '';
+    const hCod = st.userAnswers[`h_cod_${i}`] || '';
+    const hAmt = st.userAnswers[`h_amt_${i}`] || '';
+    const clsDC = st.checked ? (st.lineResults?.[`d_cod_${i}`] ? 'ok' : 'err') : '';
+    const clsDA = st.checked ? (st.lineResults?.[`d_amt_${i}`] ? 'ok' : 'err') : '';
+    const clsHC = st.checked ? (st.lineResults?.[`h_cod_${i}`] ? 'ok' : 'err') : '';
+    const clsHA = st.checked ? (st.lineResults?.[`h_amt_${i}`] ? 'ok' : 'err') : '';
+    h += `<div class="ab-row">
+      <select class="${clsDC}" ${st.correct?'disabled':''} onchange="ejInput(${ejId},'${aKey}','d_cod_${i}',this.value)">${CUENTA_OPTS.replace(`value="${dCod}"`,`value="${dCod}" selected`)}</select>
+      <input type="text" class="${clsDA}" ${st.correct?'disabled':''} placeholder="Debe (€)" value="${dAmt}" oninput="ejInput(${ejId},'${aKey}','d_amt_${i}',this.value)">
+      <select class="${clsHC}" ${st.correct?'disabled':''} onchange="ejInput(${ejId},'${aKey}','h_cod_${i}',this.value)">${CUENTA_OPTS.replace(`value="${hCod}"`,`value="${hCod}" selected`)}</select>
+      <input type="text" class="${clsHA}" ${st.correct?'disabled':''} placeholder="Haber (€)" value="${hAmt}" oninput="ejInput(${ejId},'${aKey}','h_amt_${i}',this.value)">
+    </div>`;
+  }
+  // Feedback
+  if (st.checked) {
+    if (st.correct) {
+      h += `<div class="feedback-box ok">✓ ¡Correcto! Has acertado el asiento.</div>`;
+    } else {
+      h += `<div class="feedback-box err">✗ Hay errores. ${st.hint || 'Revisa las cuentas y los importes.'}</div>`;
+    }
+  }
+  if (!st.correct) {
+    h += `<button class="btn-ej btn-ej-primary" onclick="checkAsiento(${ejId},'${aKey}')">Comprobar</button>`;
+    if (st.checked && !st.correct && st.attempts >= 2) {
+      h += `<button class="btn-ej btn-ej-secondary" onclick="showSolution(${ejId},'${aKey}')">Ver solución</button>`;
+    }
+  }
+  h += '</div>';
+  return h;
+}
+
+function ejInput(ejId, aKey, field, value) {
+  ejState[ejId].asientos[aKey].userAnswers[field] = value;
+  ejState[ejId].asientos[aKey].checked = false; // reset check on edit
+}
+
+function parseAmt(s) {
+  if (!s) return NaN;
+  return parseFloat(String(s).replace(/\./g, '').replace(',', '.'));
+}
+
+function checkAsiento(ejId, aKey) {
+  const ej = EJERCICIOS.find(e => e.id === ejId);
+  const { sol } = getEjSolution(ej);
+  const solution = sol[aKey];
+  if (!solution) return;
+  const st = ejState[ejId].asientos[aKey];
+  st.attempts++;
+  st.checked = true;
+  st.lineResults = {};
+
+  // Collect expected debe and haber entries
+  const expDebe = solution.lines.filter(l => l.side === 'debe').map(l => ({ cod: l.cod, amt: l.amt }));
+  const expHaber = solution.lines.filter(l => l.side === 'haber').map(l => ({ cod: l.cod, amt: l.amt }));
+
+  // Collect user entries from all lines (each row can have debe and/or haber)
+  const nLines = solution.lines.length;
+  const userDebe = [];
+  const userHaber = [];
+  for (let i = 0; i < nLines; i++) {
+    const dCod = st.userAnswers[`d_cod_${i}`] || '';
+    const dAmt = parseAmt(st.userAnswers[`d_amt_${i}`]);
+    const hCod = st.userAnswers[`h_cod_${i}`] || '';
+    const hAmt = parseAmt(st.userAnswers[`h_amt_${i}`]);
+    if (dCod) userDebe.push({ cod: dCod, amt: isNaN(dAmt) ? -999 : dAmt, row: i });
+    if (hCod) userHaber.push({ cod: hCod, amt: isNaN(hAmt) ? -999 : hAmt, row: i });
+  }
+
+  // Match user entries against expected (greedy matching)
+  function matchEntries(userList, expList) {
+    const matched = new Array(expList.length).fill(false);
+    const userMatched = new Array(userList.length).fill(false);
+    const results = []; // {userIdx, expIdx, codOk, amtOk}
+
+    // First pass: exact matches
+    userList.forEach((u, ui) => {
+      expList.forEach((e, ei) => {
+        if (matched[ei] || userMatched[ui]) return;
+        if (u.cod === e.cod && Math.abs(u.amt - e.amt) < 0.02) {
+          matched[ei] = true; userMatched[ui] = true;
+          results.push({ userIdx: ui, expIdx: ei, codOk: true, amtOk: true });
+        }
+      });
+    });
+    // Second pass: cod match but wrong amount
+    userList.forEach((u, ui) => {
+      if (userMatched[ui]) return;
+      expList.forEach((e, ei) => {
+        if (matched[ei] || userMatched[ui]) return;
+        if (u.cod === e.cod) {
+          matched[ei] = true; userMatched[ui] = true;
+          results.push({ userIdx: ui, expIdx: ei, codOk: true, amtOk: false });
+        }
+      });
+    });
+    // Third pass: unmatched user entries
+    userList.forEach((u, ui) => {
+      if (userMatched[ui]) return;
+      results.push({ userIdx: ui, expIdx: -1, codOk: false, amtOk: false });
+    });
+    return { results, allMatched: expList.every((_, i) => matched[i]), allCorrect: results.every(r => r.codOk && r.amtOk) && results.length === expList.length };
+  }
+
+  const debeMatch = matchEntries(userDebe, expDebe);
+  const haberMatch = matchEntries(userHaber, expHaber);
+
+  // Build lineResults for visual feedback
+  let hints = [];
+  for (let i = 0; i < nLines; i++) {
+    // Default: mark as ok if empty and not expected
+    st.lineResults[`d_cod_${i}`] = true;
+    st.lineResults[`d_amt_${i}`] = true;
+    st.lineResults[`h_cod_${i}`] = true;
+    st.lineResults[`h_amt_${i}`] = true;
+  }
+
+  // Mark debe fields
+  debeMatch.results.forEach(r => {
+    const row = userDebe[r.userIdx].row;
+    st.lineResults[`d_cod_${row}`] = r.codOk;
+    st.lineResults[`d_amt_${row}`] = r.amtOk;
+    if (!r.codOk) hints.push(`Debe: revisa la cuenta de la línea ${row + 1}.`);
+    if (!r.amtOk && r.codOk) hints.push(`Debe: revisa el importe de (${userDebe[r.userIdx].cod}).`);
+  });
+
+  // Mark haber fields
+  haberMatch.results.forEach(r => {
+    const row = userHaber[r.userIdx].row;
+    st.lineResults[`h_cod_${row}`] = r.codOk;
+    st.lineResults[`h_amt_${row}`] = r.amtOk;
+    if (!r.codOk) hints.push(`Haber: revisa la cuenta de la línea ${row + 1}.`);
+    if (!r.amtOk && r.codOk) hints.push(`Haber: revisa el importe de (${userHaber[r.userIdx].cod}).`);
+  });
+
+  // Check missing entries
+  if (userDebe.length < expDebe.length) hints.push(`Faltan ${expDebe.length - userDebe.length} cuenta(s) en el Debe.`);
+  if (userHaber.length < expHaber.length) hints.push(`Faltan ${expHaber.length - userHaber.length} cuenta(s) en el Haber.`);
+  if (userDebe.length > expDebe.length) hints.push(`Sobran ${userDebe.length - expDebe.length} cuenta(s) en el Debe.`);
+  if (userHaber.length > expHaber.length) hints.push(`Sobran ${userHaber.length - expHaber.length} cuenta(s) en el Haber.`);
+
+  // Mark empty rows that should have content as errors
+  // (handled by missing counts above)
+
+  const allOk = debeMatch.allCorrect && haberMatch.allCorrect
+    && userDebe.length === expDebe.length && userHaber.length === expHaber.length;
+
+  st.correct = allOk;
+  st.hint = hints.slice(0, 3).join(' ');
+
+  const allDone = ej.asientos.every(a => ejState[ejId].asientos[a].correct);
+  ejState[ejId].done = allDone;
+
+  renderEjercicios();
+}
+
+function showSolution(ejId, aKey) {
+  const ej = EJERCICIOS.find(e => e.id === ejId);
+  const { sol } = getEjSolution(ej);
+  const solution = sol[aKey];
+  const st = ejState[ejId].asientos[aKey];
+  st.usedShowSolution = true; // penalty: 0% in PDF
+  solution.lines.forEach((line, i) => {
+    if (line.side === 'debe') {
+      st.userAnswers[`d_cod_${i}`] = line.cod;
+      st.userAnswers[`d_amt_${i}`] = fmt(line.amt);
+      st.userAnswers[`h_cod_${i}`] = '';
+      st.userAnswers[`h_amt_${i}`] = '';
+    } else {
+      st.userAnswers[`h_cod_${i}`] = line.cod;
+      st.userAnswers[`h_amt_${i}`] = fmt(line.amt);
+      st.userAnswers[`d_cod_${i}`] = '';
+      st.userAnswers[`d_amt_${i}`] = '';
+    }
+  });
+  st.checked = true; st.correct = true;
+  st.lineResults = {};
+  solution.lines.forEach((line, i) => {
+    st.lineResults[`d_cod_${i}`] = true; st.lineResults[`d_amt_${i}`] = true;
+    st.lineResults[`h_cod_${i}`] = true; st.lineResults[`h_amt_${i}`] = true;
+  });
+  const allDone = ej.asientos.every(a => ejState[ejId].asientos[a].correct);
+  ejState[ejId].done = allDone;
+  renderEjercicios();
+}
+
+function renderEjercicios() {
+  initEjState();
+  const ej = EJERCICIOS[currentEj];
+  const { sol, rows, cuota } = getEjSolution(ej);
+  const totalDone = EJERCICIOS.filter(e => ejState[e.id].done).length;
+  const totalAsientos = EJERCICIOS.reduce((s, e) => s + e.asientos.length, 0);
+  const totalCorrect = EJERCICIOS.reduce((s, e) => s + e.asientos.filter(a => ejState[e.id].asientos[a]?.correct).length, 0);
+
+  let h = '';
+
+  // Name input
+  h += `<div class="nombre-row"><label>Nombre del alumno/a:</label><input type="text" id="studentNameInput" value="${studentName}" oninput="studentName=this.value" placeholder="Escribe tu nombre aquí"></div>`;
+
+  // Progress
+  h += `<div class="card" style="padding:16px 20px">
+    <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--textLight)">
+      <span>Progreso global: ${totalCorrect}/${totalAsientos} asientos correctos</span>
+      <span>${totalDone}/${EJERCICIOS.length} ejercicios completados</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${totalAsientos>0?Math.round(totalCorrect/totalAsientos*100):0}%"></div></div>
+  </div>`;
+
+  // Navigation
+  h += '<div class="ej-nav">';
+  EJERCICIOS.forEach((e, i) => {
+    const done = ejState[e.id].done;
+    h += `<button class="ej-nav-btn ${i===currentEj?'active':''} ${done?'done':''}" onclick="currentEj=${i};renderEjercicios()">${e.id}. ${done?'✓':''} ${e.desc}</button>`;
+  });
+  h += '</div>';
+
+  // Exercise card
+  h += `<div class="card"><h3 style="color:var(--primary);font-size:18px;margin-bottom:12px">${ej.title}</h3>`;
+  h += `<div class="ej-enunciado">`;
+  h += `La empresa <strong>${ej.desc}</strong> solicita un préstamo bancario el <strong>1 de ${monthNames[ej.startMonth-1].toLowerCase()} de ${ej.startYear}</strong> con las siguientes condiciones:<br>`;
+  h += `• Importe: <strong>${fmt(ej.principal)} €</strong><br>`;
+  h += `• Tipo de interés anual: <strong>${ej.rate}%</strong><br>`;
+  h += `• Plazo: <strong>${ej.months} meses</strong> (sistema francés, postpagable)<br>`;
+  if (ej.formCosts > 0) h += `• Gastos de formalización: <strong>${fmt(ej.formCosts)} €</strong><br>`;
+  h += `<br>Se pide: construir los asientos de ${ej.asientos.map(a => getAsientoLabel(a).toLowerCase()).join(', ')}.`;
+  h += miniCuadro(rows, ej.months > 12 ? 6 : 4);
+  h += '</div>';
+
+  // Asientos to build
+  ej.asientos.forEach(aKey => {
+    const solution = sol[aKey];
+    if (!solution) return;
+    h += buildAsientoInput(ej.id, aKey, solution.lines.length, solution.fecha);
+  });
+
+  h += '</div>';
+
+  // PDF button (only if at least 1 exercise done)
+  if (totalDone > 0) {
+    h += `<button class="btn-pdf" onclick="downloadPDF()">Descargar certificado PDF</button>`;
+  }
+
+  document.getElementById("ejerciciosContent").innerHTML = h;
+}
+
+/* ─── PDF Generation with penalty ─── */
+function calcPenaltyScore(attempts, correct, usedSolution) {
+  // If used "Ver solución" (attempts >= 3 and correct via showSolution), score = 0
+  if (usedSolution) return 0;
+  if (!correct) return 0;
+  if (attempts === 1) return 100;
+  if (attempts === 2) return 75;
+  if (attempts === 3) return 50;
+  return 25;
+}
+
+function downloadPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const now = new Date();
+  const dateStr = `${pad2(now.getDate())}/${pad2(now.getMonth()+1)}/${now.getFullYear()} ${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
+  const name = studentName || 'Sin nombre';
+
+  // Header
+  doc.setFillColor(108, 92, 231);
+  doc.rect(0, 0, 210, 40, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(20);
+  doc.setFont(undefined, 'bold');
+  doc.text('Simulador de Préstamo Bancario', 105, 18, { align: 'center' });
+  doc.setFontSize(12);
+  doc.setFont(undefined, 'normal');
+  doc.text('SA6 — Ejercicios prácticos — Certificado de práctica', 105, 28, { align: 'center' });
+  doc.setFontSize(10);
+  doc.text(`Fecha: ${dateStr}`, 105, 35, { align: 'center' });
+
+  // Student info
+  doc.setTextColor(45, 52, 54);
+  doc.setFontSize(14);
+  doc.setFont(undefined, 'bold');
+  doc.text(`Alumno/a: ${name}`, 20, 55);
+
+  // Penalty legend
+  doc.setFontSize(9);
+  doc.setFont(undefined, 'normal');
+  doc.setTextColor(100, 100, 100);
+  doc.text('Puntuación por asiento: 1er intento = 100% | 2º intento = 75% | 3er intento = 50% | 4+ intentos = 25% | Ver solución = 0%', 20, 63);
+
+  // Results table
+  let y = 74;
+  doc.setFontSize(10);
+  doc.setFont(undefined, 'bold');
+
+  // Table header
+  doc.setFillColor(108, 92, 231);
+  doc.setTextColor(255, 255, 255);
+  doc.rect(15, y - 5, 180, 9, 'F');
+  doc.text('Ejercicio', 18, y);
+  doc.text('Asiento', 68, y);
+  doc.text('Intentos', 118, y);
+  doc.text('Estado', 143, y);
+  doc.text('Puntos', 173, y);
+  y += 11;
+
+  doc.setTextColor(45, 52, 54);
+  let grandTotalScore = 0;
+  let grandTotalMax = 0;
+
+  EJERCICIOS.forEach((ej, ei) => {
+    ej.asientos.forEach((aKey, ai) => {
+      const st = ejState[ej.id].asientos[aKey];
+      const att = st?.attempts || 0;
+      const correct = st?.correct || false;
+      const usedSol = correct && att >= 3 && !st?.solvedByUser;
+      const score = calcPenaltyScore(att, correct, st?.usedShowSolution || false);
+      grandTotalScore += score;
+      grandTotalMax += 100;
+
+      if ((ei + ai) % 2 === 0) { doc.setFillColor(248, 247, 255); doc.rect(15, y - 5, 180, 9, 'F'); }
+      doc.setFont(undefined, ai === 0 ? 'bold' : 'normal');
+      doc.text(ai === 0 ? `${ej.id}. ${ej.desc}` : '', 18, y);
+      doc.setFont(undefined, 'normal');
+      doc.setFontSize(9);
+      const pdfLabel = aKey === 'form' ? 'Formalización' : aKey === 'cuota1' ? '1ª cuota' : aKey === 'cuota2' ? '2ª cuota' : aKey.startsWith('reclas_') ? `Reclas. 31/12/${aKey.split('_')[1]}` : aKey.startsWith('periodif_') ? `Periodif. 31/12/${aKey.split('_')[1]}` : aKey;
+      doc.text(pdfLabel, 68, y);
+      doc.setFontSize(10);
+      doc.text(att > 0 ? `${att}` : '-', 125, y, { align: 'center' });
+      doc.setTextColor(correct ? 0 : 200, correct ? 150 : 48, correct ? 136 : 49);
+      doc.text(correct ? 'Correcto' : (att > 0 ? 'Incorrecto' : 'Sin hacer'), 143, y);
+      doc.setTextColor(45, 52, 54);
+      doc.text(`${score}%`, 178, y, { align: 'center' });
+      y += 9;
+    });
+  });
+
+  // Total row
+  y += 2;
+  doc.setFillColor(108, 92, 231);
+  doc.setTextColor(255, 255, 255);
+  doc.rect(15, y - 5, 180, 10, 'F');
+  doc.setFont(undefined, 'bold');
+  doc.setFontSize(11);
+  const finalPct = grandTotalMax > 0 ? Math.round(grandTotalScore / grandTotalMax * 100) : 0;
+  doc.text('PUNTUACIÓN FINAL', 18, y + 1);
+  doc.text(`${grandTotalScore} / ${grandTotalMax}  (${finalPct}%)`, 178, y + 1, { align: 'right' });
+
+  y += 18;
+
+  // Score summary
+  doc.setTextColor(45, 52, 54);
+  doc.setFontSize(14);
+  doc.setFont(undefined, 'bold');
+  const msg = finalPct >= 90 ? 'Excelente trabajo.' :
+    finalPct >= 70 ? 'Buen trabajo. Practica para mejorar la puntuación.' :
+    finalPct >= 50 ? 'Resultado aceptable. Sigue practicando.' :
+    'Necesitas más práctica. Revisa la pestaña de asientos paso a paso.';
+  doc.text(msg, 105, y, { align: 'center' });
+
+  // Footer
+  doc.setFontSize(8);
+  doc.setTextColor(150, 150, 150);
+  doc.text('Tratamiento de la Documentación Contable — CFGM Gestión Administrativa — Salesianos Juan XXIII Alcoy', 105, 285, { align: 'center' });
+
+  doc.save(`Prestamo_Ejercicios_${name.replace(/\s+/g, '_')}_${pad2(now.getDate())}${pad2(now.getMonth()+1)}${now.getFullYear()}.pdf`);
+}
+
+/* ─── Init ─── */
+initEjState();
+update();
+</script>
+</body>
+</html>

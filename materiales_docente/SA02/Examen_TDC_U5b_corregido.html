@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examen TDC – U5b | Corrección</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f6fb;
+    --surface: #ffffff;
+    --surface2: #eef1f8;
+    --accent: #1e3a5f;
+    --accent2: #2e6da4;
+    --accent3: #5b9bd5;
+    --green: #2d6a4f;
+    --green2: #52b788;
+    --red: #b5202a;
+    --amber: #d4691e;
+    --purple: #5e35b1;
+    --text: #1a1a2e;
+    --text2: #4a4f6a;
+    --text3: #9098b0;
+    --border: #dde2ef;
+    --shadow: 0 2px 14px rgba(30,58,95,0.09);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    color: white;
+    padding: 24px 32px;
+    box-shadow: 0 3px 20px rgba(30,58,95,0.25);
+  }
+  .header-inner { max-width: 960px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  header h1 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.3px; }
+  header p { font-size: 0.84rem; opacity: 0.75; margin-top: 3px; }
+  .badge {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+
+  /* TABS */
+  .tab-bar {
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  }
+  .tab-bar-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    gap: 2px;
+    padding: 0 16px;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    padding: 14px 18px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text3);
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    white-space: nowrap;
+    transition: all 0.18s;
+  }
+  .tab-btn:hover { color: var(--accent2); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* MAIN */
+  main { max-width: 960px; margin: 0 auto; padding: 28px 20px 48px; }
+  .tab-content { display: none; animation: fadeIn 0.2s ease; }
+  .tab-content.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* SECTION INTRO */
+  .section-intro {
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin-bottom: 20px;
+    border-left: 5px solid var(--accent2);
+    box-shadow: var(--shadow);
+  }
+  .section-intro h2 { font-size: 1rem; font-weight: 800; color: var(--accent); margin-bottom: 5px; }
+  .section-intro p { font-size: 0.86rem; color: var(--text2); line-height: 1.65; }
+
+  /* SUBSECTION LABEL */
+  .subsection-label {
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text3);
+    margin: 24px 0 10px;
+    padding-left: 4px;
+    border-left: 3px solid var(--accent3);
+    padding-left: 10px;
+  }
+
+  /* OP CARD */
+  .op-card {
+    background: var(--surface);
+    border-radius: 12px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    transition: box-shadow 0.2s;
+  }
+  .op-card:hover { box-shadow: 0 4px 20px rgba(30,58,95,0.13); }
+  .op-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .op-date {
+    background: var(--accent);
+    color: white;
+    border-radius: 7px;
+    padding: 3px 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+  }
+  .op-title { font-weight: 700; font-size: 0.93rem; flex: 1; color: var(--text); }
+  .op-chevron { color: var(--text3); font-size: 0.9rem; transition: transform 0.2s; }
+  .op-card.open .op-chevron { transform: rotate(180deg); }
+  .op-body { display: none; padding: 0 18px 18px; border-top: 1px solid var(--border); }
+  .op-card.open .op-body { display: block; }
+
+  /* ENUNCIADO */
+  .enunciado {
+    background: #fdf8ee;
+    border: 1px solid #e8dab0;
+    border-radius: 8px;
+    padding: 11px 15px;
+    margin: 14px 0 12px;
+    font-size: 0.86rem;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+  .enunciado strong { color: var(--text); }
+
+  /* DATOS CARD */
+  .datos-card {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    font-size: 0.84rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 4px 16px;
+  }
+  .dato { color: var(--text2); }
+  .dato span { font-weight: 700; color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; }
+
+  /* CALCULOS */
+  .calculos {
+    background: #f0f7f0;
+    border: 1px solid #b8dfc5;
+    border-radius: 8px;
+    padding: 11px 15px;
+    margin-bottom: 12px;
+  }
+  .calculos h4 { font-size: 0.75rem; font-weight: 800; color: var(--green); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.6px; }
+  .calc-line { font-family: 'JetBrains Mono', monospace; font-size: 0.81rem; color: var(--text2); margin: 3px 0; }
+  .calc-line.sep { border-top: 1px solid #b8dfc5; margin: 6px 0; }
+  .calc-line.result { color: var(--green); font-weight: 700; }
+  .calc-line.note { font-family: 'Nunito', sans-serif; font-size: 0.83rem; color: var(--text2); font-style: italic; }
+
+  /* ASIENTO TABLE */
+  .asiento-label { font-size: 0.75rem; font-weight: 800; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin: 14px 0 6px; }
+  .asiento-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; margin-bottom: 12px; }
+  .asiento-table thead th {
+    padding: 6px 10px; font-size: 0.72rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.5px; color: var(--text3);
+    border-bottom: 2px solid var(--border); text-align: left;
+  }
+  .asiento-table thead th:nth-child(2),
+  .asiento-table thead th:nth-child(3) { text-align: right; }
+  .asiento-table tbody tr { border-bottom: 1px solid #eef1f8; }
+  .asiento-table tbody tr:last-child { border-bottom: none; }
+  .asiento-table td { padding: 7px 10px; vertical-align: middle; }
+  .asiento-table td:nth-child(2),
+  .asiento-table td:nth-child(3) { text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; }
+  .cod { display: inline-block; background: #e8edf6; border-radius: 4px; padding: 1px 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--accent); margin-right: 5px; }
+  .debe-row td:first-child { color: #1a3a5c; font-weight: 700; }
+  .haber-row td:first-child { color: var(--green); padding-left: 28px; }
+  .haber-row td:first-child::before { content: 'a  '; color: var(--text3); font-weight: 400; }
+  .imp-d { color: #1a3a5c; font-weight: 700; }
+  .imp-h { color: var(--green); font-weight: 700; }
+
+  /* EXPLICACION */
+  .explicacion {
+    background: #f5f0fb;
+    border: 1px solid #d4c5ef;
+    border-radius: 8px;
+    padding: 11px 15px;
+    font-size: 0.85rem;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+  .explicacion h4 { font-size: 0.74rem; font-weight: 800; color: var(--purple); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ALERT */
+  .alert {
+    background: #fff8e6;
+    border: 1px solid #f4c842;
+    border-radius: 8px;
+    padding: 9px 13px;
+    font-size: 0.83rem;
+    color: #7a4f00;
+    margin-bottom: 12px;
+  }
+  .alert-red {
+    background: #fff0f0;
+    border: 1px solid #f4b8b8;
+    border-radius: 8px;
+    padding: 9px 13px;
+    font-size: 0.83rem;
+    color: #7a0000;
+    margin-bottom: 12px;
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    color: var(--text3);
+    font-size: 0.79rem;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div>
+      <h1>📋 Examen TDC – U5b · Corrección</h1>
+      <p>2º CFGM G. Administrativa · Salesianos Juan XXIII, Alcoy &nbsp;|&nbsp; 17/02/2026</p>
+    </div>
+    <div class="badge">Venta / Baja / Deterioro / Moneda extranjera</div>
+  </div>
+</header>
+
+<div class="tab-bar">
+  <div class="tab-bar-inner">
+    <button class="tab-btn active" onclick="showTab('ex1',this)">Ej. 1 · Venta de activos</button>
+    <button class="tab-btn" onclick="showTab('ex2',this)">Ej. 2 · Bajas de activos</button>
+    <button class="tab-btn" onclick="showTab('ex3',this)">Ej. 3 · Deterioro y reversión</button>
+    <button class="tab-btn" onclick="showTab('ex4',this)">Ej. 4 · Moneda extranjera</button>
+  </div>
+</div>
+
+<main>
+
+<!-- ================== EJ. 1: VENTA ================== -->
+<div id="ex1" class="tab-content active">
+  <div class="section-intro">
+    <h2>Ejercicio 1 · Venta de inmovilizado (con amortización previa)</h2>
+    <p>Cuando se vende un activo a mitad de ejercicio, hay que contabilizar primero la <strong>amortización desde el 1/1 hasta la fecha de venta</strong>, y después el asiento de <strong>venta propiamente dicho</strong>: se dan de baja precio de adquisición y amortización acumulada, se registra el crédito con el cliente y el resultado (beneficio o pérdida).</p>
+  </div>
+
+  <!-- ENUNCIADO COMPLETO -->
+  <div style="background:#fff;border:1px solid #dde2ef;border-radius:14px;padding:20px 24px;margin-bottom:24px;box-shadow:0 2px 14px rgba(30,58,95,0.07);">
+    <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#9098b0;margin-bottom:14px;padding-left:10px;border-left:3px solid #5b9bd5;">📄 Enunciado del examen</div>
+    <p style="font-size:0.88rem;color:#1a1a2e;line-height:1.75;margin-bottom:12px;">Contabiliza en el Libro Diario las siguientes operaciones que realiza una empresa dedicada a la fabricación de artículos de decoración.</p>
+    <p style="font-size:0.88rem;font-weight:700;color:#1e3a5f;margin-bottom:8px;">1. Registra en el Diario los hechos contables siguientes en la fecha de la operación (incluye amortización del ejercicio cuando proceda y venta del activo):</p>
+
+    <div style="background:#f4f6fb;border-radius:10px;padding:14px 18px;margin-bottom:10px;font-size:0.86rem;color:#4a4f6a;line-height:1.75;">
+      <p style="font-weight:700;color:#1e3a5f;margin-bottom:6px;">a) A 31 de diciembre, la empresa tiene una máquina con el siguiente desglose:</p>
+      <ul style="list-style:none;padding-left:8px;">
+        <li>• Precio de adquisición: <strong>48.000 €</strong></li>
+        <li>• Valor residual: <strong>1.200 €</strong></li>
+        <li>• Amortización acumulada (hasta 31/12): <strong>19.500 €</strong></li>
+        <li>• Deterioro registrado: <strong>3.000 €</strong></li>
+        <li>• Coeficiente de amortización anual: <strong>12%</strong></li>
+      </ul>
+      <p style="margin-top:8px;">El <strong>18 de abril</strong> del año siguiente se vende a crédito por <strong>30.000 €</strong>, a pagar en 3 y 15 meses a partes iguales. IVA 21%.</p>
+    </div>
+
+    <div style="background:#f4f6fb;border-radius:10px;padding:14px 18px;font-size:0.86rem;color:#4a4f6a;line-height:1.75;">
+      <p style="font-weight:700;color:#1e3a5f;margin-bottom:6px;">b) A 31 de diciembre, la empresa tiene una patente con el siguiente desglose:</p>
+      <ul style="list-style:none;padding-left:8px;">
+        <li>• Precio de adquisición: <strong>36.000 €</strong></li>
+        <li>• Amortización acumulada (hasta 31/12): <strong>18.000 €</strong></li>
+        <li>• Vida útil: <strong>8 años</strong></li>
+      </ul>
+      <p style="margin-top:8px;">El <strong>10 de septiembre</strong> del año siguiente se vende a crédito por <strong>9.000 €</strong>, a pagar en 9 y 20 meses mediante pagarés, del <strong>40% y 60%</strong> respectivamente. IVA 21%.</p>
+    </div>
+  </div>
+
+  <!-- 1a: Máquina -->
+  <div class="subsection-label">a) Máquina industrial – vendida el 18 de abril</div>
+
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">18/04 – Paso 1</span>
+      <span class="op-title">Amortización del ejercicio (1/1 → 18/4)</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="datos-card">
+        <div class="dato">Precio adquisición: <span>48.000 €</span></div>
+        <div class="dato">Valor residual: <span>1.200 €</span></div>
+        <div class="dato">Amort. acumulada 31/12: <span>19.500 €</span></div>
+        <div class="dato">Deterioro registrado: <span>3.000 €</span></div>
+        <div class="dato">Coef. amortización: <span>12%</span></div>
+      </div>
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Base amortizable: 48.000 – 1.200 = 46.800 €</div>
+        <div class="calc-line">Amortización anual: 46.800 × 12% = 5.616 €/año</div>
+        <div class="calc-line">Días desde 1/1 hasta 18/4: 108 días</div>
+        <div class="calc-line result">Amort. del ejercicio: 5.616 × 108/365 = 1.661,72 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cod">681</span>Amortización inmovilizado material</td><td class="imp-d">1.661,72</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cod">2813</span>Amortización acumulada maquinaria</td><td></td><td class="imp-h">1.661,72</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        Antes de vender el activo, registramos la amortización correspondiente al período transcurrido en el ejercicio actual (del 1 de enero al 18 de abril = 108 días). Así actualizamos el valor contable del bien antes de darlo de baja.
+      </div>
+    </div>
+  </div>
+
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">18/04 – Paso 2</span>
+      <span class="op-title">Venta de la máquina a crédito (3 y 15 meses)</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Amort. acumulada total: 19.500 + 1.661,72 = 21.161,72 €</div>
+        <div class="calc-line">Valor neto contable (VNC): 48.000 – 21.161,72 – 3.000 = 23.838,28 €</div>
+        <div class="calc-line sep"></div>
+        <div class="calc-line">Precio de venta: 30.000 €</div>
+        <div class="calc-line">IVA 21%: 6.300 €</div>
+        <div class="calc-line">Total a cobrar: 36.300 €  (la mitad cada pagaré: 18.150 €)</div>
+        <div class="calc-line sep"></div>
+        <div class="calc-line result">Beneficio venta: 30.000 – 23.838,28 = 6.161,72 €</div>
+        <div class="calc-line note">Vencimiento 3 meses → c/p (cuenta 253) | 15 meses → l/p (cuenta 253 o 163)</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cod">2813</span>Amort. acumulada maquinaria</td><td class="imp-d">21.161,72</td><td></td></tr>
+          <tr class="debe-row"><td><span class="cod">2913</span>Deterioro valor maquinaria</td><td class="imp-d">3.000,00</td><td></td></tr>
+          <tr class="debe-row"><td><span class="cod">253</span>Créditos a l/p (pagaré 15m)</td><td class="imp-d">18.150,00</td><td></td></tr>
+          <tr class="debe-row"><td><span class="cod">543</span>Créditos a c/p (pagaré 3m)</td><td class="imp-d">18.150,00</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cod">213</span>Maquinaria (baja precio adquisición)</td><td></td><td class="imp-h">48.000,00</td></tr>
+          <tr class="haber-row"><td><span class="cod">477</span>HP, IVA repercutido</td><td></td><td class="imp-h">6.300,00</td></tr>
+          <tr class="haber-row"><td><span class="cod">771</span>Beneficios procedentes de inmovilizado material</td><td></td><td class="imp-h">6.161,72</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        En la venta damos de baja el activo completo: el precio de adquisición (213), toda la amortización acumulada (2813) y el deterioro registrado (2914), que se "recupera" al vender. El crédito con el comprador se divide: 3 meses → corto plazo (543), 15 meses → largo plazo (253). El resultado es un <strong>beneficio de 6.161,72 €</strong> (cuenta 771) porque el precio de venta supera el valor neto contable.
+      </div>
+    </div>
+  </div>
+
+  <!-- 1b: Patente -->
+  <div class="subsection-label">b) Patente – vendida el 10 de septiembre</div>
+
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">10/09 – Paso 1</span>
+      <span class="op-title">Amortización del ejercicio de la patente (1/1 → 10/9)</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="datos-card">
+        <div class="dato">Precio adquisición: <span>36.000 €</span></div>
+        <div class="dato">Amort. acumulada 31/12: <span>18.000 €</span></div>
+        <div class="dato">Vida útil: <span>8 años</span></div>
+      </div>
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Amortización anual: 36.000 / 8 = 4.500 €/año</div>
+        <div class="calc-line note">(sin valor residual indicado → se amortiza el total)</div>
+        <div class="calc-line">Días 1/1 al 10/9: 252 días</div>
+        <div class="calc-line result">Amort. del ejercicio: 4.500 × 252/365 = 3.106,85 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cod">680</span>Amortización inmovilizado intangible</td><td class="imp-d">3.106,85</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cod">2803</span>Amort. acumulada propiedad industrial</td><td></td><td class="imp-h">3.106,85</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        La patente es <strong>inmovilizado intangible</strong>, por eso el gasto de amortización va a la cuenta <strong>680</strong> (no 681) y la amortización acumulada a la <strong>2803</strong> (propiedad industrial). Se amortiza desde el 1/1 hasta el 10/9 (252 días).
+      </div>
+    </div>
+  </div>
+
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">10/09 – Paso 2</span>
+      <span class="op-title">Venta de la patente (pagarés 40% y 60%)</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Amort. acumulada total: 18.000 + 3.106,85 = 21.106,85 €</div>
+        <div class="calc-line">Valor neto contable (VNC): 36.000 – 21.106,85 = 14.893,15 €</div>
+        <div class="calc-line sep"></div>
+        <div class="calc-line">Precio de venta: 9.000 €</div>
+        <div class="calc-line">IVA 21%: 1.890 €</div>
+        <div class="calc-line">Total a cobrar: 10.890 €</div>
+        <div class="calc-line sep"></div>
+        <div class="calc-line">Pagaré 40% (9 meses, c/p): 10.890 × 40% = 4.356 €</div>
+        <div class="calc-line">Pagaré 60% (20 meses, l/p): 10.890 × 60% = 6.534 €</div>
+        <div class="calc-line result">Pérdida venta: 9.000 – 14.893,15 = –5.893,15 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cod">2803</span>Amort. acumulada propiedad industrial</td><td class="imp-d">21.106,85</td><td></td></tr>
+          <tr class="debe-row"><td><span class="cod">543</span>Créditos a c/p (pagaré 9m, 40%)</td><td class="imp-d">4.356,00</td><td></td></tr>
+          <tr class="debe-row"><td><span class="cod">253</span>Créditos a l/p (pagaré 20m, 60%)</td><td class="imp-d">6.534,00</td><td></td></tr>
+          <tr class="debe-row"><td><span class="cod">670</span>Pérdidas en inmovilizado intangible</td><td class="imp-d">5.893,15</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cod">203</span>Propiedad industrial (baja)</td><td></td><td class="imp-h">36.000,00</td></tr>
+          <tr class="haber-row"><td><span class="cod">477</span>HP, IVA repercutido</td><td></td><td class="imp-h">1.890,00</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        La patente se vende por 9.000 €, pero su valor neto contable es 14.893,15 €, por lo que se produce una <strong>pérdida de 5.893,15 €</strong> (cuenta 670). El total a cobrar (10.890 €) se reparte entre dos pagarés: el <strong>40% a 9 meses → corto plazo (543)</strong> y el <strong>60% a 20 meses → largo plazo (253)</strong>. Comprueba que los importes cuadran: 4.356 + 6.534 = 10.890 ✓
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================== EJ. 2: BAJAS ================== -->
+<div id="ex2" class="tab-content">
+  <div class="section-intro">
+    <h2>Ejercicio 2 · Bajas de inmovilizado (siniestros / obsolescencia)</h2>
+    <p>La baja de un activo también requiere, cuando sucede a mitad de año, <strong>registrar primero la amortización hasta la fecha del evento</strong> y después dar de baja el bien. Si no hay indemnización, la diferencia entre el valor neto y lo recuperado es una pérdida extraordinaria (cuenta 678).</p>
+  </div>
+
+  <!-- ENUNCIADO COMPLETO -->
+  <div style="background:#fff;border:1px solid #dde2ef;border-radius:14px;padding:20px 24px;margin-bottom:24px;box-shadow:0 2px 14px rgba(30,58,95,0.07);">
+    <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#9098b0;margin-bottom:14px;padding-left:10px;border-left:3px solid #5b9bd5;">📄 Enunciado del examen</div>
+    <p style="font-size:0.88rem;font-weight:700;color:#1e3a5f;margin-bottom:10px;">2. Registra en el Diario los hechos contables siguientes en la fecha de la operación (incluye amortización del ejercicio cuando proceda y baja del activo):</p>
+    <div style="background:#f4f6fb;border-radius:10px;padding:14px 18px;margin-bottom:10px;font-size:0.86rem;color:#4a4f6a;line-height:1.75;">
+      <p style="font-weight:700;color:#1e3a5f;margin-bottom:6px;">a) 20 de marzo: un equipo informático queda inservible por una sobretensión.</p>
+      <ul style="list-style:none;padding-left:8px;">
+        <li>• Precio de adquisición: <strong>24.000 €</strong></li>
+        <li>• Amortización acumulada a 31/12: <strong>12.000 €</strong></li>
+        <li>• Coeficiente amortización: <strong>20%</strong></li>
+        <li>• No hay indemnización.</li>
+      </ul>
+    </div>
+    <div style="background:#f4f6fb;border-radius:10px;padding:14px 18px;margin-bottom:10px;font-size:0.86rem;color:#4a4f6a;line-height:1.75;">
+      <p style="font-weight:700;color:#1e3a5f;margin-bottom:6px;">b) 12 de julio: robo de mobiliario de oficina.</p>
+      <ul style="list-style:none;padding-left:8px;">
+        <li>• Precio de adquisición: <strong>18.000 €</strong></li>
+        <li>• Amortización acumulada hasta la fecha del robo: <strong>7.200 €</strong></li>
+        <li>• El seguro indemniza <strong>6.500 €</strong> mediante transferencia el 30/07.</li>
+      </ul>
+    </div>
+    <div style="background:#f4f6fb;border-radius:10px;padding:14px 18px;font-size:0.86rem;color:#4a4f6a;line-height:1.75;">
+      <p style="font-weight:700;color:#1e3a5f;margin-bottom:6px;">c) 5 de diciembre: baja de una licencia de software por obsolescencia normativa.</p>
+      <ul style="list-style:none;padding-left:8px;">
+        <li>• Precio de adquisición: <strong>10.000 €</strong></li>
+        <li>• Amortización acumulada a 31/12: <strong>6.000 €</strong></li>
+        <li>• Coeficiente amortización: <strong>10%</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 2a: Equipo informático -->
+  <div class="subsection-label">a) Equipo informático inutilizado por sobretensión – 20 de marzo</div>
+
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">20/03 – Paso 1</span>
+      <span class="op-title">Amortización del ejercicio (1/1 → 20/3)</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="datos-card">
+        <div class="dato">Precio adquisición: <span>24.000 €</span></div>
+        <div class="dato">Amort. acum. 31/12: <span>12.000 €</span></div>
+        <div class="dato">Coef. amortización: <span>20%</span></div>
+      </div>
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Amortización anual: 24.000 × 20% = 4.800 €/año</div>
+        <div class="calc-line">Días 1/1 al 20/3: 79 días</div>
+        <div class="calc-line result">Amort. del ejercicio: 4.800 × 79/365 = 1.038,90 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cod">681</span>Amortización inmovilizado material</td><td class="imp-d">1.038,90</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cod">2817</span>Amort. acumulada equipos proceso información</td><td></td><td class="imp-h">1.038,90</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">20/03 – Paso 2</span>
+      <span class="op-title">Baja del equipo (sin indemnización)</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Amort. acum. total: 12.000 + 1.038,90 = 13.038,90 €</div>
+        <div class="calc-line">Valor neto contable: 24.000 – 13.038,90 = 10.961,10 €</div>
+        <div class="calc-line result">Pérdida excepcional: 10.961,10 € (sin recuperación)</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cod">2817</span>Amort. acumulada equipos proc. información</td><td class="imp-d">13.038,90</td><td></td></tr>
+          <tr class="debe-row"><td><span class="cod">678</span>Gastos excepcionales</td><td class="imp-d">10.961,10</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cod">217</span>Equipos para procesos de información (baja)</td><td></td><td class="imp-h">24.000,00</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        El equipo ha quedado completamente inutilizado sin ninguna compensación. El valor pendiente de amortizar (10.961,10 €) se convierte en una <strong>pérdida excepcional (678)</strong>. Se da de baja el activo (217) y toda la amortización acumulada (2817).
+      </div>
+    </div>
+  </div>
+
+  <!-- 2b: Mobiliario robado -->
+  <div class="subsection-label">b) Robo de mobiliario de oficina – 12 de julio</div>
+
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">12/07</span>
+      <span class="op-title">Baja del mobiliario robado</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="datos-card">
+        <div class="dato">Precio adquisición: <span>18.000 €</span></div>
+        <div class="dato">Amort. acum. a 12/07: <span>7.200 €</span></div>
+      </div>
+      <div class="alert">⚠️ La amortización acumulada ya se da hasta la fecha del robo (no hay que calcularla aparte porque el enunciado ya nos da ese dato directamente).</div>
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Valor neto contable: 18.000 – 7.200 = 10.800 €</div>
+        <div class="calc-line result">Pérdida excepcional: 10.800 € (total del VNC)</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cod">2816</span>Amort. acumulada mobiliario</td><td class="imp-d">7.200,00</td><td></td></tr>
+          <tr class="debe-row"><td><span class="cod">678</span>Gastos excepcionales (pérdida total VNC)</td><td class="imp-d">10.800,00</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cod">216</span>Mobiliario (baja)</td><td></td><td class="imp-h">18.000,00</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        Al producirse el robo, damos de baja el activo completo. La pérdida es el <strong>valor neto contable íntegro (10.800 €)</strong>, registrado en la cuenta 678. La indemnización del seguro se contabilizará de forma independiente cuando se cobre.
+      </div>
+    </div>
+  </div>
+
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">30/07</span>
+      <span class="op-title">Cobro de la indemnización del seguro</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cod">572</span>Bancos c/c</td><td class="imp-d">6.500,00</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cod">778</span>Ingresos excepcionales (indemnización seguro)</td><td></td><td class="imp-h">6.500,00</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        Al recibir la transferencia del seguro el 30/07, se registra como un <strong>ingreso excepcional (778)</strong>. Este tratamiento refleja que la pérdida del bien (678) y la indemnización recibida (778) son hechos independientes: primero se reconoce la pérdida total del activo, y después el ingreso por la compensación del seguro.
+      </div>
+    </div>
+  </div>
+
+  <!-- 2c: Software -->
+  <div class="subsection-label">c) Baja de licencia de software por obsolescencia – 5 de diciembre</div>
+
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">05/12 – Paso 1</span>
+      <span class="op-title">Amortización del ejercicio (1/1 → 5/12)</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="datos-card">
+        <div class="dato">Precio adquisición: <span>10.000 €</span></div>
+        <div class="dato">Amort. acum. 31/12: <span>6.000 €</span></div>
+        <div class="dato">Coef. amortización: <span>10%</span></div>
+      </div>
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Amortización anual: 10.000 × 10% = 1.000 €/año</div>
+        <div class="calc-line">Días 1/1 al 5/12: 339 días</div>
+        <div class="calc-line result">Amort. del ejercicio: 1.000 × 339/365 = 928,77 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cod">680</span>Amortización inmovilizado intangible</td><td class="imp-d">928,77</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cod">2806</span>Amort. acumulada aplicaciones informáticas</td><td></td><td class="imp-h">928,77</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">05/12 – Paso 2</span>
+      <span class="op-title">Baja de la licencia por obsolescencia</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Amort. acum. total: 6.000 + 928,77 = 6.928,77 €</div>
+        <div class="calc-line">Valor neto contable: 10.000 – 6.928,77 = 3.071,23 €</div>
+        <div class="calc-line result">Pérdida excepcional: 3.071,23 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cod">2806</span>Amort. acumulada aplicaciones informáticas</td><td class="imp-d">6.928,77</td><td></td></tr>
+          <tr class="debe-row"><td><span class="cod">670</span>Pérdidas procedentes de inmovilizado intangible</td><td class="imp-d">3.071,23</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cod">206</span>Aplicaciones informáticas (baja)</td><td></td><td class="imp-h">10.000,00</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        La obsolescencia normativa obliga a dar de baja el software aunque no esté totalmente amortizado. El valor pendiente (3.071,23 €) es una <strong>pérdida en inmovilizado intangible (670)</strong> — y no una pérdida excepcional (678) — porque la causa es la baja voluntaria del activo, no un siniestro. Nótese que el gasto de amortización del intangible va a la <strong>cuenta 680</strong> y la acumulada a la <strong>2806</strong>.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================== EJ. 3: DETERIORO ================== -->
+<div id="ex3" class="tab-content">
+  <div class="section-intro">
+    <h2>Ejercicio 3 · Deterioro de valor y reversión del deterioro</h2>
+    <p>El deterioro aparece cuando el <strong>valor recuperable</strong> (el mayor entre precio de venta neto y valor en uso) baja por debajo del <strong>valor contable</strong>. Si en años posteriores ese valor se recupera, se revierte el deterioro (pero nunca por encima del valor que habría tenido sin deterioro).</p>
+  </div>
+
+  <!-- ENUNCIADO COMPLETO -->
+  <div style="background:#fff;border:1px solid #dde2ef;border-radius:14px;padding:20px 24px;margin-bottom:24px;box-shadow:0 2px 14px rgba(30,58,95,0.07);">
+    <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#9098b0;margin-bottom:14px;padding-left:10px;border-left:3px solid #5b9bd5;">📄 Enunciado del examen</div>
+    <p style="font-size:0.88rem;font-weight:700;color:#1e3a5f;margin-bottom:10px;">3. Registra en el Diario el asiento del deterioro y el asiento de la reversión al cierre del año siguiente.</p>
+    <div style="background:#f4f6fb;border-radius:10px;padding:14px 18px;font-size:0.86rem;color:#4a4f6a;line-height:1.75;">
+      <p style="margin-bottom:6px;">La empresa posee un almacén con:</p>
+      <ul style="list-style:none;padding-left:8px;margin-bottom:10px;">
+        <li>• Precio de adquisición: <strong>150.000 €</strong></li>
+        <li>• Amortización acumulada a 31/12: <strong>45.000 €</strong></li>
+      </ul>
+      <p>El <strong>15 de diciembre</strong>, una reclasificación urbanística reduce su valor recuperable en un <strong>65%</strong> respecto del valor contable anterior al deterioro.</p>
+      <p style="margin-top:8px;">Al <strong>cierre del ejercicio siguiente</strong>, una mejora del mercado hace que el valor recuperable pase a ser el <strong>60% del valor contable</strong> que tenía antes del deterioro (es decir, se recupera parte).</p>
+    </div>
+  </div>
+
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">15/12 – Año 1</span>
+      <span class="op-title">Registro del deterioro del almacén</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="datos-card">
+        <div class="dato">Precio adquisición: <span>150.000 €</span></div>
+        <div class="dato">Amort. acumulada 31/12: <span>45.000 €</span></div>
+      </div>
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Valor contable (VNC) antes del deterioro: 150.000 – 45.000 = 105.000 €</div>
+        <div class="calc-line">Valor recuperable: 105.000 × (1 – 65%) = 105.000 × 35% = 36.750 €</div>
+        <div class="calc-line result">Deterioro a registrar: 105.000 – 36.750 = 68.250 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cod">691</span>Pérdidas por deterioro inmovilizado material</td><td class="imp-d">68.250,00</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cod">2911</span>Deterioro valor construcciones</td><td></td><td class="imp-h">68.250,00</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        La reclasificación urbanística reduce el valor recuperable al 35% del VNC anterior (baja un 65%). La diferencia entre el VNC (105.000 €) y el nuevo valor recuperable (36.750 €) es el <strong>deterioro de 68.250 €</strong>. Se registra como gasto (691) y corrección valorativa del activo (2910).
+      </div>
+    </div>
+  </div>
+
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">31/12 – Año 2</span>
+      <span class="op-title">Reversión parcial del deterioro</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">VNC original antes del deterioro: 105.000 €</div>
+        <div class="calc-line">Nuevo valor recuperable: 105.000 × 60% = 63.000 €</div>
+        <div class="calc-line">Deterioro registrado: 68.250 € (65% de 105.000)</div>
+        <div class="calc-line">Deterioro que debe quedar: 105.000 × (65% – 60%) = 105.000 × 5% = 5.250 €</div>
+        <div class="calc-line note">→ Queremos que el deterioro acumulado quede en el 60% → solo revertimos la diferencia</div>
+        <div class="calc-line result">Reversión a registrar: 68.250 – 63.000 = 5.250 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cod">2911</span>Deterioro valor construcciones</td><td class="imp-d">5.250,00</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cod">791</span>Reversión deterioro inmovilizado material</td><td></td><td class="imp-h">5.250,00</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        La mejora del mercado hace que el valor recuperable suba al 60% del VNC original (105.000 × 60% = 63.000 €). El deterioro registrado era de 68.250 € (65%). Para dejar el deterioro total en el 60% (63.000 €), solo necesitamos revertir la diferencia: <strong>68.250 – 63.000 = 5.250 €</strong>. Tras la reversión, el deterioro acumulado queda en 63.000 € (60% del VNC original).
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================== EJ. 4: MONEDA EXTRANJERA ================== -->
+<div id="ex4" class="tab-content">
+  <div class="section-intro">
+    <h2>Ejercicio 4 · Operaciones en moneda extranjera</h2>
+    <p>Empresa Internacional, SA. <strong>Venta</strong> a cliente estadounidense en dólares. Las diferencias de cambio surgen cuando el tipo varía entre la fecha de venta, el cierre del ejercicio y el cobro efectivo. En ventas: si el dólar sube → cobramos más euros → beneficio; si baja → pérdida.</p>
+  </div>
+
+  <!-- ENUNCIADO COMPLETO -->
+  <div style="background:#fff;border:1px solid #dde2ef;border-radius:14px;padding:20px 24px;margin-bottom:24px;box-shadow:0 2px 14px rgba(30,58,95,0.07);">
+    <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#9098b0;margin-bottom:14px;padding-left:10px;border-left:3px solid #5b9bd5;">📄 Enunciado del examen</div>
+    <p style="font-size:0.88rem;font-weight:700;color:#1e3a5f;margin-bottom:10px;">4. Realiza los asientos correspondientes a las siguientes operaciones en moneda extranjera realizadas por la empresa Internacional, SA:</p>
+    <div style="background:#f4f6fb;border-radius:10px;padding:14px 18px;font-size:0.86rem;color:#4a4f6a;line-height:1.75;">
+      <ul style="list-style:none;padding-left:8px;">
+        <li style="margin-bottom:8px;">• El <strong>10 de noviembre</strong> la empresa vende a un cliente de EE. UU. <strong>1.200 unidades</strong> de mercaderías a <strong>15 $/unidad</strong>. Tipo de cambio el 10/11: <strong>1 € = 1,20 $</strong>. La operación se realiza a crédito (vencimiento 60 días).</li>
+        <li style="margin-bottom:8px;">• Al <strong>cierre del ejercicio (31/12)</strong> el tipo de cambio es: <strong>1 € = 1,15 $</strong>.</li>
+        <li>• Al <strong>cobro, el 9 de enero</strong>, el tipo de cambio es: <strong>1 € = 1,25 $</strong>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">10/11</span>
+      <span class="op-title">Venta a crédito en dólares · 18.000 $ (1€=1,20$)</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Importe: 1.200 unid. × 15 $/ud = 18.000 $</div>
+        <div class="calc-line">Tipo de cambio: 1 € = 1,20 $ → 1 $ = 1/1,20 €</div>
+        <div class="calc-line result">Crédito en euros: 18.000 / 1,20 = 15.000 €</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cod">4304</span>Clientes en moneda extranjera</td><td class="imp-d">15.000,00</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cod">700</span>Ventas de mercaderías</td><td></td><td class="imp-h">15.000,00</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        La venta se registra convirtiendo los dólares a euros al tipo de cambio del momento de la transacción (1€=1,20$). El cliente en moneda extranjera se anota en la cuenta <strong>4304</strong>, y la venta en la <strong>700</strong>. Nótese: cuando el enunciado expresa el tipo como "1€=X$", dividimos el importe en $ entre X para obtener euros.
+      </div>
+    </div>
+  </div>
+
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">31/12</span>
+      <span class="op-title">Actualización por diferencia de cambio al cierre (1€=1,15$)</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Valor contable del crédito: 15.000 €</div>
+        <div class="calc-line">Nuevo valor: 18.000 / 1,15 = 15.652,17 €</div>
+        <div class="calc-line result">Diferencia positiva: 15.652,17 – 15.000 = 652,17 €</div>
+        <div class="calc-line note">El dólar se ha apreciado (1€ compra menos $) → el crédito vale más euros → beneficio latente</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cod">4304</span>Clientes en moneda extranjera</td><td class="imp-d">652,17</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cod">768</span>Diferencias positivas de cambio</td><td></td><td class="imp-h">652,17</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        Al cierre del ejercicio hay que <strong>actualizar los saldos en moneda extranjera</strong> al tipo de cambio de cierre. Como el euro se ha depreciado respecto al dólar (1€ solo compra 1,15$ en vez de 1,20$), el crédito vale más euros: 652,17 € de diferencia positiva (ingreso financiero, cuenta 768).
+      </div>
+    </div>
+  </div>
+
+  <div class="op-card" onclick="toggleCard(this)">
+    <div class="op-header">
+      <span class="op-date">09/01</span>
+      <span class="op-title">Cobro al cliente · diferencia de cambio negativa (1€=1,25$)</span>
+      <span class="op-chevron">▼</span>
+    </div>
+    <div class="op-body">
+      <div class="calculos">
+        <h4>🔢 Cálculos</h4>
+        <div class="calc-line">Valor contable del crédito (tras ajuste 31/12): 15.652,17 €</div>
+        <div class="calc-line">Cobro real: 18.000 / 1,25 = 14.400 €</div>
+        <div class="calc-line result">Diferencia negativa: 14.400 – 15.652,17 = –1.252,17 €</div>
+        <div class="calc-line note">El dólar bajó al cobrar → recibimos menos euros que el valor actualizado → pérdida de cambio</div>
+      </div>
+      <table class="asiento-table">
+        <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr class="debe-row"><td><span class="cod">572</span>Bancos c/c (cobro real)</td><td class="imp-d">14.400,00</td><td></td></tr>
+          <tr class="debe-row"><td><span class="cod">668</span>Diferencias negativas de cambio</td><td class="imp-d">1.252,17</td><td></td></tr>
+          <tr class="haber-row"><td><span class="cod">4304</span>Clientes en moneda extranjera (cancela)</td><td></td><td class="imp-h">15.652,17</td></tr>
+        </tbody>
+      </table>
+      <div class="explicacion">
+        <h4>💡 Explicación</h4>
+        Al cobrar, el tipo de cambio es 1€=1,25$, lo que significa que el dólar vale menos que al cierre. Cancelamos el crédito por su valor actualizado (15.652,17 €), registramos el dinero recibido (14.400 €) y la diferencia negativa (1.252,17 €) va a la cuenta <strong>668 – Diferencias negativas de cambio</strong> (gasto financiero).<br><br>
+        <strong>Resumen de la operación completa:</strong><br>
+        Ingreso registrado 10/11: +15.000 € | Ajuste 31/12: +652,17 € | Pérdida al cobro 09/01: –1.252,17 €<br>
+        Resultado neto: 14.400 € cobrados efectivamente.
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>TDC – Unidad 5b · Corrección de examen · 2ºCFGM G. Administrativa · Salesianos Juan XXIII, Alcoy</p>
+  <p style="margin-top:4px;">Cualquier duda, consúltala en clase con tu profesora 📚</p>
+</footer>
+
+</main>
+
+<script>
+  function showTab(id, btn) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+  function toggleCard(card) {
+    card.classList.toggle('open');
+  }
+</script>
+</body>
+</html>

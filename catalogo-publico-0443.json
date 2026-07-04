@@ -1,0 +1,459 @@
+{
+  "modulo": {
+    "codigo": "0443",
+    "nombre": "Tratamiento de la Documentación Contable",
+    "abreviatura": "TDC",
+    "ciclo": "CFGM Gestión Administrativa",
+    "curso": "2º",
+    "horas": 166,
+    "centro": "Salesianos Juan XXIII · Alcoy",
+    "ano_academico": "2026-2027",
+    "descripcion": "Gestionamos la documentación contable del ciclo económico completo de L'Alcoià i el Comtat, S.L.: desde la clasificación de documentos soporte hasta el cierre contable con ContaSol.",
+    "moodle_url": null
+  },
+  "situaciones_aprendizaje": [
+    {
+      "id": "SA1",
+      "numero": 1,
+      "titulo": "El archivo contable de L'Alcoià i el Comtat: clasifica y prepara los documentos soporte",
+      "titulo_corto": "El archivo contable",
+      "trimestre": 1,
+      "horas": 25,
+      "ponderacion": 15,
+      "estado": "proximamente",
+      "descripcion_breve": "Identificamos, verificamos, clasificamos y archivamos la documentación mercantil y contable que llega al departamento de L'Alcoià i el Comtat: facturas, albaranes, nóminas, efectos comerciales y documentos fiscales.",
+      "que_vamos_a_aprender": [
+        "Los tipos de documentos soporte del ciclo contable: facturas, albaranes, pagarés, letras de cambio, nóminas y extractos bancarios",
+        "Cómo verificar los controles internos de cada documento: firmas, autorizaciones y datos obligatorios",
+        "Clasificar y archivar documentación contable en soporte físico y digital según criterios profesionales",
+        "Principios de seguridad y confidencialidad en el tratamiento de la información contable"
+      ],
+      "recursos": {
+        "guia_alumno": {
+          "archivo": "03 Guías alumnado/0443_tratamiento_documentacion_contable_SA1_guia_alumno.pdf",
+          "subtitulo": "PDF · Lectura previa",
+          "accion": "Descargar"
+        },
+        "rubrica": {
+          "archivo": "05 Rúbricas/0443_tratamiento_documentacion_contable_SA1_AC1_rubrica.pdf",
+          "subtitulo": "Criterios de evaluación",
+          "accion": "Ver"
+        },
+        "recurso_interactivo": {
+          "archivo": null,
+          "subtitulo": "Próximamente",
+          "accion": "Empezar"
+        }
+      },
+      "actividades": [
+        {
+          "codigo": "A1",
+          "titulo": "El inbox del departamento",
+          "tipo": "actividad",
+          "archivo": "010 Actividades_alumno/0443_SA01_A1_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "A2",
+          "titulo": "Aprende a leer cada documento",
+          "tipo": "actividad",
+          "archivo": "010 Actividades_alumno/0443_SA01_A2_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "A3",
+          "titulo": "El archivo de enero",
+          "tipo": "actividad",
+          "archivo": "010 Actividades_alumno/0443_SA01_A3_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "AP1",
+          "titulo": "Práctica adicional",
+          "tipo": "practica",
+          "archivo": "010 Actividades_alumno/0443_SA01_AP1_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "AR1",
+          "titulo": "Actividad de refuerzo",
+          "tipo": "refuerzo",
+          "archivo": "010 Actividades_alumno/0443_SA01_AR1_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "AC1",
+          "titulo": "¿Está todo en orden? — Supuesto integrador",
+          "tipo": "calificable",
+          "archivo": "010 Actividades_alumno/0443_SA01_AC1_ficha.pdf",
+          "visible": false
+        }
+      ],
+      "materiales": [],
+      "moodle_entrega_url": null
+    },
+    {
+      "id": "SA2",
+      "numero": 2,
+      "titulo": "Un trimestre en L'Alcoià i el Comtat: registramos las operaciones del día a día",
+      "titulo_corto": "Registro del día a día",
+      "trimestre": 1,
+      "horas": 55,
+      "ponderacion": 35,
+      "estado": "proximamente",
+      "descripcion_breve": "Contabilizamos las operaciones habituales de L'Alcoià i el Comtat aplicando el PGC-PYME: compras, ventas, personal, inmovilizado, IVA y financiación. Introducimos ContaSol en la segunda mitad.",
+      "que_vamos_a_aprender": [
+        "Contabilizar compras y ventas de mercaderías, existencias, clientes y proveedores según el PGC-PYME",
+        "Registrar nóminas, Seguridad Social, gastos e ingresos, y operaciones de financiación",
+        "Gestionar el inmovilizado material e intangible: altas, bajas, amortizaciones y libro de bienes de inversión",
+        "Liquidar el IVA y trabajar con la aplicación informática ContaSol"
+      ],
+      "recursos": {
+        "guia_alumno": {
+          "archivo": "03 Guías alumnado/0443_tratamiento_documentacion_contable_SA2_guia_alumno.pdf",
+          "subtitulo": "PDF · Lectura previa",
+          "accion": "Descargar"
+        },
+        "rubrica": {
+          "archivo": "05 Rúbricas/0443_tratamiento_documentacion_contable_SA2_AC1_rubrica.pdf",
+          "subtitulo": "Criterios de evaluación",
+          "accion": "Ver"
+        },
+        "recurso_interactivo": {
+          "archivo": null,
+          "subtitulo": "Próximamente",
+          "accion": "Empezar"
+        }
+      },
+      "actividades": [
+        {
+          "codigo": "A1",
+          "titulo": "Del documento al asiento",
+          "tipo": "actividad",
+          "archivo": "010 Actividades_alumno/0443_SA02_A1_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "A2",
+          "titulo": "Las operaciones del día a día de L'Alcoià i el Comtat",
+          "tipo": "actividad",
+          "archivo": "010 Actividades_alumno/0443_SA02_A2_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "A3",
+          "titulo": "ContaSol entra en el departamento",
+          "tipo": "actividad",
+          "archivo": "010 Actividades_alumno/0443_SA02_A3_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "AP1",
+          "titulo": "Práctica adicional",
+          "tipo": "practica",
+          "archivo": "010 Actividades_alumno/0443_SA02_AP1_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "AR1",
+          "titulo": "Actividad de refuerzo",
+          "tipo": "refuerzo",
+          "archivo": "010 Actividades_alumno/0443_SA02_AR1_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "AC1",
+          "titulo": "El cierre del trimestre — Supuesto integrador Q1 2027",
+          "tipo": "calificable",
+          "archivo": "010 Actividades_alumno/0443_SA02_AC1_ficha.pdf",
+          "visible": false
+        }
+      ],
+      "materiales": [
+        {
+          "titulo": "Ejercicios: cuentas de gastos e ingresos (II)",
+          "tipo": "pdf",
+          "archivo": "materiales_docente/SA02/Ejercicio Ctas. gastos e ingresos 2.pdf",
+          "accion": "Descargar"
+        },
+        {
+          "titulo": "Ejercicios U3: cuentas de gastos e ingresos",
+          "tipo": "pdf",
+          "archivo": "materiales_docente/SA02/Ejercicio U3 Ctas. de gastos e ingresos.pdf",
+          "accion": "Descargar"
+        },
+        {
+          "titulo": "Ejercicio: compra de inmovilizado y amortización",
+          "tipo": "pdf",
+          "archivo": "materiales_docente/SA02/Ejercicio de compra de inmovilizado y amortización.pdf",
+          "accion": "Descargar"
+        },
+        {
+          "titulo": "Ejercicios: compraventa de inmovilizado (extras)",
+          "tipo": "pdf",
+          "archivo": "materiales_docente/SA02/Ejercicios Compra-Venta inmovilizado extras.pdf",
+          "accion": "Descargar"
+        },
+        {
+          "titulo": "Ejercicios U4 Bloque 1",
+          "tipo": "pdf",
+          "archivo": "materiales_docente/SA02/Ejercicios TDC U4 Bloque 1.pdf",
+          "accion": "Descargar"
+        },
+        {
+          "titulo": "Ejercicios: clientes y efectos comerciales a cobrar",
+          "tipo": "pdf",
+          "archivo": "materiales_docente/SA02/Ejercicios de Clientes, efectos comerciales a cobrar PÁG. 1.pdf",
+          "accion": "Descargar"
+        },
+        {
+          "titulo": "Ejercicios: préstamos",
+          "tipo": "pdf",
+          "archivo": "materiales_docente/SA02/Ejercicios de préstamos.pdf",
+          "accion": "Descargar"
+        },
+        {
+          "titulo": "Ejercicio examen: compraventa en moneda extranjera",
+          "tipo": "pdf",
+          "archivo": "materiales_docente/SA02/Ejercicio examen Compra-venta moneda extranjera.pdf",
+          "accion": "Descargar"
+        },
+        {
+          "titulo": "Examen de repaso TDC",
+          "tipo": "pdf",
+          "archivo": "materiales_docente/SA02/Examen TDC repaso.pdf",
+          "accion": "Descargar"
+        },
+        {
+          "titulo": "Simulador: préstamo bancario y asientos",
+          "tipo": "interactivo",
+          "archivo": "materiales_docente/SA02/Simulador-prestamo-bancario y asientos prácticos.html",
+          "accion": "Abrir"
+        },
+        {
+          "titulo": "Recurso interactivo: ciclo de vida del inmovilizado",
+          "tipo": "interactivo",
+          "archivo": "materiales_docente/SA02/ciclo-vida-inmovilizado.html",
+          "accion": "Abrir"
+        },
+        {
+          "titulo": "Constructor: venta de inmovilizado",
+          "tipo": "interactivo",
+          "archivo": "materiales_docente/SA02/constructor-venta-inmovilizado.html",
+          "accion": "Abrir"
+        },
+        {
+          "titulo": "Examen U5 corregido",
+          "tipo": "interactivo",
+          "archivo": "materiales_docente/SA02/examen_TDC_U5_corregido.html",
+          "accion": "Abrir"
+        },
+        {
+          "titulo": "Examen U5b corregido",
+          "tipo": "interactivo",
+          "archivo": "materiales_docente/SA02/Examen_TDC_U5b_corregido.html",
+          "accion": "Abrir"
+        },
+        {
+          "titulo": "Repaso interactivo: examen (02/03/26)",
+          "tipo": "interactivo",
+          "archivo": "materiales_docente/SA02/Ejercicio interactivo de repaso examen 02.03.26.html",
+          "accion": "Abrir"
+        },
+        {
+          "titulo": "Repaso interactivo: examen TDC",
+          "tipo": "interactivo",
+          "archivo": "materiales_docente/SA02/repaso_examen_TDC.html",
+          "accion": "Abrir"
+        }
+      ],
+      "moodle_entrega_url": null
+    },
+    {
+      "id": "SA3",
+      "numero": 3,
+      "titulo": "L'Alcoià i el Comtat cierra el ejercicio: contabilizamos el año completo con ContaSol",
+      "titulo_corto": "El cierre del ejercicio",
+      "trimestre": 2,
+      "horas": 60,
+      "ponderacion": 35,
+      "estado": "proximamente",
+      "descripcion_breve": "Contabilizamos el ejercicio económico completo de L'Alcoià i el Comtat en ContaSol: apertura, registro cronológico, balances, regularización, cierre y cuentas anuales.",
+      "que_vamos_a_aprender": [
+        "Dar de alta una empresa en ContaSol, codificar el plan de cuentas y registrar el asiento de apertura",
+        "Registrar cronológicamente todas las operaciones del ejercicio y generar balances de comprobación periódicos",
+        "Realizar la regularización contable, las amortizaciones y las correcciones de valor al cierre del ejercicio",
+        "Elaborar las cuentas anuales: cuenta de pérdidas y ganancias, balance de situación, memoria y ECPN"
+      ],
+      "recursos": {
+        "guia_alumno": {
+          "archivo": "03 Guías alumnado/0443_tratamiento_documentacion_contable_SA3_guia_alumno.pdf",
+          "subtitulo": "PDF · Lectura previa",
+          "accion": "Descargar"
+        },
+        "rubrica": {
+          "archivo": "05 Rúbricas/0443_tratamiento_documentacion_contable_SA3_AC1_rubrica.pdf",
+          "subtitulo": "Criterios de evaluación",
+          "accion": "Ver"
+        },
+        "recurso_interactivo": {
+          "archivo": null,
+          "subtitulo": "Próximamente",
+          "accion": "Empezar"
+        }
+      },
+      "actividades": [
+        {
+          "codigo": "A1",
+          "titulo": "Arrancamos el ejercicio en ContaSol",
+          "tipo": "actividad",
+          "archivo": "010 Actividades_alumno/0443_SA03_A1_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "A2",
+          "titulo": "El año completo de L'Alcoià i el Comtat",
+          "tipo": "actividad",
+          "archivo": "010 Actividades_alumno/0443_SA03_A2_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "A3",
+          "titulo": "Antes de cerrar hay que ajustar",
+          "tipo": "actividad",
+          "archivo": "010 Actividades_alumno/0443_SA03_A3_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "AP1",
+          "titulo": "Práctica adicional",
+          "tipo": "practica",
+          "archivo": "010 Actividades_alumno/0443_SA03_AP1_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "AR1",
+          "titulo": "Actividad de refuerzo",
+          "tipo": "refuerzo",
+          "archivo": "010 Actividades_alumno/0443_SA03_AR1_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "AC1",
+          "titulo": "Las cuentas anuales de L'Alcoià i el Comtat — Ejercicio completo 2027",
+          "tipo": "calificable",
+          "archivo": "010 Actividades_alumno/0443_SA03_AC1_ficha.pdf",
+          "visible": false
+        }
+      ],
+      "materiales": [
+        {
+          "titulo": "Ejercicio final UD7: operaciones de cierre",
+          "tipo": "interactivo",
+          "archivo": "materiales_docente/SA03/Ejercicio final UD7.html",
+          "accion": "Abrir"
+        },
+        {
+          "titulo": "Ejercicio 10: ciclo contable completo",
+          "tipo": "pdf",
+          "archivo": "materiales_docente/SA03/Ejercicio 10 TDC Ciclo contable completo.pdf",
+          "accion": "Descargar"
+        }
+      ],
+      "moodle_entrega_url": null
+    },
+    {
+      "id": "SA4",
+      "numero": 4,
+      "titulo": "Todo cuadra en L'Alcoià i el Comtat: comprobamos y conciliamos las cuentas",
+      "titulo_corto": "Comprobación y conciliación",
+      "trimestre": 2,
+      "horas": 26,
+      "ponderacion": 15,
+      "estado": "proximamente",
+      "descripcion_breve": "Verificamos saldos con administraciones públicas, cotejamos préstamos, circularizamos clientes y proveedores, realizamos la conciliación bancaria y comprobamos el resultado final del ejercicio en ContaSol.",
+      "que_vamos_a_aprender": [
+        "Verificar los saldos de cuentas con la Administración pública: IVA, IRPF y cotizaciones a la Seguridad Social",
+        "Cotejar préstamos y créditos, y circularizar saldos con clientes y proveedores",
+        "Realizar la conciliación bancaria y efectuar punteos y casaciones de cuentas",
+        "Detectar y comunicar incidencias contables aplicando criterios de calidad y confidencialidad del sector"
+      ],
+      "recursos": {
+        "guia_alumno": {
+          "archivo": "03 Guías alumnado/0443_tratamiento_documentacion_contable_SA4_guia_alumno.pdf",
+          "subtitulo": "PDF · Lectura previa",
+          "accion": "Descargar"
+        },
+        "rubrica": {
+          "archivo": "05 Rúbricas/0443_tratamiento_documentacion_contable_SA4_AC1_rubrica.pdf",
+          "subtitulo": "Criterios de evaluación",
+          "accion": "Ver"
+        },
+        "recurso_interactivo": {
+          "archivo": null,
+          "subtitulo": "Próximamente",
+          "accion": "Empezar"
+        }
+      },
+      "actividades": [
+        {
+          "codigo": "A1",
+          "titulo": "¿Todo cuadra? El auditor interno entra en escena",
+          "tipo": "actividad",
+          "archivo": "010 Actividades_alumno/0443_SA04_A1_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "A2",
+          "titulo": "La auditoría interna de L'Alcoià i el Comtat",
+          "tipo": "actividad",
+          "archivo": "010 Actividades_alumno/0443_SA04_A2_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "A3",
+          "titulo": "La conciliación bancaria de L'Alcoià i el Comtat",
+          "tipo": "actividad",
+          "archivo": "010 Actividades_alumno/0443_SA04_A3_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "AP1",
+          "titulo": "Práctica adicional",
+          "tipo": "practica",
+          "archivo": "010 Actividades_alumno/0443_SA04_AP1_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "AR1",
+          "titulo": "Actividad de refuerzo",
+          "tipo": "refuerzo",
+          "archivo": "010 Actividades_alumno/0443_SA04_AR1_ficha.pdf",
+          "visible": true
+        },
+        {
+          "codigo": "AC1",
+          "titulo": "Todo cuadra (o no) en L'Alcoià i el Comtat — Verificación y nota interna",
+          "tipo": "calificable",
+          "archivo": "010 Actividades_alumno/0443_SA04_AC1_ficha.pdf",
+          "visible": false
+        }
+      ],
+      "materiales": [
+        {
+          "titulo": "Recurso interactivo: conciliación bancaria",
+          "tipo": "interactivo",
+          "archivo": "materiales_docente/SA04/conciliacion_bancaria.html",
+          "accion": "Abrir"
+        },
+        {
+          "titulo": "Ejercicios: arqueo y reclasificación",
+          "tipo": "pdf",
+          "archivo": "materiales_docente/SA04/Ejercicios Arqueo y Reclasificacion.pdf",
+          "accion": "Descargar"
+        }
+      ],
+      "moodle_entrega_url": null
+    }
+  ]
+}

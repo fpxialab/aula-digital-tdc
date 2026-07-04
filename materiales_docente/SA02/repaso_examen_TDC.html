@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Repaso Examen TDC – Financiación</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f0f4f8;
+  --surface: #ffffff;
+  --surface2: #e8edf5;
+  --navy: #1a2e4a;
+  --blue: #2563eb;
+  --blue2: #3b82f6;
+  --green: #16a34a;
+  --green2: #dcfce7;
+  --red: #dc2626;
+  --red2: #fee2e2;
+  --amber: #d97706;
+  --amber2: #fef3c7;
+  --teal: #0d9488;
+  --purple: #7c3aed;
+  --text: #1e293b;
+  --text2: #475569;
+  --text3: #94a3b8;
+  --border: #e2e8f0;
+  --shadow: 0 2px 16px rgba(26,46,74,0.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Quicksand',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* REGISTRO */
+#registro-screen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--navy) 0%,#1e4080 100%);
+}
+.registro-card{
+  background:white;border-radius:20px;padding:48px 40px;
+  max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);
+  text-align:center;
+}
+.registro-card .logo{font-size:2.5rem;margin-bottom:16px;}
+.registro-card h1{font-size:1.4rem;font-weight:700;color:var(--navy);margin-bottom:6px;}
+.registro-card p{font-size:0.88rem;color:var(--text2);margin-bottom:28px;line-height:1.6;}
+.registro-card input{
+  width:100%;padding:12px 16px;border:2px solid var(--border);
+  border-radius:10px;font-family:'Quicksand',sans-serif;font-size:1rem;
+  margin-bottom:16px;outline:none;transition:border 0.2s;
+}
+.registro-card input:focus{border-color:var(--blue);}
+.btn-primary{
+  width:100%;padding:13px;background:var(--blue);color:white;
+  border:none;border-radius:10px;font-family:'Quicksand',sans-serif;
+  font-size:1rem;font-weight:700;cursor:pointer;transition:background 0.2s;
+}
+.btn-primary:hover{background:#1d4ed8;}
+
+/* APP */
+#app-screen{display:none;}
+
+/* HEADER */
+header{
+  background:linear-gradient(135deg,var(--navy) 0%,#1e4080 100%);
+  color:white;padding:16px 24px;
+  display:flex;justify-content:space-between;align-items:center;
+  box-shadow:0 3px 20px rgba(26,46,74,0.3);
+  position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:10px;
+}
+.header-left h1{font-size:1.1rem;font-weight:700;}
+.header-left p{font-size:0.78rem;opacity:0.75;margin-top:2px;}
+.header-right{display:flex;align-items:center;gap:12px;}
+.progress-info{
+  background:rgba(255,255,255,0.15);border-radius:20px;
+  padding:5px 14px;font-size:0.8rem;font-weight:600;
+}
+.btn-pdf{
+  background:#f59e0b;color:white;border:none;border-radius:8px;
+  padding:7px 14px;font-family:'Quicksand',sans-serif;font-size:0.82rem;
+  font-weight:700;cursor:pointer;transition:background 0.2s;
+}
+.btn-pdf:hover{background:#d97706;}
+
+/* TABS */
+.tab-bar{
+  background:var(--surface);border-bottom:2px solid var(--border);
+  padding:0 20px;display:flex;gap:2px;overflow-x:auto;
+  box-shadow:0 1px 8px rgba(0,0,0,0.05);
+}
+.tab-btn{
+  padding:12px 16px;border:none;background:none;cursor:pointer;
+  font-family:'Quicksand',sans-serif;font-size:0.84rem;font-weight:700;
+  color:var(--text3);border-bottom:3px solid transparent;margin-bottom:-2px;
+  white-space:nowrap;transition:all 0.18s;
+}
+.tab-btn:hover{color:var(--blue);}
+.tab-btn.active{color:var(--navy);border-bottom-color:var(--blue);}
+.tab-btn .tab-score{
+  display:inline-block;background:var(--surface2);border-radius:10px;
+  padding:1px 7px;font-size:0.72rem;margin-left:5px;
+}
+.tab-btn.active .tab-score{background:var(--blue);color:white;}
+
+/* MAIN */
+main{max-width:860px;margin:0 auto;padding:24px 18px 60px;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* BLOQUE INTRO */
+.bloque-intro{
+  background:var(--surface);border-radius:14px;padding:16px 20px;
+  margin-bottom:20px;border-left:5px solid var(--blue);
+  box-shadow:var(--shadow);
+}
+.bloque-intro h2{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:4px;}
+.bloque-intro p{font-size:0.85rem;color:var(--text2);line-height:1.6;}
+
+/* EJERCICIO CARD */
+.ej-card{
+  background:var(--surface);border-radius:14px;margin-bottom:18px;
+  box-shadow:var(--shadow);border:2px solid var(--border);
+  overflow:hidden;transition:border-color 0.2s;
+}
+.ej-card.correcto{border-color:var(--green);}
+.ej-card.incorrecto{border-color:var(--red);}
+
+.ej-header{
+  padding:14px 18px;display:flex;align-items:center;gap:10px;
+}
+.ej-num{
+  background:var(--navy);color:white;border-radius:8px;
+  padding:3px 10px;font-size:0.75rem;font-weight:700;white-space:nowrap;
+}
+.ej-tipo{
+  font-size:0.72rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.5px;padding:2px 8px;border-radius:10px;
+}
+.tipo-construccion{background:#ede9fe;color:var(--purple);}
+.tipo-test{background:#fef3c7;color:var(--amber);}
+.ej-title{font-weight:700;font-size:0.92rem;flex:1;}
+.ej-status{font-size:1.1rem;}
+
+.ej-body{padding:0 18px 18px;}
+
+/* ENUNCIADO */
+.enunciado{
+  background:#fffbf3;border:1px solid #e8dab0;border-radius:8px;
+  padding:12px 15px;margin-bottom:14px;font-size:0.87rem;
+  color:var(--text2);line-height:1.7;
+}
+.enunciado strong{color:var(--text);}
+
+/* TEST OPTIONS */
+.test-options{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.test-opt{
+  display:flex;align-items:flex-start;gap:10px;padding:10px 14px;
+  border:2px solid var(--border);border-radius:10px;cursor:pointer;
+  transition:all 0.15s;font-size:0.86rem;color:var(--text);
+  background:var(--surface);
+}
+.test-opt:hover:not(.disabled){border-color:var(--blue);background:#eff6ff;}
+.test-opt.selected{border-color:var(--blue);background:#eff6ff;}
+.test-opt.correcto{border-color:var(--green);background:var(--green2);}
+.test-opt.incorrecto{border-color:var(--red);background:var(--red2);}
+.test-opt.disabled{cursor:default;}
+.opt-letra{
+  background:var(--surface2);border-radius:5px;padding:1px 7px;
+  font-weight:700;font-size:0.78rem;flex-shrink:0;margin-top:1px;
+  font-family:'JetBrains Mono',monospace;
+}
+.test-opt.correcto .opt-letra{background:var(--green);color:white;}
+.test-opt.incorrecto .opt-letra{background:var(--red);color:white;}
+
+/* CONSTRUCCION */
+.construccion-area{margin-bottom:14px;}
+.asiento-input-table{width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:10px;}
+.asiento-input-table th{
+  padding:7px 10px;font-size:0.72rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);
+  border-bottom:2px solid var(--border);text-align:left;background:var(--surface2);
+}
+.asiento-input-table th:nth-child(2),.asiento-input-table th:nth-child(3){text-align:right;}
+.asiento-input-table td{padding:5px 8px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+.asiento-input-table td:nth-child(2),.asiento-input-table td:nth-child(3){text-align:right;}
+.cuenta-label{
+  display:flex;align-items:center;gap:6px;
+}
+.cod-fixed{
+  background:var(--surface2);border-radius:4px;padding:2px 7px;
+  font-family:'JetBrains Mono',monospace;font-size:0.78rem;
+  color:var(--navy);flex-shrink:0;
+}
+.nombre-cuenta{font-size:0.84rem;color:var(--text2);}
+.importe-input{
+  width:100px;padding:5px 8px;border:2px solid var(--border);
+  border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:0.83rem;
+  text-align:right;outline:none;transition:border 0.2s;
+  font-family:'Quicksand',sans-serif;
+}
+.importe-input:focus{border-color:var(--blue);}
+.importe-input.correcto{border-color:var(--green);background:var(--green2);}
+.importe-input.incorrecto{border-color:var(--red);background:var(--red2);}
+.importe-input:disabled{background:var(--surface2);color:var(--text3);}
+.debe-row .nombre-cuenta{color:#1a3a5c;font-weight:600;}
+.haber-row .nombre-cuenta{color:var(--green);padding-left:16px;}
+.haber-row .nombre-cuenta::before{content:'a ';color:var(--text3);font-weight:400;}
+
+/* BOTONES ACCION */
+.btn-comprobar{
+  background:var(--blue);color:white;border:none;border-radius:8px;
+  padding:9px 20px;font-family:'Quicksand',sans-serif;font-size:0.88rem;
+  font-weight:700;cursor:pointer;transition:background 0.2s;margin-right:8px;
+}
+.btn-comprobar:hover{background:#1d4ed8;}
+.btn-reintentar{
+  background:var(--surface2);color:var(--text);border:none;border-radius:8px;
+  padding:9px 20px;font-family:'Quicksand',sans-serif;font-size:0.88rem;
+  font-weight:700;cursor:pointer;transition:background 0.2s;
+}
+.btn-reintentar:hover{background:var(--border);}
+
+/* FEEDBACK */
+.feedback{
+  border-radius:10px;padding:12px 16px;margin-top:14px;
+  font-size:0.85rem;line-height:1.65;display:none;
+}
+.feedback.correcto{background:var(--green2);border:1px solid #86efac;color:#14532d;}
+.feedback.incorrecto{background:var(--red2);border:1px solid #fca5a5;color:#7f1d1d;}
+.feedback h4{font-weight:700;margin-bottom:5px;font-size:0.82rem;text-transform:uppercase;letter-spacing:0.4px;}
+
+/* SOLUCION */
+.solucion{
+  background:#f8fafc;border:1px solid var(--border);border-radius:10px;
+  padding:12px 16px;margin-top:12px;display:none;
+}
+.solucion h4{
+  font-size:0.75rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.5px;color:var(--text3);margin-bottom:10px;
+}
+.asiento-sol{width:100%;border-collapse:collapse;font-size:0.84rem;}
+.asiento-sol th{
+  padding:5px 8px;font-size:0.7rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.4px;color:var(--text3);border-bottom:2px solid var(--border);text-align:left;
+}
+.asiento-sol th:nth-child(2),.asiento-sol th:nth-child(3){text-align:right;}
+.asiento-sol td{padding:6px 8px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+.asiento-sol td:nth-child(2),.asiento-sol td:nth-child(3){
+  text-align:right;font-family:'JetBrains Mono',monospace;font-size:0.81rem;
+}
+.sol-debe{color:#1a3a5c;font-weight:700;}
+.sol-haber{color:var(--green);padding-left:16px;}
+.sol-haber::before{content:'a ';color:var(--text3);font-weight:400;}
+.imp-d{color:#1a3a5c;font-weight:700;}
+.imp-h{color:var(--green);font-weight:700;}
+.cod-sol{
+  display:inline-block;background:var(--surface2);border-radius:4px;
+  padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:0.76rem;
+  color:var(--navy);margin-right:4px;
+}
+
+/* INTENTOS BADGE */
+.intentos-badge{
+  display:inline-block;background:var(--amber2);color:var(--amber);
+  border-radius:10px;padding:2px 8px;font-size:0.72rem;font-weight:700;
+  margin-left:8px;
+}
+
+/* RESUMEN FINAL */
+.resumen-bar{
+  background:var(--surface);border-radius:14px;padding:16px 20px;
+  margin-bottom:20px;box-shadow:var(--shadow);
+  display:flex;gap:20px;align-items:center;flex-wrap:wrap;
+}
+.stat-box{text-align:center;flex:1;min-width:80px;}
+.stat-num{font-size:1.6rem;font-weight:700;color:var(--navy);}
+.stat-label{font-size:0.75rem;color:var(--text3);margin-top:2px;}
+.stat-box.verde .stat-num{color:var(--green);}
+.stat-box.rojo .stat-num{color:var(--red);}
+
+/* EXPLICACION */
+.explicacion-box{
+  background:#f5f0fb;border:1px solid #d4c5ef;border-radius:8px;
+  padding:11px 15px;margin-top:10px;font-size:0.84rem;
+  color:var(--text2);line-height:1.7;
+}
+.explicacion-box h4{
+  font-size:0.73rem;font-weight:700;color:var(--purple);
+  margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px;
+}
+</style>
+</head>
+<body>
+
+<!-- PANTALLA REGISTRO -->
+<div id="registro-screen">
+  <div class="registro-card">
+    <div class="logo">📚</div>
+    <h1>Repaso Examen TDC</h1>
+    <p>Financiación propia y ajena · 2º CFGM G. Administrativa<br>Salesianos Juan XXIII, Alcoy</p>
+    <input type="text" id="nombre-input" placeholder="Escribe tu nombre completo..." maxlength="60">
+    <input type="text" id="curso-input" placeholder="Curso (ej: 2ºC)" maxlength="20">
+    <button class="btn-primary" onclick="iniciarApp()">Comenzar el repaso →</button>
+  </div>
+</div>
+
+<!-- APP PRINCIPAL -->
+<div id="app-screen">
+<header>
+  <div class="header-left">
+    <h1>📚 Repaso Examen TDC – Financiación</h1>
+    <p id="header-nombre">2º CFGM G. Administrativa</p>
+  </div>
+  <div class="header-right">
+    <div class="progress-info" id="progress-info">0 / 20 ejercicios</div>
+    <button class="btn-pdf" onclick="generarPDF()">⬇ Descargar PDF</button>
+  </div>
+</header>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showTab('t1',this)">🏛 Constitución <span class="tab-score" id="score-t1">0/4</span></button>
+  <button class="tab-btn" onclick="showTab('t2',this)">📈 Ampliación capital <span class="tab-score" id="score-t2">0/4</span></button>
+  <button class="tab-btn" onclick="showTab('t3',this)">💰 Reparto beneficios <span class="tab-score" id="score-t3">0/4</span></button>
+  <button class="tab-btn" onclick="showTab('t4',this)">🏦 Préstamos bancarios <span class="tab-score" id="score-t4">0/4</span></button>
+  <button class="tab-btn" onclick="showTab('t5',this)">🔒 Fianzas y depósitos <span class="tab-score" id="score-t5">0/4</span></button>
+</div>
+
+<main>
+
+<!-- ===== TAB 1: CONSTITUCIÓN ===== -->
+<div id="t1" class="tab-content active">
+  <div class="bloque-intro">
+    <h2>🏛 Constitución de la empresa</h2>
+    <p>Al constituir una empresa, los socios aportan el capital que se ingresa en la cuenta corriente. Según la forma jurídica: SA y SRL usan la cuenta <strong>(100) Capital social</strong>, las cooperativas y fundaciones usan <strong>(101) Fondo social</strong>, y las empresas individuales <strong>(102) Capital</strong>.</p>
+  </div>
+
+  <!-- EJ 1.1 TEST -->
+  <div class="ej-card" id="card-1-1">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 1</span>
+      <span class="ej-tipo tipo-test">Tipo test</span>
+      <span class="ej-title">Constitución de una SRL</span>
+      <span class="ej-status" id="status-1-1">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">Tres socios constituyen una <strong>Sociedad de Responsabilidad Limitada</strong>. El primero aporta <strong>15.000 €</strong>, el segundo <strong>20.000 €</strong> y el tercero <strong>25.000 €</strong>. Todo el dinero se ingresa en la cuenta corriente de la empresa. El capital social queda íntegramente suscrito y desembolsado. ¿Cuál es el asiento correcto?</div>
+      <div class="test-options" id="opts-1-1">
+        <div class="test-opt" onclick="seleccionarOpt(this,'1-1','A')">
+          <span class="opt-letra">A</span>
+          <span>60.000 (572) Bancos c/c &nbsp;|&nbsp; a (100) Capital social 60.000</span>
+        </div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'1-1','B')">
+          <span class="opt-letra">B</span>
+          <span>60.000 (572) Bancos c/c &nbsp;|&nbsp; a (102) Capital 60.000</span>
+        </div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'1-1','C')">
+          <span class="opt-letra">C</span>
+          <span>60.000 (572) Bancos c/c &nbsp;|&nbsp; a (101) Fondo social 60.000</span>
+        </div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'1-1','D')">
+          <span class="opt-letra">D</span>
+          <span>60.000 (100) Capital social &nbsp;|&nbsp; a (572) Bancos c/c 60.000</span>
+        </div>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarTest('1-1','A','t1')">Comprobar</button>
+      <div class="feedback" id="fb-1-1"></div>
+    </div>
+  </div>
+
+  <!-- EJ 1.2 CONSTRUCCION -->
+  <div class="ej-card" id="card-1-2">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 2</span>
+      <span class="ej-tipo tipo-construccion">Construcción</span>
+      <span class="ej-title">Constitución de una SA con aportación mixta</span>
+      <span class="ej-status" id="status-1-2">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">Dos socios fundan una <strong>Sociedad Anónima</strong>. El primero aporta <strong>40.000 €</strong> ingresados en la cuenta bancaria de la empresa y el segundo aporta un <strong>local comercial valorado en 60.000 €</strong>, del cual el <strong>30% corresponde al terreno</strong> y el <strong>70% restante a la construcción</strong>. El capital social queda íntegramente suscrito y desembolsado. Contabiliza el asiento de constitución introduciendo los importes.</div>
+      <div class="construccion-area">
+        <table class="asiento-input-table">
+          <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+          <tbody>
+            <tr class="debe-row"><td><div class="cuenta-label"><span class="cod-fixed">572</span><span class="nombre-cuenta">Bancos c/c</span></div></td>
+              <td><input class="importe-input" id="i-1-2-1" placeholder="0,00" type="text"></td><td></td></tr>
+            <tr class="debe-row"><td><div class="cuenta-label"><span class="cod-fixed">220</span><span class="nombre-cuenta">Terrenos y bienes naturales (30%)</span></div></td>
+              <td><input class="importe-input" id="i-1-2-2" placeholder="0,00" type="text"></td><td></td></tr>
+            <tr class="debe-row"><td><div class="cuenta-label"><span class="cod-fixed">221</span><span class="nombre-cuenta">Construcciones (70%)</span></div></td>
+              <td><input class="importe-input" id="i-1-2-3" placeholder="0,00" type="text"></td><td></td></tr>
+            <tr class="haber-row"><td><div class="cuenta-label"><span class="cod-fixed">100</span><span class="nombre-cuenta">Capital social</span></div></td>
+              <td></td><td><input class="importe-input" id="i-1-2-4" placeholder="0,00" type="text"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarConstruccion('1-2',['40000','18000','42000','100000'],'t1')">Comprobar</button>
+      <button class="btn-reintentar" id="retry-1-2" style="display:none" onclick="reintentarEj('1-2',['i-1-2-1','i-1-2-2','i-1-2-3','i-1-2-4'])">Reintentar</button>
+      <div class="feedback" id="fb-1-2"></div>
+      <div class="solucion" id="sol-1-2">
+        <h4>✅ Solución correcta</h4>
+        <table class="asiento-sol"><thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cod-sol">572</span><span class="sol-debe">Bancos c/c</span></td><td class="imp-d">40.000</td><td></td></tr>
+          <tr><td><span class="cod-sol">220</span><span class="sol-debe">Terrenos y bienes naturales (30%)</span></td><td class="imp-d">18.000</td><td></td></tr>
+          <tr><td><span class="cod-sol">221</span><span class="sol-debe">Construcciones (70%)</span></td><td class="imp-d">42.000</td><td></td></tr>
+          <tr><td><span class="cod-sol">100</span><span class="sol-haber">Capital social</span></td><td></td><td class="imp-h">100.000</td></tr>
+        </tbody></table>
+        <div class="explicacion-box"><h4>💡 Explicación</h4>Las aportaciones no dinerarias se desglosan por tipo de bien. El local vale 60.000 €: el 30% es terreno (60.000 × 30% = 18.000 €, cuenta 220) y el 70% es construcción (60.000 × 70% = 42.000 €, cuenta 221). El capital social recoge la suma total: 40.000 + 60.000 = 100.000 €.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EJ 1.3 TEST -->
+  <div class="ej-card" id="card-1-3">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 3</span>
+      <span class="ej-tipo tipo-test">Tipo test</span>
+      <span class="ej-title">Empresa individual vs. SA: cuenta correcta</span>
+      <span class="ej-status" id="status-1-3">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">Un empresario autónomo inicia su actividad aportando <strong>35.000 €</strong> que deposita en la cuenta bancaria de la empresa. ¿Qué cuenta de pasivo/patrimonio neto utilizará para registrar su aportación?</div>
+      <div class="test-options" id="opts-1-3">
+        <div class="test-opt" onclick="seleccionarOpt(this,'1-3','A')"><span class="opt-letra">A</span><span>(100) Capital social</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'1-3','B')"><span class="opt-letra">B</span><span>(101) Fondo social</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'1-3','C')"><span class="opt-letra">C</span><span>(102) Capital</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'1-3','D')"><span class="opt-letra">D</span><span>(572) Bancos c/c</span></div>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarTest('1-3','C','t1')">Comprobar</button>
+      <div class="feedback" id="fb-1-3"></div>
+    </div>
+  </div>
+
+  <!-- EJ 1.4 CONSTRUCCION -->
+  <div class="ej-card" id="card-1-4">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 4</span>
+      <span class="ej-tipo tipo-construccion">Construcción</span>
+      <span class="ej-title">Constitución de una cooperativa</span>
+      <span class="ej-status" id="status-1-4">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">Cinco trabajadores constituyen una <strong>cooperativa de trabajo asociado</strong>. Cada socio aporta <strong>8.000 €</strong> en efectivo, ingresándolo en la <strong>caja</strong> de la cooperativa.</div>
+      <div class="construccion-area">
+        <table class="asiento-input-table">
+          <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+          <tbody>
+            <tr class="debe-row"><td><div class="cuenta-label"><span class="cod-fixed">570</span><span class="nombre-cuenta">Caja</span></div></td>
+              <td><input class="importe-input" id="i-1-4-1" placeholder="0,00" type="text"></td><td></td></tr>
+            <tr class="haber-row"><td><div class="cuenta-label"><span class="cod-fixed">101</span><span class="nombre-cuenta">Fondo social</span></div></td>
+              <td></td><td><input class="importe-input" id="i-1-4-2" placeholder="0,00" type="text"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarConstruccion('1-4',['40000','40000'],'t1')">Comprobar</button>
+      <button class="btn-reintentar" id="retry-1-4" style="display:none" onclick="reintentarEj('1-4',['i-1-4-1','i-1-4-2'])">Reintentar</button>
+      <div class="feedback" id="fb-1-4"></div>
+      <div class="solucion" id="sol-1-4">
+        <h4>✅ Solución correcta</h4>
+        <table class="asiento-sol"><thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cod-sol">570</span><span class="sol-debe">Caja</span></td><td class="imp-d">40.000</td><td></td></tr>
+          <tr><td><span class="cod-sol">101</span><span class="sol-haber">Fondo social</span></td><td></td><td class="imp-h">40.000</td></tr>
+        </tbody></table>
+        <div class="explicacion-box"><h4>💡 Explicación</h4>Las cooperativas no tienen capital social sino <strong>fondo social (101)</strong>. El total aportado es 5 × 8.000 = 40.000 €. Como el dinero se recibe en efectivo en caja, se usa la cuenta <strong>570 Caja</strong> en lugar de 572 Bancos.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 2: AMPLIACIÓN CAPITAL ===== -->
+<div id="t2" class="tab-content">
+  <div class="bloque-intro">
+    <h2>📈 Ampliación de capital</h2>
+    <p>Las ampliaciones pueden ser <strong>a la par</strong> (precio = valor nominal), <strong>sobre la par</strong> (precio &gt; valor nominal → prima de emisión, cuenta 110) o <strong>con cargo a reservas</strong> (liberada, sin aportación dineraria). La prima de emisión se suscribe y desembolsa en su totalidad por la cuenta corriente.</p>
+  </div>
+
+  <!-- EJ 2.1 TEST -->
+  <div class="ej-card" id="card-2-1">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 1</span>
+      <span class="ej-tipo tipo-test">Tipo test</span>
+      <span class="ej-title">Ampliación a la par</span>
+      <span class="ej-status" id="status-2-1">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">Una SA emite <strong>5.000 acciones nuevas</strong> de <strong>4 € de valor nominal</strong> cada una, <strong>a la par</strong>. Se suscriben y desembolsan en su totalidad por transferencia bancaria. ¿Cuál es el importe que abona la cuenta Bancos?</div>
+      <div class="test-options" id="opts-2-1">
+        <div class="test-opt" onclick="seleccionarOpt(this,'2-1','A')"><span class="opt-letra">A</span><span>5.000 €</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'2-1','B')"><span class="opt-letra">B</span><span>20.000 €</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'2-1','C')"><span class="opt-letra">C</span><span>25.000 €</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'2-1','D')"><span class="opt-letra">D</span><span>4.000 €</span></div>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarTest('2-1','B','t2')">Comprobar</button>
+      <div class="feedback" id="fb-2-1"></div>
+    </div>
+  </div>
+
+  <!-- EJ 2.2 CONSTRUCCION -->
+  <div class="ej-card" id="card-2-2">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 2</span>
+      <span class="ej-tipo tipo-construccion">Construcción</span>
+      <span class="ej-title">Ampliación sobre la par (con prima de emisión)</span>
+      <span class="ej-status" id="status-2-2">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">La SA MuebleDecor emite <strong>8.000 acciones</strong> de <strong>5 € de valor nominal</strong> a un precio de emisión de <strong>6 € por acción</strong> (120% del valor nominal). Se suscriben y desembolsan en su totalidad a través de la cuenta corriente bancaria.</div>
+      <div class="construccion-area">
+        <table class="asiento-input-table">
+          <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+          <tbody>
+            <tr class="debe-row"><td><div class="cuenta-label"><span class="cod-fixed">572</span><span class="nombre-cuenta">Bancos c/c</span></div></td>
+              <td><input class="importe-input" id="i-2-2-1" placeholder="0,00" type="text"></td><td></td></tr>
+            <tr class="haber-row"><td><div class="cuenta-label"><span class="cod-fixed">100</span><span class="nombre-cuenta">Capital social</span></div></td>
+              <td></td><td><input class="importe-input" id="i-2-2-2" placeholder="0,00" type="text"></td></tr>
+            <tr class="haber-row"><td><div class="cuenta-label"><span class="cod-fixed">110</span><span class="nombre-cuenta">Prima de emisión o asunción</span></div></td>
+              <td></td><td><input class="importe-input" id="i-2-2-3" placeholder="0,00" type="text"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarConstruccion('2-2',['48000','40000','8000'],'t2')">Comprobar</button>
+      <button class="btn-reintentar" id="retry-2-2" style="display:none" onclick="reintentarEj('2-2',['i-2-2-1','i-2-2-2','i-2-2-3'])">Reintentar</button>
+      <div class="feedback" id="fb-2-2"></div>
+      <div class="solucion" id="sol-2-2">
+        <h4>✅ Solución correcta</h4>
+        <table class="asiento-sol"><thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cod-sol">572</span><span class="sol-debe">Bancos c/c</span></td><td class="imp-d">48.000</td><td></td></tr>
+          <tr><td><span class="cod-sol">100</span><span class="sol-haber">Capital social</span></td><td></td><td class="imp-h">40.000</td></tr>
+          <tr><td><span class="cod-sol">110</span><span class="sol-haber">Prima de emisión</span></td><td></td><td class="imp-h">8.000</td></tr>
+        </tbody></table>
+        <div class="explicacion-box"><h4>💡 Explicación</h4>Bancos: 8.000 × 6€ = 48.000 €. Capital social: 8.000 × 5€ (valor nominal) = 40.000 €. Prima de emisión: 8.000 × (6–5)€ = 8.000 €. La prima recoge el exceso sobre el valor nominal.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EJ 2.3 TEST -->
+  <div class="ej-card" id="card-2-3">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 3</span>
+      <span class="ej-tipo tipo-test">Tipo test</span>
+      <span class="ej-title">Ampliación liberada con cargo a reservas</span>
+      <span class="ej-status" id="status-2-3">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">La SA TextilNord realiza una ampliación de capital <strong>con cargo a reservas voluntarias</strong> por un importe de <strong>50.000 €</strong>. ¿Cuál de los siguientes asientos es el correcto?</div>
+      <div class="test-options" id="opts-2-3">
+        <div class="test-opt" onclick="seleccionarOpt(this,'2-3','A')"><span class="opt-letra">A</span><span>50.000 (572) Bancos c/c &nbsp;|&nbsp; a (100) Capital social 50.000</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'2-3','B')"><span class="opt-letra">B</span><span>50.000 (113) Reservas voluntarias &nbsp;|&nbsp; a (100) Capital social 50.000</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'2-3','C')"><span class="opt-letra">C</span><span>50.000 (100) Capital social &nbsp;|&nbsp; a (113) Reservas voluntarias 50.000</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'2-3','D')"><span class="opt-letra">D</span><span>50.000 (113) Reservas voluntarias &nbsp;|&nbsp; a (110) Prima de emisión 50.000</span></div>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarTest('2-3','B','t2')">Comprobar</button>
+      <div class="feedback" id="fb-2-3"></div>
+    </div>
+  </div>
+
+  <!-- EJ 2.4 CONSTRUCCION -->
+  <div class="ej-card" id="card-2-4">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 4</span>
+      <span class="ej-tipo tipo-construccion">Construcción</span>
+      <span class="ej-title">Ampliación sobre la par — calcular prima</span>
+      <span class="ej-status" id="status-2-4">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">La SA DecorHome amplía capital emitiendo <strong>12.000 acciones</strong> de <strong>3 € de valor nominal</strong> a <strong>120% de su valor nominal</strong>. Las acciones se suscriben y desembolsan en su totalidad a través de la cuenta corriente bancaria.</div>
+      <div class="construccion-area">
+        <table class="asiento-input-table">
+          <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+          <tbody>
+            <tr class="debe-row"><td><div class="cuenta-label"><span class="cod-fixed">572</span><span class="nombre-cuenta">Bancos c/c</span></div></td>
+              <td><input class="importe-input" id="i-2-4-1" placeholder="0,00" type="text"></td><td></td></tr>
+            <tr class="haber-row"><td><div class="cuenta-label"><span class="cod-fixed">100</span><span class="nombre-cuenta">Capital social</span></div></td>
+              <td></td><td><input class="importe-input" id="i-2-4-2" placeholder="0,00" type="text"></td></tr>
+            <tr class="haber-row"><td><div class="cuenta-label"><span class="cod-fixed">110</span><span class="nombre-cuenta">Prima de emisión o asunción</span></div></td>
+              <td></td><td><input class="importe-input" id="i-2-4-3" placeholder="0,00" type="text"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarConstruccion('2-4',['43200','36000','7200'],'t2')">Comprobar</button>
+      <button class="btn-reintentar" id="retry-2-4" style="display:none" onclick="reintentarEj('2-4',['i-2-4-1','i-2-4-2','i-2-4-3'])">Reintentar</button>
+      <div class="feedback" id="fb-2-4"></div>
+      <div class="solucion" id="sol-2-4">
+        <h4>✅ Solución correcta</h4>
+        <table class="asiento-sol"><thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cod-sol">572</span><span class="sol-debe">Bancos c/c</span></td><td class="imp-d">43.200</td><td></td></tr>
+          <tr><td><span class="cod-sol">100</span><span class="sol-haber">Capital social</span></td><td></td><td class="imp-h">36.000</td></tr>
+          <tr><td><span class="cod-sol">110</span><span class="sol-haber">Prima de emisión</span></td><td></td><td class="imp-h">7.200</td></tr>
+        </tbody></table>
+        <div class="explicacion-box"><h4>💡 Explicación</h4>Precio emisión: 3 × 1,20 = 3,60 €/acción. Bancos: 12.000 × 3,60 = 43.200 €. Capital social: 12.000 × 3 = 36.000 €. Prima: 12.000 × 0,60 = 7.200 €.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 3: REPARTO BENEFICIOS ===== -->
+<div id="t3" class="tab-content">
+  <div class="bloque-intro">
+    <h2>💰 Reparto del beneficio y constitución de reservas</h2>
+    <p>El beneficio (cuenta 129) se reparte entre <strong>reservas</strong> (112 legal, 113 voluntarias, 114 estatutarias, 120 remanente) y <strong>dividendos</strong>. Los dividendos a cuenta usan la cuenta (557) y los definitivos la (526). Al pagar dividendos se practica retención del IRPF (cuenta 4751) según tramos vigentes.</p>
+  </div>
+
+  <!-- EJ 3.1 TEST -->
+  <div class="ej-card" id="card-3-1">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 1</span>
+      <span class="ej-tipo tipo-test">Tipo test</span>
+      <span class="ej-title">Reserva legal mínima obligatoria</span>
+      <span class="ej-status" id="status-3-1">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">Una SA tiene un beneficio después de impuestos de <strong>80.000 €</strong> y un capital social de <strong>400.000 €</strong>. La reserva legal actual es de <strong>60.000 €</strong>. ¿Cuánto debe destinarse como mínimo a la reserva legal este ejercicio?</div>
+      <div class="test-options" id="opts-3-1">
+        <div class="test-opt" onclick="seleccionarOpt(this,'3-1','A')"><span class="opt-letra">A</span><span>8.000 € (10% del beneficio)</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'3-1','B')"><span class="opt-letra">B</span><span>20.000 € (20% del capital hasta alcanzar el límite)</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'3-1','C')"><span class="opt-letra">C</span><span>0 € (ya ha alcanzado el 20% del capital social)</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'3-1','D')"><span class="opt-letra">D</span><span>4.000 € (5% del beneficio)</span></div>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarTest('3-1','A','t3')">Comprobar</button>
+      <div class="feedback" id="fb-3-1"></div>
+    </div>
+  </div>
+
+  <!-- EJ 3.2 CONSTRUCCION -->
+  <div class="ej-card" id="card-3-2">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 2</span>
+      <span class="ej-tipo tipo-construccion">Construcción</span>
+      <span class="ej-title">Reparto de beneficios con reservas y dividendo</span>
+      <span class="ej-status" id="status-3-2">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">La SA ArtDecor tiene un resultado del ejercicio de <strong>200.000 €</strong> y la junta acuerda el siguiente reparto: reserva legal 10%, reservas voluntarias 15%, reserva estatutaria 5%, remanente 5% y el resto se reparte como dividendo activo a pagar. Calcula e introduce los importes del asiento de distribución del resultado.</div>
+      <div class="construccion-area">
+        <table class="asiento-input-table">
+          <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+          <tbody>
+            <tr class="debe-row"><td><div class="cuenta-label"><span class="cod-fixed">129</span><span class="nombre-cuenta">Resultado del ejercicio</span></div></td>
+              <td><input class="importe-input" id="i-3-2-1" placeholder="0,00" type="text"></td><td></td></tr>
+            <tr class="haber-row"><td><div class="cuenta-label"><span class="cod-fixed">112</span><span class="nombre-cuenta">Reserva legal</span></div></td>
+              <td></td><td><input class="importe-input" id="i-3-2-2" placeholder="0,00" type="text"></td></tr>
+            <tr class="haber-row"><td><div class="cuenta-label"><span class="cod-fixed">113</span><span class="nombre-cuenta">Reservas voluntarias</span></div></td>
+              <td></td><td><input class="importe-input" id="i-3-2-3" placeholder="0,00" type="text"></td></tr>
+            <tr class="haber-row"><td><div class="cuenta-label"><span class="cod-fixed">1141</span><span class="nombre-cuenta">Reservas estatutarias</span></div></td>
+              <td></td><td><input class="importe-input" id="i-3-2-4" placeholder="0,00" type="text"></td></tr>
+            <tr class="haber-row"><td><div class="cuenta-label"><span class="cod-fixed">120</span><span class="nombre-cuenta">Remanente</span></div></td>
+              <td></td><td><input class="importe-input" id="i-3-2-5" placeholder="0,00" type="text"></td></tr>
+            <tr class="haber-row"><td><div class="cuenta-label"><span class="cod-fixed">526</span><span class="nombre-cuenta">Dividendo activo a pagar</span></div></td>
+              <td></td><td><input class="importe-input" id="i-3-2-6" placeholder="0,00" type="text"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarConstruccion('3-2',['200000','20000','30000','10000','10000','130000'],'t3')">Comprobar</button>
+      <button class="btn-reintentar" id="retry-3-2" style="display:none" onclick="reintentarEj('3-2',['i-3-2-1','i-3-2-2','i-3-2-3','i-3-2-4','i-3-2-5','i-3-2-6'])">Reintentar</button>
+      <div class="feedback" id="fb-3-2"></div>
+      <div class="solucion" id="sol-3-2">
+        <h4>✅ Solución correcta</h4>
+        <table class="asiento-sol"><thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cod-sol">129</span><span class="sol-debe">Resultado del ejercicio</span></td><td class="imp-d">200.000</td><td></td></tr>
+          <tr><td><span class="cod-sol">112</span><span class="sol-haber">Reserva legal (10%)</span></td><td></td><td class="imp-h">20.000</td></tr>
+          <tr><td><span class="cod-sol">113</span><span class="sol-haber">Reservas voluntarias (15%)</span></td><td></td><td class="imp-h">30.000</td></tr>
+          <tr><td><span class="cod-sol">1141</span><span class="sol-haber">Reservas estatutarias (5%)</span></td><td></td><td class="imp-h">10.000</td></tr>
+          <tr><td><span class="cod-sol">120</span><span class="sol-haber">Remanente (5%)</span></td><td></td><td class="imp-h">10.000</td></tr>
+          <tr><td><span class="cod-sol">526</span><span class="sol-haber">Dividendo activo a pagar (65%)</span></td><td></td><td class="imp-h">130.000</td></tr>
+        </tbody></table>
+        <div class="explicacion-box"><h4>💡 Explicación</h4>10%+15%+5%+5% = 35% a reservas. Resto: 100%–35% = 65% → 130.000 € de dividendo. La suma del Haber = 200.000 ✓</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EJ 3.3 TEST -->
+  <div class="ej-card" id="card-3-3">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 3</span>
+      <span class="ej-tipo tipo-test">Tipo test</span>
+      <span class="ej-title">Pago del dividendo con retención IRPF</span>
+      <span class="ej-status" id="status-3-3">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">La SA ModaDecor paga un dividendo de <strong>50.000 €</strong> con una retención del IRPF del <strong>19%</strong>. ¿Qué importe se ingresa efectivamente en el banco?</div>
+      <div class="test-options" id="opts-3-3">
+        <div class="test-opt" onclick="seleccionarOpt(this,'3-3','A')"><span class="opt-letra">A</span><span>50.000 €</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'3-3','B')"><span class="opt-letra">B</span><span>9.500 €</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'3-3','C')"><span class="opt-letra">C</span><span>40.500 €</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'3-3','D')"><span class="opt-letra">D</span><span>59.500 €</span></div>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarTest('3-3','C','t3')">Comprobar</button>
+      <div class="feedback" id="fb-3-3"></div>
+    </div>
+  </div>
+
+  <!-- EJ 3.4 CONSTRUCCION -->
+  <div class="ej-card" id="card-3-4">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 4</span>
+      <span class="ej-tipo tipo-construccion">Construcción</span>
+      <span class="ej-title">Pago efectivo del dividendo con retención</span>
+      <span class="ej-status" id="status-3-4">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">La SA FurnArt tiene registrado un <strong>dividendo activo a pagar de 60.000 €</strong>. El día del pago realiza la transferencia a los accionistas con una <strong>retención del 19%</strong> sobre el dividendo.</div>
+      <div class="construccion-area">
+        <table class="asiento-input-table">
+          <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+          <tbody>
+            <tr class="debe-row"><td><div class="cuenta-label"><span class="cod-fixed">526</span><span class="nombre-cuenta">Dividendo activo a pagar</span></div></td>
+              <td><input class="importe-input" id="i-3-4-1" placeholder="0,00" type="text"></td><td></td></tr>
+            <tr class="haber-row"><td><div class="cuenta-label"><span class="cod-fixed">4751</span><span class="nombre-cuenta">HP acreedora retenciones practicadas</span></div></td>
+              <td></td><td><input class="importe-input" id="i-3-4-2" placeholder="0,00" type="text"></td></tr>
+            <tr class="haber-row"><td><div class="cuenta-label"><span class="cod-fixed">572</span><span class="nombre-cuenta">Bancos c/c</span></div></td>
+              <td></td><td><input class="importe-input" id="i-3-4-3" placeholder="0,00" type="text"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarConstruccion('3-4',['60000','11400','48600'],'t3')">Comprobar</button>
+      <button class="btn-reintentar" id="retry-3-4" style="display:none" onclick="reintentarEj('3-4',['i-3-4-1','i-3-4-2','i-3-4-3'])">Reintentar</button>
+      <div class="feedback" id="fb-3-4"></div>
+      <div class="solucion" id="sol-3-4">
+        <h4>✅ Solución correcta</h4>
+        <table class="asiento-sol"><thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cod-sol">526</span><span class="sol-debe">Dividendo activo a pagar</span></td><td class="imp-d">60.000</td><td></td></tr>
+          <tr><td><span class="cod-sol">4751</span><span class="sol-haber">HP acreedora retenciones (19%)</span></td><td></td><td class="imp-h">11.400</td></tr>
+          <tr><td><span class="cod-sol">572</span><span class="sol-haber">Bancos c/c (neto a socios)</span></td><td></td><td class="imp-h">48.600</td></tr>
+        </tbody></table>
+        <div class="explicacion-box"><h4>💡 Explicación</h4>Retención: 60.000 × 19% = 11.400 €. Pago neto: 60.000 – 11.400 = 48.600 €. La retención queda pendiente de ingreso a Hacienda (4751).</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 4: PRÉSTAMOS ===== -->
+<div id="t4" class="tab-content">
+  <div class="bloque-intro">
+    <h2>🏦 Préstamos con entidades de crédito</h2>
+    <p>Los préstamos a largo plazo usan la cuenta <strong>(170)</strong> y a corto plazo <strong>(520)/(5200)</strong>. Los gastos de formalización van a <strong>(669)</strong>. Al cierre hay que periodificar los intereses devengados (662) y <strong>reclasificar</strong> la parte del préstamo que vencerá en el año siguiente de largo a corto plazo.</p>
+  </div>
+
+  <!-- EJ 4.1 TEST -->
+  <div class="ej-card" id="card-4-1">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 1</span>
+      <span class="ej-tipo tipo-test">Tipo test</span>
+      <span class="ej-title">Recepción del préstamo bancario</span>
+      <span class="ej-status" id="status-4-1">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">El 1 de marzo la empresa recibe un <strong>préstamo de 50.000 €</strong> de una entidad bancaria a devolver en <strong>3 años</strong>. Los gastos de formalización ascienden a <strong>400 €</strong>. ¿Cuál es el asiento correcto al recibir el préstamo?</div>
+      <div class="test-options" id="opts-4-1">
+        <div class="test-opt" onclick="seleccionarOpt(this,'4-1','A')"><span class="opt-letra">A</span>
+          <span>50.000 (572) Bancos &nbsp;|&nbsp; a (170) Deudas l/p 50.000</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'4-1','B')"><span class="opt-letra">B</span>
+          <span>400 (669) Otros gastos financieros + 49.600 (572) Bancos &nbsp;|&nbsp; a (170) Deudas l/p 50.000</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'4-1','C')"><span class="opt-letra">C</span>
+          <span>50.000 (572) Bancos &nbsp;|&nbsp; a (5200) Préstamos c/p 50.000</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'4-1','D')"><span class="opt-letra">D</span>
+          <span>50.400 (572) Bancos &nbsp;|&nbsp; a (170) Deudas l/p 50.400</span></div>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarTest('4-1','B','t4')">Comprobar</button>
+      <div class="feedback" id="fb-4-1"></div>
+    </div>
+  </div>
+
+  <!-- EJ 4.2 CONSTRUCCION -->
+  <div class="ej-card" id="card-4-2">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 2</span>
+      <span class="ej-tipo tipo-construccion">Construcción</span>
+      <span class="ej-title">Reclasificación a corto plazo al cierre</span>
+      <span class="ej-status" id="status-4-2">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">La empresa tiene un préstamo de <strong>90.000 €</strong> registrado en la cuenta (170). Al cierre del ejercicio, la cuota de amortización del año siguiente asciende a <strong>30.000 €</strong>. Contabiliza el asiento de reclasificación a 31/12.</div>
+      <div class="construccion-area">
+        <table class="asiento-input-table">
+          <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+          <tbody>
+            <tr class="debe-row"><td><div class="cuenta-label"><span class="cod-fixed">170</span><span class="nombre-cuenta">Deudas a largo plazo entidades de crédito</span></div></td>
+              <td><input class="importe-input" id="i-4-2-1" placeholder="0,00" type="text"></td><td></td></tr>
+            <tr class="haber-row"><td><div class="cuenta-label"><span class="cod-fixed">5200</span><span class="nombre-cuenta">Préstamos a corto plazo entidades de crédito</span></div></td>
+              <td></td><td><input class="importe-input" id="i-4-2-2" placeholder="0,00" type="text"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarConstruccion('4-2',['30000','30000'],'t4')">Comprobar</button>
+      <button class="btn-reintentar" id="retry-4-2" style="display:none" onclick="reintentarEj('4-2',['i-4-2-1','i-4-2-2'])">Reintentar</button>
+      <div class="feedback" id="fb-4-2"></div>
+      <div class="solucion" id="sol-4-2">
+        <h4>✅ Solución correcta</h4>
+        <table class="asiento-sol"><thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cod-sol">170</span><span class="sol-debe">Deudas l/p entidades de crédito</span></td><td class="imp-d">30.000</td><td></td></tr>
+          <tr><td><span class="cod-sol">5200</span><span class="sol-haber">Préstamos c/p entidades de crédito</span></td><td></td><td class="imp-h">30.000</td></tr>
+        </tbody></table>
+        <div class="explicacion-box"><h4>💡 Explicación</h4>Al cierre hay que traspasar al corto plazo la parte del préstamo que se devolverá en el ejercicio siguiente (≤12 meses). Esto permite que el balance refleje correctamente las obligaciones a corto y largo plazo.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EJ 4.3 TEST -->
+  <div class="ej-card" id="card-4-3">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 3</span>
+      <span class="ej-tipo tipo-test">Tipo test</span>
+      <span class="ej-title">Intereses devengados no vencidos</span>
+      <span class="ej-status" id="status-4-3">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">Al cierre del ejercicio, la empresa debe periodificar <strong>1.800 €</strong> de intereses devengados y no vencidos de un préstamo a largo plazo. ¿Cuál es el asiento correcto?</div>
+      <div class="test-options" id="opts-4-3">
+        <div class="test-opt" onclick="seleccionarOpt(this,'4-3','A')"><span class="opt-letra">A</span>
+          <span>1.800 (662) Intereses de deudas &nbsp;|&nbsp; a (527) Intereses c/p deudas entidades crédito 1.800</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'4-3','B')"><span class="opt-letra">B</span>
+          <span>1.800 (527) Intereses c/p &nbsp;|&nbsp; a (662) Intereses de deudas 1.800</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'4-3','C')"><span class="opt-letra">C</span>
+          <span>1.800 (662) Intereses de deudas &nbsp;|&nbsp; a (572) Bancos c/c 1.800</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'4-3','D')"><span class="opt-letra">D</span>
+          <span>1.800 (170) Deudas l/p &nbsp;|&nbsp; a (662) Intereses de deudas 1.800</span></div>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarTest('4-3','A','t4')">Comprobar</button>
+      <div class="feedback" id="fb-4-3"></div>
+    </div>
+  </div>
+
+  <!-- EJ 4.4 CONSTRUCCION -->
+  <div class="ej-card" id="card-4-4">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 4</span>
+      <span class="ej-tipo tipo-construccion">Construcción</span>
+      <span class="ej-title">Pago de mensualidad del préstamo</span>
+      <span class="ej-status" id="status-4-4">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">La empresa paga una mensualidad de su préstamo. Según el cuadro de amortización, la cuota total es <strong>1.500 €</strong>, de los cuales <strong>1.200 €</strong> corresponden a amortización del principal y <strong>300 €</strong> a intereses.</div>
+      <div class="construccion-area">
+        <table class="asiento-input-table">
+          <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+          <tbody>
+            <tr class="debe-row"><td><div class="cuenta-label"><span class="cod-fixed">5200</span><span class="nombre-cuenta">Préstamos a corto plazo entidades de crédito</span></div></td>
+              <td><input class="importe-input" id="i-4-4-1" placeholder="0,00" type="text"></td><td></td></tr>
+            <tr class="debe-row"><td><div class="cuenta-label"><span class="cod-fixed">662</span><span class="nombre-cuenta">Intereses de deudas</span></div></td>
+              <td><input class="importe-input" id="i-4-4-2" placeholder="0,00" type="text"></td><td></td></tr>
+            <tr class="haber-row"><td><div class="cuenta-label"><span class="cod-fixed">572</span><span class="nombre-cuenta">Bancos c/c</span></div></td>
+              <td></td><td><input class="importe-input" id="i-4-4-3" placeholder="0,00" type="text"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarConstruccion('4-4',['1200','300','1500'],'t4')">Comprobar</button>
+      <button class="btn-reintentar" id="retry-4-4" style="display:none" onclick="reintentarEj('4-4',['i-4-4-1','i-4-4-2','i-4-4-3'])">Reintentar</button>
+      <div class="feedback" id="fb-4-4"></div>
+      <div class="solucion" id="sol-4-4">
+        <h4>✅ Solución correcta</h4>
+        <table class="asiento-sol"><thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cod-sol">5200</span><span class="sol-debe">Préstamos c/p (amortización principal)</span></td><td class="imp-d">1.200</td><td></td></tr>
+          <tr><td><span class="cod-sol">662</span><span class="sol-debe">Intereses de deudas</span></td><td class="imp-d">300</td><td></td></tr>
+          <tr><td><span class="cod-sol">572</span><span class="sol-haber">Bancos c/c</span></td><td></td><td class="imp-h">1.500</td></tr>
+        </tbody></table>
+        <div class="explicacion-box"><h4>💡 Explicación</h4>Cada mensualidad tiene dos componentes: la amortización del principal (reduce la deuda, cuenta 5200) y los intereses (gasto financiero, cuenta 662). El total sale de bancos.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 5: FIANZAS ===== -->
+<div id="t5" class="tab-content">
+  <div class="bloque-intro">
+    <h2>🔒 Fianzas y depósitos</h2>
+    <p>Las fianzas son garantías recibidas. Si el plazo es <strong>superior a un año → (180) Fianzas recibidas a largo plazo</strong>. Si es igual o inferior a un año → <strong>(560) Fianzas recibidas a corto plazo</strong>. Al cumplir la obligación se devuelve (abono cuentas subgrupo 57). En caso de incumplimiento se registra un ingreso en la cuenta (759).</p>
+  </div>
+
+  <!-- EJ 5.1 TEST -->
+  <div class="ej-card" id="card-5-1">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 1</span>
+      <span class="ej-tipo tipo-test">Tipo test</span>
+      <span class="ej-title">Fianza recibida a largo plazo</span>
+      <span class="ej-status" id="status-5-1">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">La empresa ArrendaCom alquila un local y exige al inquilino una <strong>fianza de 5.000 €</strong>. El contrato es de <strong>24 meses</strong>. La fianza se recibe por transferencia. ¿Cuál es el asiento correcto?</div>
+      <div class="test-options" id="opts-5-1">
+        <div class="test-opt" onclick="seleccionarOpt(this,'5-1','A')"><span class="opt-letra">A</span>
+          <span>5.000 (572) Bancos &nbsp;|&nbsp; a (560) Fianzas recibidas c/p 5.000</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'5-1','B')"><span class="opt-letra">B</span>
+          <span>5.000 (572) Bancos &nbsp;|&nbsp; a (180) Fianzas recibidas l/p 5.000</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'5-1','C')"><span class="opt-letra">C</span>
+          <span>5.000 (180) Fianzas recibidas l/p &nbsp;|&nbsp; a (572) Bancos 5.000</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'5-1','D')"><span class="opt-letra">D</span>
+          <span>5.000 (572) Bancos &nbsp;|&nbsp; a (759) Ingresos por servicios diversos 5.000</span></div>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarTest('5-1','B','t5')">Comprobar</button>
+      <div class="feedback" id="fb-5-1"></div>
+    </div>
+  </div>
+
+  <!-- EJ 5.2 CONSTRUCCION -->
+  <div class="ej-card" id="card-5-2">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 2</span>
+      <span class="ej-tipo tipo-construccion">Construcción</span>
+      <span class="ej-title">Fianza recibida a corto plazo y devolución</span>
+      <span class="ej-status" id="status-5-2">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">El 1 de enero, la empresa recibe una <strong>fianza de 2.400 €</strong> como garantía de un contrato de servicios de <strong>8 meses</strong> de duración. Al finalizar el contrato, el cliente ha cumplido todas sus obligaciones y la empresa devuelve la fianza por transferencia. Contabiliza <strong>solo el asiento de constitución</strong> de la fianza.</div>
+      <div class="construccion-area">
+        <table class="asiento-input-table">
+          <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+          <tbody>
+            <tr class="debe-row"><td><div class="cuenta-label"><span class="cod-fixed">572</span><span class="nombre-cuenta">Bancos c/c</span></div></td>
+              <td><input class="importe-input" id="i-5-2-1" placeholder="0,00" type="text"></td><td></td></tr>
+            <tr class="haber-row"><td><div class="cuenta-label"><span class="cod-fixed">560</span><span class="nombre-cuenta">Fianzas recibidas a corto plazo</span></div></td>
+              <td></td><td><input class="importe-input" id="i-5-2-2" placeholder="0,00" type="text"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarConstruccion('5-2',['2400','2400'],'t5')">Comprobar</button>
+      <button class="btn-reintentar" id="retry-5-2" style="display:none" onclick="reintentarEj('5-2',['i-5-2-1','i-5-2-2'])">Reintentar</button>
+      <div class="feedback" id="fb-5-2"></div>
+      <div class="solucion" id="sol-5-2">
+        <h4>✅ Solución correcta</h4>
+        <table class="asiento-sol"><thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cod-sol">572</span><span class="sol-debe">Bancos c/c</span></td><td class="imp-d">2.400</td><td></td></tr>
+          <tr><td><span class="cod-sol">560</span><span class="sol-haber">Fianzas recibidas a corto plazo</span></td><td></td><td class="imp-h">2.400</td></tr>
+        </tbody></table>
+        <div class="explicacion-box"><h4>💡 Explicación</h4>El contrato dura 8 meses (menos de 12) → fianza a corto plazo (560). Al recibir la fianza entra dinero en bancos y se crea una obligación de devolver (pasivo corriente).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EJ 5.3 TEST -->
+  <div class="ej-card" id="card-5-3">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 3</span>
+      <span class="ej-tipo tipo-test">Tipo test</span>
+      <span class="ej-title">Incumplimiento total de la fianza</span>
+      <span class="ej-status" id="status-5-3">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">La empresa tiene registrada una <strong>fianza recibida a corto plazo de 3.000 €</strong>. Al finalizar el contrato, el cliente incumple <strong>totalmente</strong> sus obligaciones. ¿Cuál es el asiento correcto al registrar el incumplimiento?</div>
+      <div class="test-options" id="opts-5-3">
+        <div class="test-opt" onclick="seleccionarOpt(this,'5-3','A')"><span class="opt-letra">A</span>
+          <span>3.000 (560) Fianzas recibidas c/p &nbsp;|&nbsp; a (572) Bancos 3.000</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'5-3','B')"><span class="opt-letra">B</span>
+          <span>3.000 (560) Fianzas recibidas c/p &nbsp;|&nbsp; a (759) Ingresos por servicios diversos 3.000</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'5-3','C')"><span class="opt-letra">C</span>
+          <span>3.000 (572) Bancos &nbsp;|&nbsp; a (560) Fianzas recibidas c/p 3.000</span></div>
+        <div class="test-opt" onclick="seleccionarOpt(this,'5-3','D')"><span class="opt-letra">D</span>
+          <span>3.000 (560) Fianzas recibidas c/p &nbsp;|&nbsp; a (700) Ventas 3.000</span></div>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarTest('5-3','B','t5')">Comprobar</button>
+      <div class="feedback" id="fb-5-3"></div>
+    </div>
+  </div>
+
+  <!-- EJ 5.4 CONSTRUCCION -->
+  <div class="ej-card" id="card-5-4">
+    <div class="ej-header">
+      <span class="ej-num">Ej. 4</span>
+      <span class="ej-tipo tipo-construccion">Construcción</span>
+      <span class="ej-title">Incumplimiento parcial de la fianza</span>
+      <span class="ej-status" id="status-5-4">⚪</span>
+    </div>
+    <div class="ej-body">
+      <div class="enunciado">La empresa tiene una <strong>fianza recibida a corto plazo de 4.000 €</strong>. Al terminar el contrato se detectan desperfectos por valor de <strong>1.500 €</strong>. La empresa devuelve el resto de la fianza por transferencia y registra el incumplimiento parcial.</div>
+      <div class="construccion-area">
+        <table class="asiento-input-table">
+          <thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+          <tbody>
+            <tr class="debe-row"><td><div class="cuenta-label"><span class="cod-fixed">560</span><span class="nombre-cuenta">Fianzas recibidas a corto plazo</span></div></td>
+              <td><input class="importe-input" id="i-5-4-1" placeholder="0,00" type="text"></td><td></td></tr>
+            <tr class="haber-row"><td><div class="cuenta-label"><span class="cod-fixed">572</span><span class="nombre-cuenta">Bancos c/c (devolución)</span></div></td>
+              <td></td><td><input class="importe-input" id="i-5-4-2" placeholder="0,00" type="text"></td></tr>
+            <tr class="haber-row"><td><div class="cuenta-label"><span class="cod-fixed">759</span><span class="nombre-cuenta">Ingresos por servicios diversos (desperfectos)</span></div></td>
+              <td></td><td><input class="importe-input" id="i-5-4-3" placeholder="0,00" type="text"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="btn-comprobar" onclick="comprobarConstruccion('5-4',['4000','2500','1500'],'t5')">Comprobar</button>
+      <button class="btn-reintentar" id="retry-5-4" style="display:none" onclick="reintentarEj('5-4',['i-5-4-1','i-5-4-2','i-5-4-3'])">Reintentar</button>
+      <div class="feedback" id="fb-5-4"></div>
+      <div class="solucion" id="sol-5-4">
+        <h4>✅ Solución correcta</h4>
+        <table class="asiento-sol"><thead><tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cod-sol">560</span><span class="sol-debe">Fianzas recibidas c/p</span></td><td class="imp-d">4.000</td><td></td></tr>
+          <tr><td><span class="cod-sol">572</span><span class="sol-haber">Bancos c/c (4.000–1.500)</span></td><td></td><td class="imp-h">2.500</td></tr>
+          <tr><td><span class="cod-sol">759</span><span class="sol-haber">Ingresos por servicios diversos</span></td><td></td><td class="imp-h">1.500</td></tr>
+        </tbody></table>
+        <div class="explicacion-box"><h4>💡 Explicación</h4>Se cancela la fianza completa (4.000). Se devuelve la parte no reclamada (4.000–1.500=2.500) y los desperfectos quedan como ingreso para la empresa (759).</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div><!-- fin app-screen -->
+
+<script>
+// ==================== PISTAS PROGRESIVAS ====================
+// ==================== PISTAS TEST (por intento) ====================
+const PISTAS_TEST = {
+  '1-1': [
+    'Fíjate en la forma jurídica de la empresa: ¿es una SA, una SRL, una cooperativa o un autónomo? Cada una usa una cuenta diferente del subgrupo (10).',
+    'Una SRL usa la misma cuenta que una SA: la (100) Capital social. Comprueba también que el movimiento de bancos es correcto: ¿entra o sale dinero?',
+  ],
+  '1-3': [
+    'Piensa en la forma jurídica: un autónomo no tiene socios ni acciones. ¿Qué cuenta del subgrupo (10) es exclusiva de las empresas individuales?',
+    'Las cuentas del subgrupo (10) son: (100) SA y SRL, (101) cooperativas y fundaciones, (102) empresas individuales (autónomos). El autónomo no usa ni capital social ni fondo social.',
+  ],
+  '2-1': [
+    '"A la par" significa que el precio de emisión coincide exactamente con el valor nominal. No hay prima. Calcula simplemente: nº acciones × valor nominal.',
+    'A la par: precio = valor nominal = 4 €. Multiplica por el número de acciones. El total que entra en bancos es ese mismo importe y va íntegro a Capital social.',
+  ],
+  '2-3': [
+    'Una ampliación "con cargo a reservas" no supone entrada de dinero. Se capitaliza una reserva ya existente. ¿Qué cuenta disminuye y cuál aumenta?',
+    'No hay movimiento de bancos. La reserva voluntaria (113) disminuye (al debe) y el capital social (100) aumenta (al haber). Es un simple traspaso dentro del patrimonio neto.',
+  ],
+  '3-1': [
+    'La reserva legal mínima es el 10% del beneficio, pero solo hasta que alcance el 20% del capital social. Comprueba si la reserva actual ya ha llegado a ese límite.',
+    'Límite: 400.000 × 20% = 80.000 €. La reserva actual es 60.000 €, así que aún no ha alcanzado el límite. Por tanto, sí hay que dotar el mínimo del 10% del beneficio.',
+  ],
+  '3-3': [
+    'La retención del IRPF se descuenta del dividendo bruto. El accionista recibe el dividendo menos la retención. Calcula primero cuánto es el 19% de 50.000 €.',
+    'Retención = 50.000 × 19% = 9.500 €. Lo que llega efectivamente al banco de los accionistas es el dividendo bruto menos la retención: 50.000 – 9.500 €.',
+  ],
+  '4-1': [
+    'El préstamo es a 3 años → largo plazo (170). Los gastos de formalización son un gasto financiero separado (669). El dinero que entra en bancos no es el importe total del préstamo.',
+    'El banco descuenta los gastos al transferir: Bancos = 50.000 – 400 = 49.600 €. Los gastos van a (669) y la deuda total sigue siendo 50.000 € en (170).',
+  ],
+  '4-3': [
+    'Los intereses devengados pero no vencidos son un gasto del ejercicio actual que aún no se ha pagado. La contrapartida no es bancos sino una deuda a corto plazo.',
+    'El gasto va a (662 Intereses de deudas) en el debe. La contrapartida es (527 Intereses a corto plazo de deudas con entidades de crédito) en el haber, ya que aún no se han pagado.',
+  ],
+  '5-1': [
+    'El plazo del contrato determina la cuenta: más de 12 meses → largo plazo. ¿Cuál es la cuenta de fianzas recibidas a largo plazo?',
+    '24 meses > 12 meses → fianza a largo plazo → cuenta (180). Al recibir la fianza por transferencia: (572) en el debe y (180) en el haber.',
+  ],
+  '5-3': [
+    'En el incumplimiento total la empresa no devuelve nada. La fianza pasa a ser un ingreso para la empresa. ¿Qué cuenta de ingreso se usa en este caso?',
+    'La fianza (560) se cancela en el debe. Al no devolverse, genera un ingreso en (759 Ingresos por servicios diversos) en el haber. No hay movimiento de bancos.',
+  ],
+};
+
+// ==================== PISTAS CONSTRUCCION (por campo) ====================
+const PISTAS_CAMPO = {
+  // Cada ejercicio tiene un array de objetos: {campo: 'i-X-Y', pistas: ['pista1','pista2']}
+  '1-2': [
+    { campo: 'i-1-2-1', pistas: [
+      'Este campo recoge la aportación dineraria del primer socio, que se ingresa en la cuenta bancaria.',
+      'El primer socio aporta 40.000 € en efectivo → ese es exactamente el importe de Bancos (572).',
+    ]},
+    { campo: 'i-1-2-2', pistas: [
+      'El terreno es el 30% del valor total del local. Aplica ese porcentaje sobre 60.000 €.',
+      'Terreno (220): 60.000 × 30% = 18.000 €.',
+    ]},
+    { campo: 'i-1-2-3', pistas: [
+      'La construcción es el 70% restante del valor del local. Aplica ese porcentaje sobre 60.000 €.',
+      'Construcciones (221): 60.000 × 70% = 42.000 €.',
+    ]},
+    { campo: 'i-1-2-4', pistas: [
+      'El capital social es la suma de todas las aportaciones: la dineraria y el valor total del local.',
+      'Capital social (100) = 40.000 (efectivo) + 60.000 (local) = 100.000 €.',
+    ]},
+  ],
+  '1-4': [
+    { campo: 'i-1-4-1', pistas: [
+      'El dinero se recibe en caja (en efectivo), no por transferencia bancaria. Calcula el total: 5 socios × 8.000 €.',
+      'Caja (570) = 5 × 8.000 = 40.000 €. Se usa la cuenta 570 porque el efectivo entra físicamente en caja.',
+    ]},
+    { campo: 'i-1-4-2', pistas: [
+      'Las cooperativas no usan Capital social, sino Fondo social. El importe es igual al total recibido en caja.',
+      'Fondo social (101) = 40.000 €. Debe coincidir exactamente con el importe de Caja para que el asiento cuadre.',
+    ]},
+  ],
+  '2-2': [
+    { campo: 'i-2-2-1', pistas: [
+      'Bancos recibe el total cobrado por todas las acciones al precio de emisión. Multiplica nº acciones × precio de emisión.',
+      'Bancos (572) = 8.000 acciones × 6 €/acción = 48.000 €.',
+    ]},
+    { campo: 'i-2-2-2', pistas: [
+      'El capital social solo recoge el valor nominal de las acciones emitidas, no el precio de emisión.',
+      'Capital social (100) = 8.000 acciones × 5 € (valor nominal) = 40.000 €.',
+    ]},
+    { campo: 'i-2-2-3', pistas: [
+      'La prima de emisión es la diferencia entre lo cobrado en bancos y lo abonado a capital social.',
+      'Prima (110) = 48.000 (bancos) – 40.000 (capital) = 8.000 €. O bien: 8.000 acciones × (6–5) € = 8.000 €.',
+    ]},
+  ],
+  '2-4': [
+    { campo: 'i-2-4-1', pistas: [
+      'Bancos recibe el total al precio de emisión. Primero calcula el precio por acción: valor nominal × 120%.',
+      'Precio emisión = 3 × 1,20 = 3,60 €. Bancos (572) = 12.000 × 3,60 = 43.200 €.',
+    ]},
+    { campo: 'i-2-4-2', pistas: [
+      'El capital social solo registra el valor nominal, no el precio de emisión.',
+      'Capital social (100) = 12.000 × 3 € = 36.000 €.',
+    ]},
+    { campo: 'i-2-4-3', pistas: [
+      'La prima es la diferencia entre lo que entra en bancos y lo que va a capital social.',
+      'Prima (110) = 43.200 – 36.000 = 7.200 €. O bien: 12.000 × (3,60–3) = 12.000 × 0,60 = 7.200 €.',
+    ]},
+  ],
+  '3-2': [
+    { campo: 'i-3-2-1', pistas: [
+      'La cuenta (129) Resultado del ejercicio recoge el beneficio total antes de distribuir. ¿Cuál es el beneficio de la empresa?',
+      'Resultado del ejercicio (129) = 200.000 €. Esta cuenta se cancela íntegramente en el debe.',
+    ]},
+    { campo: 'i-3-2-2', pistas: [
+      'La reserva legal es el 10% del beneficio del ejercicio. Aplica ese porcentaje.',
+      'Reserva legal (112) = 200.000 × 10% = 20.000 €.',
+    ]},
+    { campo: 'i-3-2-3', pistas: [
+      'Las reservas voluntarias son el 15% del beneficio. Aplica ese porcentaje.',
+      'Reservas voluntarias (113) = 200.000 × 15% = 30.000 €.',
+    ]},
+    { campo: 'i-3-2-4', pistas: [
+      'La reserva estatutaria es el 5% del beneficio. Aplica ese porcentaje.',
+      'Reservas estatutarias (1141) = 200.000 × 5% = 10.000 €.',
+    ]},
+    { campo: 'i-3-2-5', pistas: [
+      'El remanente es el 5% del beneficio. Aplica ese porcentaje.',
+      'Remanente (120) = 200.000 × 5% = 10.000 €.',
+    ]},
+    { campo: 'i-3-2-6', pistas: [
+      'El dividendo es lo que queda tras restar todos los porcentajes destinados a reservas. Suma todos los porcentajes ya aplicados y calcula el resto.',
+      'Reservas totales: 10+15+5+5 = 35%. Dividendo = 100% – 35% = 65% → 200.000 × 65% = 130.000 €.',
+    ]},
+  ],
+  '3-4': [
+    { campo: 'i-3-4-1', pistas: [
+      'La cuenta (526) Dividendo activo a pagar recoge el dividendo pendiente de pago. Se cancela completamente al pagar. ¿Cuál es el importe total del dividendo?',
+      'Dividendo activo a pagar (526) = 60.000 €. Se cancela íntegramente en el debe, independientemente de la retención.',
+    ]},
+    { campo: 'i-3-4-2', pistas: [
+      'La retención del IRPF no se paga al accionista, sino que la empresa la retiene e ingresa a Hacienda. Calcula el 19% del dividendo bruto.',
+      'HP acreedora retenciones (4751) = 60.000 × 19% = 11.400 €.',
+    ]},
+    { campo: 'i-3-4-3', pistas: [
+      'El importe que entra en bancos es el dividendo bruto menos la retención que se queda Hacienda.',
+      'Bancos (572) = 60.000 – 11.400 = 48.600 €.',
+    ]},
+  ],
+  '4-2': [
+    { campo: 'i-4-2-1', pistas: [
+      'Se traspasa de largo plazo a corto plazo la parte que vencerá el próximo año. La cuenta (170) disminuye en ese importe. ¿Cuánto vence el año que viene?',
+      'Deudas l/p (170) = 30.000 €. Esa es exactamente la cuota de amortización del año siguiente que hay que reclasificar.',
+    ]},
+    { campo: 'i-4-2-2', pistas: [
+      'La parte reclasificada pasa a corto plazo. El importe debe coincidir exactamente con lo que sale de la cuenta (170).',
+      'Préstamos c/p (5200) = 30.000 €. El asiento es simétrico: mismo importe en debe y haber.',
+    ]},
+  ],
+  '4-4': [
+    { campo: 'i-4-4-1', pistas: [
+      'Este campo recoge solo la cuota de amortización del principal, no el total de la mensualidad. Revisa los datos del enunciado.',
+      'Préstamos c/p (5200) = 1.200 €. Es la parte de la mensualidad que reduce la deuda con el banco.',
+    ]},
+    { campo: 'i-4-4-2', pistas: [
+      'Este campo recoge únicamente los intereses de la mensualidad, no la amortización del principal.',
+      'Intereses de deudas (662) = 300 €. Es el gasto financiero de la mensualidad.',
+    ]},
+    { campo: 'i-4-4-3', pistas: [
+      'Por bancos sale el total de la mensualidad: la suma de la amortización del principal más los intereses.',
+      'Bancos (572) = 1.200 + 300 = 1.500 €. Es el importe total transferido al banco.',
+    ]},
+  ],
+  '5-2': [
+    { campo: 'i-5-2-1', pistas: [
+      'Al recibir la fianza entra dinero en la cuenta bancaria. El importe es exactamente el de la fianza recibida.',
+      'Bancos (572) = 2.400 €. Es el efectivo que entra al recibir la fianza por transferencia.',
+    ]},
+    { campo: 'i-5-2-2', pistas: [
+      'El contrato dura 8 meses (menos de 12). ¿Corto o largo plazo? El importe es el mismo que el recibido en bancos.',
+      'Fianzas recibidas c/p (560) = 2.400 €. Menos de 12 meses → corto plazo → cuenta 560.',
+    ]},
+  ],
+  '5-4': [
+    { campo: 'i-5-4-1', pistas: [
+      'La fianza registrada se cancela completamente en el debe, independientemente de los desperfectos. ¿Cuál era el importe total de la fianza?',
+      'Fianzas recibidas c/p (560) = 4.000 €. Se cancela el total en el debe aunque solo se devuelva una parte.',
+    ]},
+    { campo: 'i-5-4-2', pistas: [
+      'Por bancos solo sale lo que se devuelve al cliente: el total de la fianza menos los desperfectos que se retienen.',
+      'Bancos (572) = 4.000 – 1.500 = 2.500 €. Es la parte de la fianza que sí se devuelve.',
+    ]},
+    { campo: 'i-5-4-3', pistas: [
+      'Los desperfectos no se devuelven: se convierten en un ingreso para la empresa. ¿Qué cuenta recoge ese ingreso?',
+      'Ingresos por servicios diversos (759) = 1.500 €. Es el importe de los desperfectos que la empresa se queda como compensación.',
+    ]},
+  ],
+};
+
+// ==================== ESTADO ====================
+let alumno = {nombre:'', curso:'', inicio: new Date().toLocaleString('es-ES')};
+let resultados = {}; // id -> {correcto, intentos}
+let intentosEj = {}; // id -> número de intentos realizados
+const TOTAL = 20;
+
+function iniciarApp() {
+  const n = document.getElementById('nombre-input').value.trim();
+  const c = document.getElementById('curso-input').value.trim();
+  if (!n) { alert('Por favor, escribe tu nombre.'); return; }
+  alumno.nombre = n;
+  alumno.curso = c || '2º CFGM';
+  document.getElementById('header-nombre').textContent = n + ' · ' + alumno.curso;
+  document.getElementById('registro-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display = 'block';
+}
+
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function getPistaTest(ejId, intento) {
+  const pistas = PISTAS_TEST[ejId] || [];
+  return pistas[intento - 1] || null;
+}
+
+function getPistasCamposErroneos(ejId, inputIds, correctos) {
+  // Devuelve un array de mensajes de pista para los campos incorrectos
+  const pistasEj = PISTAS_CAMPO[ejId] || [];
+  const msgs = [];
+  inputIds.forEach((id, idx) => {
+    const inp = document.getElementById(id);
+    if (inp && inp.classList.contains('incorrecto')) {
+      const campoPistas = pistasEj.find(p => p.campo === id);
+      if (campoPistas) {
+        // intento actual determina qué pista mostrar
+        const intento = intentosEj[ejId] || 1;
+        const pista = campoPistas.pistas[intento - 1] || campoPistas.pistas[campoPistas.pistas.length - 1];
+        // Obtener nombre del campo del label en la tabla
+        const row = inp.closest('tr');
+        const nombreCuenta = row ? (row.querySelector('.nombre-cuenta')?.textContent || row.querySelector('.cod-fixed')?.textContent || `Campo ${idx+1}`) : `Campo ${idx+1}`;
+        const codCuenta = row ? (row.querySelector('.cod-fixed')?.textContent || '') : '';
+        msgs.push(`<li><strong>${codCuenta ? '(' + codCuenta + ') ' : ''}${nombreCuenta}:</strong> ${pista}</li>`);
+      }
+    }
+  });
+  return msgs;
+}
+
+// ==================== LÓGICA TEST ====================
+let seleccionActual = {};
+function seleccionarOpt(el, ejId, letra) {
+  if (el.classList.contains('disabled')) return;
+  document.querySelectorAll(`#opts-${ejId} .test-opt`).forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  seleccionActual[ejId] = letra;
+}
+
+function comprobarTest(ejId, correcta, tabId) {
+  const sel = seleccionActual[ejId];
+  if (!sel) { alert('Selecciona una opción primero.'); return; }
+  if (!resultados[ejId]) resultados[ejId] = {correcto: false, intentos: 0};
+  if (!intentosEj[ejId]) intentosEj[ejId] = 0;
+
+  resultados[ejId].intentos++;
+  intentosEj[ejId]++;
+  const intento = intentosEj[ejId];
+
+  const fb = document.getElementById(`fb-${ejId}`);
+  fb.style.display = 'block';
+
+  if (sel === correcta) {
+    // CORRECTO
+    const opts = document.querySelectorAll(`#opts-${ejId} .test-opt`);
+    opts.forEach(o => {
+      o.classList.add('disabled');
+      if (o.querySelector('.opt-letra').textContent === correcta) o.classList.add('correcto');
+    });
+    resultados[ejId].correcto = true;
+    fb.className = 'feedback correcto';
+    fb.innerHTML = `<h4>✅ ¡Correcto!</h4>Has seleccionado la respuesta correcta (opción ${correcta}). ¡Bien hecho!`;
+    document.getElementById(`card-${ejId}`).classList.remove('incorrecto');
+    document.getElementById(`card-${ejId}`).classList.add('correcto');
+    document.getElementById(`status-${ejId}`).textContent = '✅';
+  } else {
+    // INCORRECTO
+    // Marcar la opción seleccionada como incorrecta
+    document.querySelectorAll(`#opts-${ejId} .test-opt`).forEach(o => {
+      o.classList.remove('selected');
+      const letra = o.querySelector('.opt-letra').textContent;
+      if (letra === sel) o.classList.add('incorrecto');
+    });
+
+    document.getElementById(`card-${ejId}`).classList.add('incorrecto');
+    document.getElementById(`status-${ejId}`).textContent = '❌';
+
+    if (intento >= 3) {
+      // Tercer intento: marcar incorrecta Y mostrar correcta, bloquear
+      document.querySelectorAll(`#opts-${ejId} .test-opt`).forEach(o => {
+        o.classList.add('disabled');
+        const letra = o.querySelector('.opt-letra').textContent;
+        if (letra === correcta) o.classList.add('correcto');
+      });
+      fb.className = 'feedback incorrecto';
+      fb.innerHTML = `<h4>❌ Respuesta incorrecta</h4>Has agotado los intentos. La respuesta correcta era la opción <strong>${correcta}</strong>. Repasa este concepto antes del examen.`;
+    } else {
+      // Primer o segundo intento: solo pista, permitir reintentar
+      const pista = getPistaTest(ejId, intento);
+      fb.className = 'feedback incorrecto';
+      fb.innerHTML = `<h4>❌ Incorrecto — Intento ${intento}/3</h4>${pista ? `<strong>💡 Pista:</strong> ${pista}` : 'Vuelve a intentarlo.'} <br><br><em>Puedes seleccionar otra opción y volver a comprobar.</em>`;
+      // Limpiar la selección incorrecta para permitir nueva selección
+      setTimeout(() => {
+        document.querySelectorAll(`#opts-${ejId} .test-opt`).forEach(o => o.classList.remove('incorrecto'));
+      }, 1200);
+      delete seleccionActual[ejId];
+    }
+  }
+  actualizarProgreso(tabId);
+}
+
+// ==================== LÓGICA CONSTRUCCION ====================
+function normalizar(v) {
+  return v.replace(/\./g,'').replace(',','.').replace(/[€\s]/g,'').trim();
+}
+
+function comprobarConstruccion(ejId, correctos, tabId) {
+  const inputs = document.querySelectorAll(`[id^="i-${ejId}-"]`);
+  const inputIds = Array.from(inputs).map(i => i.id);
+  if (!resultados[ejId]) resultados[ejId] = {correcto: false, intentos: 0};
+  if (!intentosEj[ejId]) intentosEj[ejId] = 0;
+
+  resultados[ejId].intentos++;
+  intentosEj[ejId]++;
+  const intento = intentosEj[ejId];
+
+  let todoOk = true;
+  inputs.forEach((inp, idx) => {
+    const val = parseFloat(normalizar(inp.value)) || 0;
+    const exp = parseFloat(correctos[idx]);
+    inp.classList.remove('correcto','incorrecto');
+    if (Math.abs(val - exp) < 0.1) {
+      inp.classList.add('correcto');
+    } else {
+      inp.classList.add('incorrecto');
+      todoOk = false;
+    }
+  });
+
+  const fb = document.getElementById(`fb-${ejId}`);
+  const sol = document.getElementById(`sol-${ejId}`);
+  fb.style.display = 'block';
+
+  if (todoOk) {
+    // CORRECTO
+    inputs.forEach(inp => { inp.disabled = true; });
+    sol.style.display = 'block';
+    resultados[ejId].correcto = true;
+    fb.className = 'feedback correcto';
+    fb.innerHTML = `<h4>✅ ¡Perfecto! Todos los importes son correctos.</h4>`;
+    document.getElementById(`card-${ejId}`).classList.remove('incorrecto');
+    document.getElementById(`card-${ejId}`).classList.add('correcto');
+    document.getElementById(`status-${ejId}`).textContent = '✅';
+    const retry = document.getElementById(`retry-${ejId}`);
+    if (retry) retry.style.display = 'none';
+  } else {
+    // INCORRECTO
+    document.getElementById(`card-${ejId}`).classList.add('incorrecto');
+    document.getElementById(`status-${ejId}`).textContent = '❌';
+
+    if (intento >= 3) {
+      // Tercer intento: bloquear y mostrar solución
+      inputs.forEach(inp => { inp.disabled = true; });
+      sol.style.display = 'block';
+      fb.className = 'feedback incorrecto';
+      fb.innerHTML = `<h4>❌ Respuesta incorrecta</h4>Has agotado los intentos. Revisa la solución correcta a continuación y repasa este concepto antes del examen.`;
+      const retry = document.getElementById(`retry-${ejId}`);
+      if (retry) retry.style.display = 'none';
+    } else {
+      // Primer o segundo intento: pistas por campo + reintentar, sin solución
+      sol.style.display = 'none';
+      const pistasMsgs = getPistasCamposErroneos(ejId, inputIds, correctos);
+      let pistasHtml = '';
+      if (pistasMsgs.length > 0) {
+        pistasHtml = `<strong>💡 Pistas para los campos marcados en rojo:</strong><ul style="margin-top:6px;padding-left:18px;line-height:1.8">${pistasMsgs.join('')}</ul>`;
+      }
+      fb.className = 'feedback incorrecto';
+      fb.innerHTML = `<h4>❌ Algunos importes no son correctos — Intento ${intento}/3</h4>${pistasHtml}<br><em>Corrige los campos en rojo y pulsa "Reintentar".</em>`;
+      // Desbloquear solo los incorrectos
+      inputs.forEach(inp => {
+        if (inp.classList.contains('correcto')) {
+          inp.disabled = true;
+        } else {
+          inp.disabled = false;
+        }
+      });
+      const retry = document.getElementById(`retry-${ejId}`);
+      if (retry) retry.style.display = 'inline-block';
+    }
+  }
+  actualizarProgreso(tabId);
+}
+
+function reintentarEj(ejId, inputIds) {
+  inputIds.forEach(id => {
+    const inp = document.getElementById(id);
+    if (inp && inp.classList.contains('incorrecto')) {
+      inp.value = '';
+      inp.classList.remove('incorrecto');
+      inp.disabled = false;
+    }
+  });
+  document.getElementById(`fb-${ejId}`).style.display = 'none';
+  document.getElementById(`retry-${ejId}`).style.display = 'none';
+}
+
+// ==================== PROGRESO ====================
+function actualizarProgreso(tabId) {
+  const total = Object.keys(resultados).length;
+  const correctos = Object.values(resultados).filter(r=>r.correcto).length;
+  document.getElementById('progress-info').textContent = `${correctos} / ${TOTAL} correctos`;
+
+  const tabs = ['t1','t2','t3','t4','t5'];
+  const prefijos = {t1:'1-',t2:'2-',t3:'3-',t4:'4-',t5:'5-'};
+  tabs.forEach(t => {
+    const pref = prefijos[t];
+    let c=0;
+    for(let i=1;i<=4;i++){
+      const k=pref+i;
+      if(resultados[k]&&resultados[k].correcto) c++;
+    }
+    document.getElementById(`score-${t}`).textContent=`${c}/4`;
+  });
+}
+
+// ==================== PDF ====================
+function generarPDF() {
+  const ahora = new Date().toLocaleString('es-ES');
+  const ejIds = [];
+  for(let t=1;t<=5;t++) for(let e=1;e<=4;e++) ejIds.push(`${t}-${e}`);
+
+  const bloques = {
+    '1':'Constitución de la empresa',
+    '2':'Ampliación de capital',
+    '3':'Reparto de beneficios',
+    '4':'Préstamos bancarios',
+    '5':'Fianzas y depósitos'
+  };
+
+  let totalIntentados=0, totalCorrectos=0;
+  let filas='';
+  ejIds.forEach(id => {
+    const r = resultados[id] || null;
+    const [t,e] = id.split('-');
+    const bloque = bloques[t];
+    const estado = r ? (r.correcto ? '✅ Correcto' : '❌ Incorrecto') : '— Sin realizar';
+    const intentos = r ? r.intentos : 0;
+    if(r) { totalIntentados++; if(r.correcto) totalCorrectos++; }
+    filas += `<tr>
+      <td style="padding:6px 10px;border-bottom:1px solid #e2e8f0;">${bloque}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #e2e8f0;text-align:center;">Ej. ${e}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #e2e8f0;text-align:center;">${estado}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #e2e8f0;text-align:center;">${intentos}</td>
+    </tr>`;
+  });
+
+  const pct = totalIntentados>0 ? Math.round(totalCorrectos/totalIntentados*100) : 0;
+
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+  <style>
+    body{font-family:Arial,sans-serif;margin:40px;color:#1e293b;font-size:13px;}
+    h1{color:#1a2e4a;font-size:18px;margin-bottom:4px;}
+    h2{color:#2563eb;font-size:14px;margin:20px 0 8px;}
+    .info{background:#f0f4f8;border-radius:8px;padding:12px 16px;margin-bottom:20px;}
+    .info p{margin:3px 0;}
+    table{width:100%;border-collapse:collapse;}
+    th{background:#1a2e4a;color:white;padding:8px 10px;text-align:left;font-size:12px;}
+    th:nth-child(2),th:nth-child(3),th:nth-child(4){text-align:center;}
+    .resumen{background:#f0f4f8;border-radius:8px;padding:14px;margin-top:20px;display:flex;gap:30px;}
+    .stat{text-align:center;}
+    .stat-n{font-size:22px;font-weight:bold;color:#1a2e4a;}
+    .stat-l{font-size:11px;color:#94a3b8;margin-top:2px;}
+    .stat-n.verde{color:#16a34a;} .stat-n.rojo{color:#dc2626;}
+    .footer{margin-top:30px;font-size:11px;color:#94a3b8;text-align:center;border-top:1px solid #e2e8f0;padding-top:10px;}
+  </style></head><body>
+  <h1>📚 Repaso Examen TDC – Financiación empresarial</h1>
+  <p style="color:#64748b;margin-bottom:16px;">Informe de resultados</p>
+  <div class="info">
+    <p><strong>Alumno/a:</strong> ${alumno.nombre}</p>
+    <p><strong>Curso:</strong> ${alumno.curso}</p>
+    <p><strong>Módulo:</strong> Tratamiento de la Documentación Contable – 2º CFGM G. Administrativa</p>
+    <p><strong>Inicio:</strong> ${alumno.inicio} &nbsp;|&nbsp; <strong>Descarga:</strong> ${ahora}</p>
+  </div>
+  <h2>Detalle por ejercicio</h2>
+  <table>
+    <thead><tr><th>Bloque temático</th><th>Ejercicio</th><th>Resultado</th><th>Intentos</th></tr></thead>
+    <tbody>${filas}</tbody>
+  </table>
+  <div class="resumen">
+    <div class="stat"><div class="stat-n">${TOTAL}</div><div class="stat-l">Ejercicios totales</div></div>
+    <div class="stat"><div class="stat-n">${totalIntentados}</div><div class="stat-l">Realizados</div></div>
+    <div class="stat"><div class="stat-n verde">${totalCorrectos}</div><div class="stat-l">Correctos</div></div>
+    <div class="stat"><div class="stat-n rojo">${totalIntentados-totalCorrectos}</div><div class="stat-l">Incorrectos</div></div>
+    <div class="stat"><div class="stat-n" style="color:#2563eb">${pct}%</div><div class="stat-l">% Acierto (realizados)</div></div>
+  </div>
+  <div class="footer">Salesianos Juan XXIII, Alcoy · TDC 2º CFGM G. Administrativa · ${ahora}</div>
+  </body></html>`;
+
+  const blob = new Blob([html],{type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `repaso_TDC_${alumno.nombre.replace(/\s+/g,'_')}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

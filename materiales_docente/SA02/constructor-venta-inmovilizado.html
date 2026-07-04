@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Constructor de Asientos de Venta de Inmovilizado</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Quicksand', sans-serif; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useMemo, useCallback } = React;
+
+/* ───────── helpers ───────── */
+const fmt = (n) => {
+  if (n == null || isNaN(n)) return "0,00";
+  const num = Number(n);
+  const fixed = Math.abs(num).toFixed(2);
+  const [intPart, decPart] = fixed.split(".");
+  const withDots = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return (num < 0 ? "-" : "") + withDots + "," + decPart;
+};
+
+const round2 = (n) => Math.round(n * 100) / 100;
+
+/* ───────── scenarios ───────── */
+const SCENARIOS = [
+  {
+    id: 1,
+    empresa: "Levantina de Moda, S.L.",
+    actividad: "cadena de tiendas de ropa",
+    bien: "Mobiliario comercial",
+    cuentaBien: "216",
+    nombreBien: "Mobiliario",
+    precioAdq: 18000,
+    fechaCompra: "01/01/20X0",
+    mesCompra: 1,
+    vidaUtil: 10,
+    valorResidual: 0,
+    amortAnual: 1800,
+    metodo: "lineal constante",
+    amortAcumFinAnterior: 5400,
+    aniosTranscurridos: 3,
+    fechaVenta: "01/07/20X3",
+    mesVenta: 7,
+    anioVenta: 4,
+    precioVenta: 10000,
+    tipoIVA: 21,
+    formaCobro: "banco",
+    textoFormaCobro: "transferencia bancaria",
+    tieneDeterioro: false,
+    deterioroAcum: 0,
+    tipo: "material",
+    difficulty: "básico",
+    hint: "Recuerda que hay que amortizar los 6 meses del año de la venta (enero a junio).",
+  },
+  {
+    id: 2,
+    empresa: "Nortec Ingeniería, S.L.",
+    actividad: "consultoría de ingeniería industrial",
+    bien: "Equipos informáticos",
+    cuentaBien: "217",
+    nombreBien: "Equipos para procesos de información",
+    precioAdq: 8000,
+    fechaCompra: "01/04/20X0",
+    mesCompra: 4,
+    vidaUtil: 5,
+    valorResidual: 0,
+    amortAnual: 1600,
+    metodo: "lineal constante",
+    amortAcumFinAnterior: 3600,
+    aniosTranscurridos: 2,
+    fechaVenta: "31/12/20X2",
+    mesVenta: 12,
+    anioVenta: 3,
+    precioVenta: 2000,
+    tipoIVA: 21,
+    formaCobro: "mixto",
+    textoFormaCobro: "50% cheque bancario y 50% a cobrar a 90 días",
+    tieneDeterioro: false,
+    deterioroAcum: 0,
+    tipo: "material",
+    difficulty: "intermedio",
+    hint: "La compra fue en abril, así que el primer año solo se amortizaron 9 meses. Comprueba bien la amortización acumulada.",
+  },
+  {
+    id: 3,
+    empresa: "Costa Blanca Logistics, S.A.",
+    actividad: "empresa de transporte de mercancías",
+    bien: "Furgoneta de reparto",
+    cuentaBien: "218",
+    nombreBien: "Elementos de transporte",
+    precioAdq: 32000,
+    fechaCompra: "01/03/20X0",
+    mesCompra: 3,
+    vidaUtil: 8,
+    valorResidual: 0,
+    amortAnual: 4000,
+    metodo: "lineal constante",
+    amortAcumFinAnterior: 11666.67,
+    aniosTranscurridos: 3,
+    fechaVenta: "01/09/20X3",
+    mesVenta: 9,
+    anioVenta: 4,
+    precioVenta: 22000,
+    tipoIVA: 21,
+    formaCobro: "credito",
+    textoFormaCobro: "cobro aplazado: 40% a 3 meses y 60% a 15 meses",
+    tieneDeterioro: false,
+    deterioroAcum: 0,
+    tipo: "material",
+    difficulty: "avanzado",
+    hint: "La compra fue en marzo. En el año de la venta, amortiza solo de enero a agosto (8 meses). Además, el cobro se reparte entre corto y largo plazo.",
+  },
+  {
+    id: 4,
+    empresa: "Digitalia Creativa, S.L.",
+    actividad: "agencia de diseño web",
+    bien: "Aplicación informática de diseño 3D",
+    cuentaBien: "206",
+    nombreBien: "Aplicaciones informáticas",
+    precioAdq: 12000,
+    fechaCompra: "01/01/20X0",
+    mesCompra: 1,
+    vidaUtil: 6,
+    valorResidual: 0,
+    amortAnual: 2000,
+    metodo: "lineal constante",
+    amortAcumFinAnterior: 8000,
+    aniosTranscurridos: 4,
+    fechaVenta: "30/06/20X4",
+    mesVenta: 6,
+    anioVenta: 5,
+    precioVenta: 1500,
+    tipoIVA: 21,
+    formaCobro: "banco",
+    textoFormaCobro: "transferencia bancaria",
+    tieneDeterioro: false,
+    deterioroAcum: 0,
+    tipo: "intangible",
+    difficulty: "intermedio",
+    hint: "Es inmovilizado intangible: las cuentas de amortización y resultado son diferentes (subgrupo 28/68 y 670/770).",
+  },
+  {
+    id: 5,
+    empresa: "Talleres Montalbán, S.L.",
+    actividad: "taller de reparación de automóviles",
+    bien: "Elevador hidráulico",
+    cuentaBien: "213",
+    nombreBien: "Maquinaria",
+    precioAdq: 15000,
+    fechaCompra: "01/07/20X0",
+    mesCompra: 7,
+    vidaUtil: 10,
+    valorResidual: 0,
+    amortAnual: 1500,
+    metodo: "lineal constante",
+    amortAcumFinAnterior: 6000,
+    aniosTranscurridos: 4,
+    fechaVenta: "01/10/20X4",
+    mesVenta: 10,
+    anioVenta: 5,
+    precioVenta: 5000,
+    tipoIVA: 21,
+    formaCobro: "banco",
+    textoFormaCobro: "transferencia bancaria en el momento de la operación",
+    tieneDeterioro: true,
+    deterioroAcum: 1500,
+    tipo: "material",
+    difficulty: "avanzado",
+    hint: "Este caso incluye un deterioro acumulado de 1.500 € que hay que dar de baja en el asiento de venta. No olvides restarlo del VNC.",
+  },
+];
+
+/* ───────── step definitions ───────── */
+const STEP_TITLES = [
+  "Escenario",
+  "Paso 1: Amortización del período",
+  "Paso 2: Amortización acumulada total",
+  "Paso 3: Valor neto contable",
+  "Paso 4: Resultado de la venta",
+  "Paso 5: Cálculos de IVA y cobro",
+  "Paso 6: Construye el asiento",
+  "Resultado",
+];
+
+/* ───────── main component ───────── */
+const App = function ConstructorVentaInmovilizado() {
+  const [scenarioIdx, setScenarioIdx] = useState(0);
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState({});
+  const [errors, setErrors] = useState({});
+  const [showHint, setShowHint] = useState(false);
+  const [showDataPanel, setShowDataPanel] = useState(false);
+  const [asientoLineas, setAsientoLineas] = useState([]);
+  const [asientoChecked, setAsientoChecked] = useState(false);
+  const [asientoErrors, setAsientoErrors] = useState([]);
+  const [completedScenarios, setCompletedScenarios] = useState([]);
+  const [score, setScore] = useState(0);
+  const [totalAttempts, setTotalAttempts] = useState(0);
+
+  const sc = SCENARIOS[scenarioIdx];
+
+  /* correct answers calculation */
+  const correct = useMemo(() => {
+    const mesesVentaAnio = sc.mesVenta - 1;
+    const amortPeriodo = round2(sc.amortAnual * (mesesVentaAnio / 12));
+    const amortAcumTotal = round2(sc.amortAcumFinAnterior + amortPeriodo);
+    const vnc = round2(sc.precioAdq - amortAcumTotal - sc.deterioroAcum);
+    const resultado = round2(sc.precioVenta - vnc);
+    const iva = round2(sc.precioVenta * (sc.tipoIVA / 100));
+    const totalCobro = round2(sc.precioVenta + iva);
+
+    return { amortPeriodo, amortAcumTotal, vnc, resultado, iva, totalCobro, mesesVentaAnio };
+  }, [sc]);
+
+  /* correct journal entry */
+  const correctAsiento = useMemo(() => {
+    const lines = [];
+    const esMaterial = sc.tipo === "material";
+    const cuentaAmortAcum = esMaterial ? `281${sc.cuentaBien.slice(-1)}` : `280${sc.cuentaBien.slice(-1)}`;
+    const nombreAmortAcum = esMaterial ? `Amort. acum. ${sc.nombreBien.toLowerCase()}` : `Amort. acum. ${sc.nombreBien.toLowerCase()}`;
+
+    // DEBE
+    lines.push({ lado: "D", cuenta: cuentaAmortAcum, nombre: nombreAmortAcum, importe: correct.amortAcumTotal });
+
+    if (sc.tieneDeterioro) {
+      const cuentaDet = esMaterial ? `291${sc.cuentaBien.slice(-1)}` : `290${sc.cuentaBien.slice(-1)}`;
+      lines.push({ lado: "D", cuenta: cuentaDet, nombre: `Deterioro de valor ${sc.nombreBien.toLowerCase()}`, importe: sc.deterioroAcum });
+    }
+
+    if (sc.formaCobro === "banco") {
+      lines.push({ lado: "D", cuenta: "572", nombre: "Bancos, c/c", importe: correct.totalCobro });
+    } else if (sc.formaCobro === "mixto") {
+      lines.push({ lado: "D", cuenta: "572", nombre: "Bancos, c/c", importe: round2(correct.totalCobro * 0.5) });
+      lines.push({ lado: "D", cuenta: "543", nombre: "Créditos c/p enajenación inmov.", importe: round2(correct.totalCobro * 0.5) });
+    } else if (sc.formaCobro === "credito") {
+      lines.push({ lado: "D", cuenta: "543", nombre: "Créditos c/p enajenación inmov.", importe: round2(correct.totalCobro * 0.4) });
+      lines.push({ lado: "D", cuenta: "253", nombre: "Créditos l/p enajenación inmov.", importe: round2(correct.totalCobro * 0.6) });
+    }
+
+    if (correct.resultado < 0) {
+      const cuentaPerdida = esMaterial ? "671" : "670";
+      lines.push({ lado: "D", cuenta: cuentaPerdida, nombre: `Pérdidas proc. inmov. ${esMaterial ? "material" : "intangible"}`, importe: Math.abs(correct.resultado) });
+    }
+
+    // HABER
+    lines.push({ lado: "H", cuenta: sc.cuentaBien, nombre: sc.nombreBien, importe: sc.precioAdq });
+    lines.push({ lado: "H", cuenta: "477", nombre: "H.P., IVA repercutido", importe: correct.iva });
+
+    if (correct.resultado > 0) {
+      const cuentaBenef = esMaterial ? "771" : "770";
+      lines.push({ lado: "H", cuenta: cuentaBenef, nombre: `Beneficios proc. inmov. ${esMaterial ? "material" : "intangible"}`, importe: correct.resultado });
+    }
+
+    return lines;
+  }, [sc, correct]);
+
+  /* per-step contextual hints */
+  const stepHints = useMemo(() => ({
+    1: sc.hint,
+    2: `Amort. acumulada total = lo que ya estaba acumulado (${fmt(sc.amortAcumFinAnterior)} €) + lo que acabas de calcular en el paso anterior.`,
+    3: `VNC = Precio de adquisición − Amort. acumulada total${sc.tieneDeterioro ? " − Deterioro acumulado" : ""}. Revisa los datos del escenario si necesitas los importes.`,
+    4: `Compara el precio de venta (${fmt(sc.precioVenta)} €) con el VNC que has calculado. Si el precio de venta es mayor → beneficio. Si es menor → pérdida.`,
+    5: `El IVA se calcula sobre el precio de venta (sin IVA): ${fmt(sc.precioVenta)} × ${sc.tipoIVA}%. El total a cobrar es precio de venta + IVA.`,
+  }), [sc, correct]);
+
+  const setAnswer = (key, val) => {
+    setAnswers(prev => ({ ...prev, [key]: val }));
+    setErrors(prev => ({ ...prev, [key]: undefined }));
+  };
+
+  const checkValue = (key, correctVal, tolerance = 0.05) => {
+    const userVal = parseFloat(String(answers[key] || "0").replace(",", "."));
+    if (Math.abs(userVal - correctVal) <= tolerance) {
+      setErrors(prev => ({ ...prev, [key]: false }));
+      return true;
+    } else {
+      setErrors(prev => ({ ...prev, [key]: true }));
+      return false;
+    }
+  };
+
+  const nextScenario = () => {
+    const nextIdx = (scenarioIdx + 1) % SCENARIOS.length;
+    setScenarioIdx(nextIdx);
+    setStep(0);
+    setAnswers({});
+    setErrors({});
+    setShowHint(false);
+    setShowDataPanel(false);
+    setAsientoLineas([]);
+    setAsientoChecked(false);
+    setAsientoErrors([]);
+  };
+
+  const resetCurrent = () => {
+    setStep(0);
+    setAnswers({});
+    setErrors({});
+    setShowHint(false);
+    setShowDataPanel(false);
+    setAsientoLineas([]);
+    setAsientoChecked(false);
+    setAsientoErrors([]);
+  };
+
+  /* ───────── styles ───────── */
+  const colors = {
+    primary: "#5B6ABF",
+    primaryDark: "#434F8C",
+    primaryLight: "#E8EAFC",
+    success: "#4CAF82",
+    successLight: "#E8F8F0",
+    successBorder: "#B8E6CC",
+    error: "#D9534F",
+    errorLight: "#FDF0EF",
+    errorBorder: "#F0C0BE",
+    warm: "#F9F6F0",
+    warmDark: "#E8E2D6",
+    text: "#3A3A4A",
+    textLight: "#7A7A8A",
+    textMuted: "#A0A0B0",
+    amber: "#D4920A",
+    amberLight: "#FFF8E6",
+    amberBorder: "#F0DFA0",
+    card: "#FFFFFF",
+    bg: "#F4F2ED",
+  };
+
+  const inputStyle = (errKey) => ({
+    width: "100%",
+    padding: "10px 14px",
+    borderRadius: 10,
+    border: `2px solid ${errors[errKey] === true ? colors.error : errors[errKey] === false ? colors.success : "#D8D8E4"}`,
+    background: errors[errKey] === false ? colors.successLight : errors[errKey] === true ? colors.errorLight : "#FFF",
+    fontSize: 15,
+    color: colors.text,
+    fontFamily: "'Quicksand', sans-serif",
+    fontWeight: 600,
+    outline: "none",
+    boxSizing: "border-box",
+    transition: "border-color 0.2s, background 0.2s",
+  });
+
+  const btnPrimary = {
+    background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.primaryDark} 100%)`,
+    color: "#fff",
+    border: "none",
+    borderRadius: 10,
+    padding: "11px 28px",
+    fontSize: 14,
+    fontWeight: 700,
+    cursor: "pointer",
+    fontFamily: "'Quicksand', sans-serif",
+    boxShadow: "0 3px 12px rgba(91,106,191,0.25)",
+    transition: "transform 0.12s, box-shadow 0.12s",
+    letterSpacing: 0.3,
+  };
+
+  const btnSecondary = {
+    background: "transparent",
+    color: colors.primary,
+    border: `2px solid ${colors.primary}`,
+    borderRadius: 10,
+    padding: "9px 22px",
+    fontSize: 13,
+    fontWeight: 700,
+    cursor: "pointer",
+    fontFamily: "'Quicksand', sans-serif",
+    letterSpacing: 0.3,
+  };
+
+  /* ───────── renderers ───────── */
+
+  const renderScenario = () => (
+    <div>
+      <div style={{
+        background: `linear-gradient(135deg, ${colors.primaryLight} 0%, #F0EEFF 100%)`,
+        borderRadius: 14,
+        padding: "20px 24px",
+        border: `1px solid #D0D4F0`,
+        marginBottom: 20,
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <span style={{
+            background: colors.primary, color: "#fff", borderRadius: 20,
+            padding: "3px 14px", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1,
+          }}>
+            {sc.difficulty}
+          </span>
+          <span style={{ fontSize: 12, color: colors.textLight }}>Escenario {sc.id} de {SCENARIOS.length}</span>
+        </div>
+
+        <h3 style={{ fontSize: 17, color: colors.primaryDark, margin: "0 0 10px" }}>{sc.empresa}</h3>
+        <p style={{ fontSize: 14, color: colors.text, lineHeight: 1.8, margin: 0 }}>
+          <strong>{sc.empresa}</strong>, {sc.actividad}, vende el {sc.fechaVenta} un bien de inmovilizado {sc.tipo} con las siguientes características:
+        </p>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 20 }}>
+        {[
+          { icon: "🏷️", label: "Bien", value: `(${sc.cuentaBien}) ${sc.nombreBien}` },
+          { icon: "💰", label: "Precio de adquisición", value: `${fmt(sc.precioAdq)} €` },
+          { icon: "📅", label: "Fecha de compra", value: sc.fechaCompra },
+          { icon: "⏱️", label: "Vida útil", value: `${sc.vidaUtil} años` },
+          { icon: "📉", label: "Método de amortización", value: sc.metodo },
+          { icon: "📊", label: `Amort. acum. a 31/12 del año anterior`, value: `${fmt(sc.amortAcumFinAnterior)} €` },
+          { icon: "🤝", label: "Precio de venta (sin IVA)", value: `${fmt(sc.precioVenta)} €` },
+          { icon: "💳", label: "Forma de cobro", value: sc.textoFormaCobro },
+          ...(sc.tieneDeterioro ? [{ icon: "⚠️", label: "Deterioro acumulado", value: `${fmt(sc.deterioroAcum)} €` }] : []),
+          ...(sc.valorResidual > 0 ? [{ icon: "🔄", label: "Valor residual", value: `${fmt(sc.valorResidual)} €` }] : []),
+        ].map((item, i) => (
+          <div key={i} style={{
+            background: colors.card, borderRadius: 10, padding: "12px 16px",
+            border: `1px solid ${colors.warmDark}`, display: "flex", gap: 10, alignItems: "flex-start",
+          }}>
+            <span style={{ fontSize: 18, flexShrink: 0 }}>{item.icon}</span>
+            <div>
+              <div style={{ fontSize: 11, color: colors.textMuted, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{item.label}</div>
+              <div style={{ fontSize: 14, color: colors.text, fontWeight: 700, marginTop: 2 }}>{item.value}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{
+        background: colors.amberLight, borderRadius: 10, padding: "14px 18px",
+        border: `1px solid ${colors.amberBorder}`, marginBottom: 20,
+      }}>
+        <div style={{ fontSize: 13, color: colors.amber, fontWeight: 700, marginBottom: 4 }}>📝 Tu misión</div>
+        <div style={{ fontSize: 13, color: colors.text, lineHeight: 1.6 }}>
+          Vas a calcular paso a paso todos los datos necesarios y construir el asiento de venta de este inmovilizado. Cada paso se valida antes de pasar al siguiente.
+        </div>
+      </div>
+
+      <div style={{ textAlign: "center" }}>
+        <button onClick={() => setStep(1)} style={btnPrimary}>
+          Empezar los cálculos →
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderStep1 = () => {
+    const meses = correct.mesesVentaAnio;
+    return (
+      <div>
+        <StepHeader num={1} title="Amortización del período" desc={`Calcula la amortización correspondiente al año de la venta. El bien se vende el ${sc.fechaVenta}, así que debes calcular los meses transcurridos desde el 1 de enero hasta la fecha de venta.`} />
+        
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+          <div>
+            <FieldLabel>¿Cuántos meses hay que amortizar en el año de la venta?</FieldLabel>
+            <input type="number" value={answers.meses || ""} onChange={e => setAnswer("meses", e.target.value)}
+              placeholder="Nº de meses" style={inputStyle("meses")} min={0} max={12} />
+            <FieldFeedback errKey="meses" correctVal={meses} suffix=" meses" />
+          </div>
+          <div>
+            <FieldLabel>Cuota de amortización del período (€)</FieldLabel>
+            <input type="text" value={answers.amortPeriodo || ""} onChange={e => setAnswer("amortPeriodo", e.target.value)}
+              placeholder="0,00" style={inputStyle("amortPeriodo")} />
+            <FieldFeedback errKey="amortPeriodo" correctVal={correct.amortPeriodo} suffix=" €" />
+          </div>
+        </div>
+
+        <InfoBox>
+          <strong>Fórmula:</strong> Cuota del período = Amortización anual × (meses / 12) = {fmt(sc.amortAnual)} × ({meses} / 12)
+        </InfoBox>
+
+        <StepButtons
+          stepNum={1}
+          onCheck={() => {
+            const a = checkValue("meses", meses, 0);
+            const b = checkValue("amortPeriodo", correct.amortPeriodo, 0.5);
+            if (a && b) { setTotalAttempts(t => t + 1); setScore(s => s + 1); }
+            else setTotalAttempts(t => t + 1);
+          }}
+          onNext={() => { setShowHint(false); setStep(2); }}
+          canProceed={errors.meses === false && errors.amortPeriodo === false}
+        />
+      </div>
+    );
+  };
+
+  const renderStep2 = () => (
+    <div>
+      <StepHeader num={2} title="Amortización acumulada total" desc="Suma la amortización acumulada a cierre del ejercicio anterior más la amortización del período que acabas de calcular." />
+
+      <div style={{ maxWidth: 400, marginBottom: 16 }}>
+        <FieldLabel>Amortización acumulada total hasta la fecha de venta (€)</FieldLabel>
+        <input type="text" value={answers.amortAcumTotal || ""} onChange={e => setAnswer("amortAcumTotal", e.target.value)}
+          placeholder="0,00" style={inputStyle("amortAcumTotal")} />
+        <FieldFeedback errKey="amortAcumTotal" correctVal={correct.amortAcumTotal} suffix=" €" />
+      </div>
+
+      <InfoBox>
+        <strong>Fórmula:</strong> Amort. acum. total = Amort. acum. anterior + Amort. del período = {fmt(sc.amortAcumFinAnterior)} + {fmt(correct.amortPeriodo)}
+      </InfoBox>
+
+      <StepButtons
+        stepNum={2}
+        onCheck={() => {
+          const ok = checkValue("amortAcumTotal", correct.amortAcumTotal, 0.5);
+          setTotalAttempts(t => t + 1);
+          if (ok) setScore(s => s + 1);
+        }}
+        onNext={() => { setShowHint(false); setStep(3); }}
+        canProceed={errors.amortAcumTotal === false}
+      />
+    </div>
+  );
+
+  const renderStep3 = () => (
+    <div>
+      <StepHeader num={3} title="Valor neto contable (VNC)" desc={`Calcula el valor neto contable del bien en el momento de la venta. Recuerda: VNC = Precio de adquisición − Amort. acumulada${sc.tieneDeterioro ? " − Deterioro acumulado" : ""}.`} />
+
+      <div style={{ maxWidth: 400, marginBottom: 16 }}>
+        <FieldLabel>Valor neto contable en la fecha de venta (€)</FieldLabel>
+        <input type="text" value={answers.vnc || ""} onChange={e => setAnswer("vnc", e.target.value)}
+          placeholder="0,00" style={inputStyle("vnc")} />
+        <FieldFeedback errKey="vnc" correctVal={correct.vnc} suffix=" €" />
+      </div>
+
+      <InfoBox>
+        <strong>Fórmula:</strong> VNC = {fmt(sc.precioAdq)} − {fmt(correct.amortAcumTotal)}{sc.tieneDeterioro ? ` − ${fmt(sc.deterioroAcum)}` : ""}
+      </InfoBox>
+
+      <StepButtons
+        stepNum={3}
+        onCheck={() => {
+          const ok = checkValue("vnc", correct.vnc, 0.5);
+          setTotalAttempts(t => t + 1);
+          if (ok) setScore(s => s + 1);
+        }}
+        onNext={() => { setShowHint(false); setStep(4); }}
+        canProceed={errors.vnc === false}
+      />
+    </div>
+  );
+
+  const renderStep4 = () => (
+    <div>
+      <StepHeader num={4} title="Resultado de la venta" desc="Compara el precio de venta con el valor neto contable para determinar si hay beneficio o pérdida." />
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+        <div>
+          <FieldLabel>¿Beneficio o pérdida?</FieldLabel>
+          <div style={{ display: "flex", gap: 8 }}>
+            {["beneficio", "perdida"].map(opt => (
+              <button key={opt} onClick={() => setAnswer("tipoResultado", opt)} style={{
+                flex: 1, padding: "10px 8px", borderRadius: 10, fontSize: 14, fontWeight: 700,
+                fontFamily: "'Quicksand', sans-serif", cursor: "pointer", transition: "all 0.15s",
+                background: answers.tipoResultado === opt
+                  ? (opt === "beneficio" ? colors.successLight : colors.errorLight)
+                  : "#F8F8FA",
+                border: `2px solid ${answers.tipoResultado === opt
+                  ? (opt === "beneficio" ? colors.success : colors.error)
+                  : "#E0E0E8"}`,
+                color: answers.tipoResultado === opt
+                  ? (opt === "beneficio" ? colors.success : colors.error)
+                  : colors.textLight,
+              }}>
+                {opt === "beneficio" ? "📈 Beneficio" : "📉 Pérdida"}
+              </button>
+            ))}
+          </div>
+          {errors.tipoResultado === true && <div style={{ fontSize: 12, color: colors.error, marginTop: 4, fontWeight: 600 }}>Revisa: ¿el precio de venta es mayor o menor que el VNC?</div>}
+          {errors.tipoResultado === false && <div style={{ fontSize: 12, color: colors.success, marginTop: 4, fontWeight: 600 }}>✓ Correcto</div>}
+        </div>
+        <div>
+          <FieldLabel>Importe del resultado (€)</FieldLabel>
+          <input type="text" value={answers.resultado || ""} onChange={e => setAnswer("resultado", e.target.value)}
+            placeholder="0,00" style={inputStyle("resultado")} />
+          <FieldFeedback errKey="resultado" correctVal={Math.abs(correct.resultado)} suffix=" €" />
+        </div>
+      </div>
+
+      <InfoBox>
+        <strong>Fórmula:</strong> Resultado = Precio de venta − VNC = {fmt(sc.precioVenta)} − {fmt(correct.vnc)} = {fmt(correct.resultado)} €
+        {correct.resultado >= 0 ? " → Beneficio ✓" : " → Pérdida ✗"}
+      </InfoBox>
+
+      <StepButtons
+        stepNum={4}
+        onCheck={() => {
+          const correctTipo = correct.resultado >= 0 ? "beneficio" : "perdida";
+          const a = answers.tipoResultado === correctTipo;
+          setErrors(prev => ({ ...prev, tipoResultado: !a }));
+          const b = checkValue("resultado", Math.abs(correct.resultado), 0.5);
+          setTotalAttempts(t => t + 1);
+          if (a && b) setScore(s => s + 1);
+        }}
+        onNext={() => { setShowHint(false); setStep(5); }}
+        canProceed={errors.tipoResultado === false && errors.resultado === false}
+      />
+    </div>
+  );
+
+  const renderStep5 = () => (
+    <div>
+      <StepHeader num={5} title="IVA y forma de cobro" desc={`Calcula el IVA repercutido (${sc.tipoIVA}%) sobre el precio de venta y el total a cobrar.`} />
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+        <div>
+          <FieldLabel>IVA repercutido ({sc.tipoIVA}%) (€)</FieldLabel>
+          <input type="text" value={answers.iva || ""} onChange={e => setAnswer("iva", e.target.value)}
+            placeholder="0,00" style={inputStyle("iva")} />
+          <FieldFeedback errKey="iva" correctVal={correct.iva} suffix=" €" />
+        </div>
+        <div>
+          <FieldLabel>Total a cobrar (€)</FieldLabel>
+          <input type="text" value={answers.totalCobro || ""} onChange={e => setAnswer("totalCobro", e.target.value)}
+            placeholder="0,00" style={inputStyle("totalCobro")} />
+          <FieldFeedback errKey="totalCobro" correctVal={correct.totalCobro} suffix=" €" />
+        </div>
+      </div>
+
+      {sc.formaCobro !== "banco" && (
+        <div style={{
+          background: colors.amberLight, borderRadius: 10, padding: "12px 16px",
+          border: `1px solid ${colors.amberBorder}`, marginBottom: 16,
+        }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: colors.amber }}>⚡ Recuerda la forma de cobro</div>
+          <div style={{ fontSize: 13, color: colors.text, marginTop: 4 }}>
+            {sc.textoFormaCobro}. Tendrás que repartir el total a cobrar entre las cuentas correspondientes en el asiento.
+          </div>
+        </div>
+      )}
+
+      <StepButtons
+        stepNum={5}
+        onCheck={() => {
+          const a = checkValue("iva", correct.iva, 0.5);
+          const b = checkValue("totalCobro", correct.totalCobro, 0.5);
+          setTotalAttempts(t => t + 1);
+          if (a && b) setScore(s => s + 1);
+        }}
+        onNext={() => {
+          setShowHint(false);
+          const numLines = correctAsiento.length;
+          setAsientoLineas(Array.from({ length: numLines }, () => ({ lado: "D", cuenta: "", importe: "" })));
+          setStep(6);
+        }}
+        canProceed={errors.iva === false && errors.totalCobro === false}
+      />
+    </div>
+  );
+
+  const renderStep6 = () => {
+    const updateLine = (idx, field, val) => {
+      setAsientoLineas(prev => {
+        const copy = [...prev];
+        copy[idx] = { ...copy[idx], [field]: val };
+        return copy;
+      });
+      setAsientoChecked(false);
+      setAsientoErrors([]);
+    };
+
+    const checkAsiento = () => {
+      const errs = [];
+      const userDebe = asientoLineas.filter(l => l.lado === "D");
+      const userHaber = asientoLineas.filter(l => l.lado === "H");
+      const correctDebe = correctAsiento.filter(l => l.lado === "D");
+      const correctHaber = correctAsiento.filter(l => l.lado === "H");
+
+      let totalUserDebe = 0;
+      let totalUserHaber = 0;
+      let matchedCorrect = 0;
+
+      asientoLineas.forEach((line, i) => {
+        const userImporte = parseFloat(String(line.importe || "0").replace(",", "."));
+        const userCuenta = String(line.cuenta || "").trim();
+
+        if (line.lado === "D") totalUserDebe += userImporte;
+        else totalUserHaber += userImporte;
+
+        // find matching correct line
+        const pool = line.lado === "D" ? correctDebe : correctHaber;
+        const match = pool.find(c => {
+          const cuentaMatch = c.cuenta === userCuenta || c.cuenta.startsWith(userCuenta) || userCuenta.startsWith(c.cuenta);
+          const importeMatch = Math.abs(c.importe - userImporte) < 1;
+          return cuentaMatch && importeMatch;
+        });
+
+        if (!match) {
+          if (!userCuenta && !line.importe) errs.push({ idx: i, msg: "Línea vacía" });
+          else if (!userCuenta) errs.push({ idx: i, msg: "Falta la cuenta" });
+          else errs.push({ idx: i, msg: `Revisa cuenta o importe` });
+        } else {
+          matchedCorrect++;
+        }
+      });
+
+      if (Math.abs(totalUserDebe - totalUserHaber) > 1) {
+        errs.push({ idx: -1, msg: `El asiento no cuadra: Debe (${fmt(totalUserDebe)}) ≠ Haber (${fmt(totalUserHaber)})` });
+      }
+
+      setAsientoErrors(errs);
+      setAsientoChecked(true);
+      setTotalAttempts(t => t + 1);
+      if (errs.length === 0) {
+        setScore(s => s + 1);
+      }
+    };
+
+    const allCorrect = asientoChecked && asientoErrors.length === 0;
+
+    return (
+      <div>
+        <StepHeader num={6} title="Construye el asiento de venta" desc={`Ahora monta el asiento completo. Tienes ${correctAsiento.length} líneas. Indica para cada una: lado (Debe/Haber), código de cuenta e importe.`} />
+
+        <div style={{
+          background: "#FEFEFE", borderRadius: 12, padding: "16px 20px",
+          border: `1px solid ${colors.warmDark}`, marginBottom: 16,
+        }}>
+          <div style={{
+            display: "grid", gridTemplateColumns: "80px 1fr 1fr 40px",
+            gap: 8, marginBottom: 8, paddingBottom: 8, borderBottom: `2px solid ${colors.primary}`,
+          }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: colors.primary, textTransform: "uppercase" }}>Lado</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: colors.primary, textTransform: "uppercase" }}>Cuenta</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: colors.primary, textTransform: "uppercase" }}>Importe (€)</div>
+            <div></div>
+          </div>
+
+          {asientoLineas.map((line, i) => {
+            const lineErr = asientoChecked ? asientoErrors.find(e => e.idx === i) : null;
+            const lineOk = asientoChecked && !lineErr;
+            return (
+              <div key={i} style={{
+                display: "grid", gridTemplateColumns: "80px 1fr 1fr 40px", gap: 8,
+                padding: "6px 0", alignItems: "center",
+                background: lineOk ? colors.successLight : lineErr ? colors.errorLight : "transparent",
+                borderRadius: 6, paddingLeft: 4, paddingRight: 4, marginBottom: 2,
+              }}>
+                <select value={line.lado} onChange={e => updateLine(i, "lado", e.target.value)} style={{
+                  padding: "8px 4px", borderRadius: 8, border: "1.5px solid #D8D8E4",
+                  fontSize: 13, fontWeight: 700, fontFamily: "'Quicksand', sans-serif",
+                  color: line.lado === "D" ? colors.primary : colors.amber,
+                  background: "#fff",
+                }}>
+                  <option value="D">Debe</option>
+                  <option value="H">Haber</option>
+                </select>
+                <input type="text" value={line.cuenta} onChange={e => updateLine(i, "cuenta", e.target.value)}
+                  placeholder="Código cuenta" style={{
+                    padding: "8px 10px", borderRadius: 8, border: `1.5px solid ${lineErr ? colors.error : lineOk ? colors.success : "#D8D8E4"}`,
+                    fontSize: 13, fontFamily: "'Quicksand', sans-serif", fontWeight: 600, background: "#fff",
+                  }} />
+                <input type="text" value={line.importe} onChange={e => updateLine(i, "importe", e.target.value)}
+                  placeholder="0,00" style={{
+                    padding: "8px 10px", borderRadius: 8, border: `1.5px solid ${lineErr ? colors.error : lineOk ? colors.success : "#D8D8E4"}`,
+                    fontSize: 13, fontFamily: "'Quicksand', sans-serif", fontWeight: 600, textAlign: "right", background: "#fff",
+                  }} />
+                <div style={{ textAlign: "center", fontSize: 16 }}>
+                  {lineOk ? "✅" : lineErr ? "❌" : ""}
+                </div>
+              </div>
+            );
+          })}
+
+          {asientoChecked && asientoErrors.filter(e => e.idx === -1).map((e, i) => (
+            <div key={i} style={{ fontSize: 13, color: colors.error, fontWeight: 600, marginTop: 8, padding: "8px 12px", background: colors.errorLight, borderRadius: 8 }}>
+              ⚠️ {e.msg}
+            </div>
+          ))}
+        </div>
+
+        {asientoChecked && allCorrect && (
+          <div style={{
+            background: colors.successLight, borderRadius: 12, padding: "16px 20px",
+            border: `1px solid ${colors.successBorder}`, marginBottom: 16, textAlign: "center",
+          }}>
+            <div style={{ fontSize: 28, marginBottom: 6 }}>🎉</div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: colors.success }}>¡Asiento correcto!</div>
+            <div style={{ fontSize: 13, color: colors.text, marginTop: 4 }}>Has construido correctamente el asiento de venta. ¡Bien hecho!</div>
+          </div>
+        )}
+
+        <div style={{ display: "flex", gap: 10, justifyContent: "space-between", marginTop: 16 }}>
+          <button onClick={() => setShowHint(!showHint)} style={btnSecondary}>
+            {showHint ? "Ocultar pista" : "💡 Ver pista"}
+          </button>
+          <div style={{ display: "flex", gap: 10 }}>
+            {!allCorrect && (
+              <button onClick={checkAsiento} style={btnPrimary}>Comprobar asiento</button>
+            )}
+            {allCorrect && (
+              <button onClick={() => setStep(7)} style={btnPrimary}>Ver resultado final →</button>
+            )}
+          </div>
+        </div>
+
+        {showHint && (
+          <div style={{
+            background: colors.amberLight, borderRadius: 10, padding: "14px 18px",
+            border: `1px solid ${colors.amberBorder}`, marginTop: 12,
+          }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: colors.amber, marginBottom: 6 }}>💡 Pista para el asiento</div>
+            <div style={{ fontSize: 13, color: colors.text, lineHeight: 1.6 }}>
+              Recuerda: el bien se da de baja por el Haber a su precio de adquisición. La amortización acumulada va al Debe para cancelarla.
+              {sc.tieneDeterioro && " El deterioro acumulado también se cancela por el Debe."}
+              {" "}El {correct.resultado >= 0 ? "beneficio va al Haber" : "la pérdida va al Debe"}.
+              <br /><br />
+              <strong>Cuentas que intervienen en este asiento:</strong>
+              <div style={{ marginTop: 6, display: "flex", flexWrap: "wrap", gap: 6 }}>
+                {[...new Set(correctAsiento.map(l => l.cuenta))].sort().map(c => (
+                  <span key={c} style={{
+                    background: "#fff", padding: "3px 10px", borderRadius: 6,
+                    fontSize: 12, fontWeight: 700, color: colors.primaryDark, border: `1px solid ${colors.amberBorder}`,
+                  }}>{c}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderResult = () => {
+    const esMaterial = sc.tipo === "material";
+    return (
+      <div style={{ textAlign: "center" }}>
+        <div style={{ fontSize: 48, marginBottom: 10 }}>✨</div>
+        <h3 style={{ fontSize: 20, color: colors.primaryDark, margin: "0 0 8px" }}>¡Escenario completado!</h3>
+        <p style={{ fontSize: 14, color: colors.textLight, marginBottom: 20 }}>{sc.empresa} — Venta de {sc.nombreBien}</p>
+
+        {/* Solution summary */}
+        <div style={{
+          background: colors.card, borderRadius: 14, padding: "20px 24px",
+          border: `1px solid ${colors.warmDark}`, textAlign: "left", marginBottom: 20,
+          boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
+        }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: colors.primary, marginBottom: 12 }}>📋 Solución completa</div>
+
+          <div style={{ fontSize: 13, color: colors.text, lineHeight: 2 }}>
+            Amortización del período ({correct.mesesVentaAnio} meses): <strong>{fmt(correct.amortPeriodo)} €</strong><br />
+            Amortización acumulada total: <strong>{fmt(correct.amortAcumTotal)} €</strong><br />
+            {sc.tieneDeterioro && <>Deterioro acumulado: <strong>{fmt(sc.deterioroAcum)} €</strong><br /></>}
+            Valor neto contable: <strong>{fmt(correct.vnc)} €</strong><br />
+            Precio de venta: <strong>{fmt(sc.precioVenta)} €</strong><br />
+            <span style={{ color: correct.resultado >= 0 ? colors.success : colors.error, fontWeight: 700 }}>
+              {correct.resultado >= 0 ? `Beneficio: ${fmt(correct.resultado)} €` : `Pérdida: ${fmt(Math.abs(correct.resultado))} €`}
+            </span>
+          </div>
+
+          <div style={{
+            marginTop: 16, padding: 16, background: colors.warm, borderRadius: 10,
+            fontFamily: "'Courier Prime', 'Courier New', monospace", fontSize: 12,
+          }}>
+            <div style={{ textAlign: "center", fontWeight: 700, marginBottom: 8, color: colors.primaryDark }}>— {sc.fechaVenta} —</div>
+            {correctAsiento.filter(l => l.lado === "D").map((l, i) => (
+              <div key={`d${i}`} style={{ color: colors.primary, padding: "2px 0" }}>
+                {fmt(l.importe)} ({l.cuenta}) {l.nombre}
+              </div>
+            ))}
+            {correctAsiento.filter(l => l.lado === "H").map((l, i) => (
+              <div key={`h${i}`} style={{ color: colors.amber, padding: "2px 0", textAlign: "right" }}>
+                a ({l.cuenta}) {l.nombre} {fmt(l.importe)}
+              </div>
+            ))}
+          </div>
+
+          <div style={{
+            marginTop: 14, padding: "10px 14px", borderRadius: 8,
+            background: correct.resultado >= 0 ? colors.successLight : colors.errorLight,
+            border: `1px solid ${correct.resultado >= 0 ? colors.successBorder : colors.errorBorder}`,
+            fontSize: 12, color: colors.text, lineHeight: 1.5,
+          }}>
+            <strong>¿Por qué {correct.resultado >= 0 ? "beneficio" : "pérdida"}?</strong> El precio de venta ({fmt(sc.precioVenta)} €) es {correct.resultado >= 0 ? "superior" : "inferior"} al valor neto contable ({fmt(correct.vnc)} €). La diferencia se registra en la cuenta ({correct.resultado >= 0 ? (esMaterial ? "771" : "770") : (esMaterial ? "671" : "670")}) en el {correct.resultado >= 0 ? "Haber" : "Debe"}.
+          </div>
+        </div>
+
+        <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+          <button onClick={resetCurrent} style={btnSecondary}>🔄 Repetir este escenario</button>
+          {scenarioIdx < SCENARIOS.length - 1 && (
+            <button onClick={nextScenario} style={btnPrimary}>Siguiente escenario →</button>
+          )}
+          {scenarioIdx === SCENARIOS.length - 1 && (
+            <button onClick={() => { setScenarioIdx(0); resetCurrent(); }} style={btnPrimary}>Volver al inicio</button>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  /* ───────── subcomponents ───────── */
+  function StepHeader({ num, title, desc }) {
+    return (
+      <div style={{ marginBottom: 18 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+          <span style={{
+            background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.primaryDark} 100%)`,
+            color: "#fff", borderRadius: "50%", width: 30, height: 30,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 14, fontWeight: 800, flexShrink: 0,
+          }}>{num}</span>
+          <h3 style={{ fontSize: 17, color: colors.primaryDark, margin: 0 }}>{title}</h3>
+        </div>
+        <p style={{ fontSize: 13, color: colors.textLight, margin: 0, lineHeight: 1.6, paddingLeft: 40 }}>{desc}</p>
+      </div>
+    );
+  }
+
+  function FieldLabel({ children }) {
+    return <div style={{ fontSize: 12, fontWeight: 700, color: colors.text, marginBottom: 5 }}>{children}</div>;
+  }
+
+  function FieldFeedback({ errKey, correctVal, suffix = "" }) {
+    if (errors[errKey] === true) return <div style={{ fontSize: 12, color: colors.error, marginTop: 4, fontWeight: 600 }}>✗ Incorrecto. Inténtalo de nuevo.</div>;
+    if (errors[errKey] === false) return <div style={{ fontSize: 12, color: colors.success, marginTop: 4, fontWeight: 600 }}>✓ Correcto: {fmt(correctVal)}{suffix}</div>;
+    return null;
+  }
+
+  function InfoBox({ children }) {
+    return (
+      <div style={{
+        background: colors.primaryLight, borderRadius: 10, padding: "12px 16px",
+        border: `1px solid #D0D4F0`, marginBottom: 16, fontSize: 13, color: colors.primaryDark, lineHeight: 1.6,
+      }}>
+        {children}
+      </div>
+    );
+  }
+
+  function StepButtons({ onCheck, onNext, canProceed, stepNum }) {
+    const hasHint = stepHints[stepNum] != null;
+    return (
+      <div>
+        <div style={{ display: "flex", gap: 10, justifyContent: "space-between", marginTop: 18 }}>
+          {hasHint ? (
+            <button onClick={() => setShowHint(!showHint)} style={btnSecondary}>
+              {showHint ? "Ocultar pista" : "💡 Pista"}
+            </button>
+          ) : <div />}
+          <div style={{ display: "flex", gap: 10 }}>
+            {!canProceed && <button onClick={onCheck} style={btnPrimary}>Comprobar</button>}
+            {canProceed && <button onClick={onNext} style={btnPrimary}>Siguiente paso →</button>}
+          </div>
+        </div>
+        {showHint && hasHint && (
+          <div style={{
+            background: colors.amberLight, borderRadius: 10, padding: "14px 18px",
+            border: `1px solid ${colors.amberBorder}`, marginTop: 12,
+          }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: colors.amber, marginBottom: 4 }}>💡 Pista</div>
+            <div style={{ fontSize: 13, color: colors.text, lineHeight: 1.6 }}>{stepHints[stepNum]}</div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  /* ───────── main render ───────── */
+  const stepRenderers = [renderScenario, renderStep1, renderStep2, renderStep3, renderStep4, renderStep5, renderStep6, renderResult];
+
+  return (
+    <div style={{
+      fontFamily: "'Quicksand', sans-serif",
+      minHeight: "100vh",
+      background: `linear-gradient(180deg, ${colors.bg} 0%, #EAE7E0 100%)`,
+    }}>
+      <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet" />
+
+      {/* Header */}
+      <div style={{
+        background: `linear-gradient(135deg, ${colors.primaryDark} 0%, ${colors.primary} 50%, #7B86D4 100%)`,
+        padding: "18px 24px 14px",
+        color: "#fff",
+      }}>
+        <div style={{ maxWidth: 780, margin: "0 auto" }}>
+          <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: 2.5, opacity: 0.65, marginBottom: 3 }}>
+            TDC · CFGM Gestión Administrativa · Inmovilizado
+          </div>
+          <h1 style={{ fontSize: 22, margin: "0 0 10px", fontWeight: 800, letterSpacing: -0.3 }}>
+            Constructor de Asientos de Venta
+          </h1>
+
+          {/* Progress */}
+          <div style={{ display: "flex", gap: 3 }}>
+            {STEP_TITLES.map((t, i) => (
+              <div key={i} style={{ flex: 1 }}>
+                <div style={{
+                  height: 4, borderRadius: 2,
+                  background: i <= step ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.18)",
+                  transition: "background 0.3s",
+                }} />
+                <div style={{
+                  fontSize: 8, marginTop: 3, textAlign: "center",
+                  opacity: i === step ? 1 : 0.4, fontWeight: i === step ? 800 : 500,
+                  letterSpacing: 0.3,
+                }}>{t}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Scenario selector */}
+      <div style={{ maxWidth: 780, margin: "0 auto", padding: "12px 20px 0" }}>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+          {SCENARIOS.map((s, i) => (
+            <button key={i} onClick={() => { setScenarioIdx(i); resetCurrent(); }} style={{
+              padding: "5px 14px", borderRadius: 20, fontSize: 11, fontWeight: 700,
+              fontFamily: "'Quicksand', sans-serif", cursor: "pointer", transition: "all 0.15s",
+              background: i === scenarioIdx ? colors.primary : "#fff",
+              color: i === scenarioIdx ? "#fff" : colors.textLight,
+              border: `1.5px solid ${i === scenarioIdx ? colors.primary : "#D8D8E4"}`,
+            }}>
+              {s.difficulty === "básico" ? "⭐" : s.difficulty === "intermedio" ? "⭐⭐" : "⭐⭐⭐"} {s.empresa.split(",")[0]}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div style={{ maxWidth: 780, margin: "0 auto", padding: "16px 20px 40px" }}>
+
+        {/* Collapsible data panel - visible in steps 1-6 */}
+        {step >= 1 && step <= 6 && (
+          <div style={{
+            background: colors.card,
+            borderRadius: 12,
+            marginBottom: 12,
+            border: `1px solid ${colors.warmDark}`,
+            boxShadow: "0 1px 6px rgba(100,100,140,0.04)",
+            overflow: "hidden",
+          }}>
+            <button onClick={() => setShowDataPanel(!showDataPanel)} style={{
+              width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center",
+              padding: "10px 18px", background: "none", border: "none", cursor: "pointer",
+              fontFamily: "'Quicksand', sans-serif", fontSize: 13, fontWeight: 700, color: colors.primary,
+            }}>
+              <span>📋 Datos del escenario — {sc.empresa}</span>
+              <span style={{ fontSize: 11, color: colors.textMuted, fontWeight: 600 }}>
+                {showDataPanel ? "▲ Ocultar" : "▼ Mostrar"}
+              </span>
+            </button>
+            {showDataPanel && (
+              <div style={{ padding: "0 18px 14px", borderTop: `1px solid ${colors.warmDark}` }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginTop: 12 }}>
+                  {[
+                    { label: "Bien", value: `(${sc.cuentaBien}) ${sc.nombreBien}` },
+                    { label: "P. adquisición", value: `${fmt(sc.precioAdq)} €` },
+                    { label: "Fecha compra", value: sc.fechaCompra },
+                    { label: "Vida útil", value: `${sc.vidaUtil} años` },
+                    { label: "Amort. anual", value: `${fmt(sc.amortAnual)} €` },
+                    { label: "Amort. acum. anterior", value: `${fmt(sc.amortAcumFinAnterior)} €` },
+                    { label: "Fecha venta", value: sc.fechaVenta },
+                    { label: "Precio venta", value: `${fmt(sc.precioVenta)} €` },
+                    { label: "Forma cobro", value: sc.textoFormaCobro },
+                    ...(sc.tieneDeterioro ? [{ label: "Deterioro acum.", value: `${fmt(sc.deterioroAcum)} €` }] : []),
+                  ].map((item, i) => (
+                    <div key={i} style={{
+                      padding: "6px 10px", background: colors.warm, borderRadius: 8,
+                      fontSize: 11,
+                    }}>
+                      <div style={{ color: colors.textMuted, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.3, marginBottom: 1 }}>{item.label}</div>
+                      <div style={{ color: colors.text, fontWeight: 700, fontSize: 12 }}>{item.value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        <div style={{
+          background: colors.card,
+          borderRadius: 16,
+          padding: "24px 28px",
+          boxShadow: "0 3px 16px rgba(100,100,140,0.06)",
+          border: `1px solid ${colors.warmDark}`,
+        }}>
+          {step > 0 && step < 7 && (
+            <button onClick={() => { setShowHint(false); setStep(s => s - 1); }} style={{
+              background: "none", border: `1px solid ${colors.warmDark}`, borderRadius: 6,
+              padding: "4px 12px", fontSize: 12, color: colors.textLight, cursor: "pointer",
+              marginBottom: 12, fontFamily: "'Quicksand', sans-serif", fontWeight: 600,
+            }}>
+              ← Paso anterior
+            </button>
+          )}
+
+          {stepRenderers[step]()}
+        </div>
+
+        {/* Footer */}
+        <div style={{ textAlign: "center", marginTop: 16, fontSize: 10, color: colors.textMuted, letterSpacing: 0.5 }}>
+          Recurso educativo interactivo · RA2 (CE h,i,j,k) · RA3 (CE t) · PGC-PYME · {SCENARIOS.length} escenarios con dificultad progresiva
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+</script>
+</body>
+</html>

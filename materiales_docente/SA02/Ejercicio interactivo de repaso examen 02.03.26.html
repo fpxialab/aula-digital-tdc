@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Efectos Comerciales e Insolvencias – ECODESIGN, S.L.</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f4f8; color: #1e293b; min-height: 100vh; }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #1a3a2a 0%, #2d6a4f 100%);
+    color: white; padding: 18px 24px 0;
+    box-shadow: 0 4px 20px rgba(26,58,42,0.25);
+  }
+  .header-top { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; flex-wrap: wrap; }
+  .header-icon { font-size: 34px; }
+  .header-title h1 { font-size: 18px; font-weight: 800; }
+  .header-title p  { font-size: 11px; opacity: 0.7; margin-top: 3px; }
+  .header-pts { text-align: right; }
+  .header-pts .label { font-size: 9px; opacity: 0.65; text-transform: uppercase; letter-spacing: 1px; }
+  .header-pts .pts   { font-size: 22px; font-weight: 900; line-height: 1.1; }
+
+  /* ── TABS ── */
+  .tabs { display: flex; gap: 2px; overflow-x: auto; padding-bottom: 0; }
+  .tab-btn {
+    padding: 7px 13px 10px; border-radius: 9px 9px 0 0;
+    border: none; cursor: pointer; font-family: inherit;
+    background: rgba(255,255,255,0.13); color: rgba(255,255,255,0.82);
+    font-weight: 500; font-size: 11px; transition: all 0.17s;
+    white-space: nowrap; display: flex; align-items: flex-start; gap: 5px;
+  }
+  .tab-btn.active { background: #f0f4f8; color: #1a3a2a; font-weight: 700; }
+  .tab-btn:hover:not(.active) { background: rgba(255,255,255,0.22); }
+  .tab-icon { font-size: 14px; margin-top: 1px; }
+  .tab-text { text-align: left; }
+  .tab-fecha { font-size: 9px; opacity: 0.75; margin-bottom: 1px; }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 920px; margin: 0 auto; padding: 22px 16px 40px; }
+  .op-panel  { display: none; }
+  .op-panel.active { display: block; }
+
+  /* ── OP HEADER ── */
+  .op-header { display: flex; align-items: center; gap: 11px; margin-bottom: 16px; flex-wrap: wrap; }
+  .op-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg,#1a3a2a,#2d6a4f);
+    color: white; display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 900; flex-shrink: 0;
+  }
+  .op-titulo { font-size: 16px; font-weight: 800; color: #1a3a2a; margin: 0; }
+  .op-sub    { font-size: 11px; color: #6b7280; }
+  .op-counter {
+    margin-left: auto; font-size: 10px; font-weight: 700;
+    padding: 3px 9px; border-radius: 20px;
+    background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7;
+  }
+
+  /* ── PANEL ── */
+  .panel { background: white; border-radius: 15px; box-shadow: 0 4px 22px rgba(26,58,42,.08); padding: 22px; border: 1px solid #d1e7dd; }
+
+  /* ── CONTEXTO (hilo narrativo) ── */
+  .contexto {
+    background: #f0fdf4; border-left: 4px solid #2d6a4f;
+    border-radius: 0 10px 10px 0; padding: 10px 14px;
+    font-size: 12px; color: #166534; line-height: 1.6; margin-bottom: 12px;
+    display: flex; gap: 8px; align-items: flex-start;
+  }
+  .contexto-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── ENUNCIADO ── */
+  .enunciado {
+    background: #f8fafc; border: 1px solid #e2e8f0;
+    border-radius: 11px; padding: 13px 15px;
+    font-size: 14px; color: #374151; line-height: 1.65; margin-bottom: 14px;
+  }
+
+  /* ── BLOQUES DE ASIENTO dentro del panel ── */
+  .asiento-bloque { margin-bottom: 20px; }
+  .asiento-bloque-titulo {
+    font-size: 12px; font-weight: 700; color: #2d6a4f;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 8px; padding-bottom: 4px;
+    border-bottom: 1px dashed #a7f3d0;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  /* ── PISTA ── */
+  .pista-toggle {
+    background: none; border: none; cursor: pointer; font-size: 12px; font-weight: 700;
+    color: #b45309; display: flex; align-items: center; gap: 5px; padding: 0;
+    font-family: inherit; margin-bottom: 6px;
+  }
+  .pista-box {
+    background: #fffbeb; border: 1px solid #fde68a;
+    border-radius: 9px; padding: 11px 13px;
+    font-size: 13px; color: #92400e; line-height: 1.6; margin-bottom: 10px; display: none;
+  }
+  .pista-box.visible { display: block; }
+
+  /* ── TABLA ASIENTO ── */
+  .table-header {
+    display: grid; grid-template-columns: 80px 68px 1fr 110px 24px;
+    gap: 7px; padding: 0 12px; margin-bottom: 5px;
+  }
+  .table-header span { font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.8px; }
+  .table-header span.right { text-align: right; }
+
+  .rows { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+  .row {
+    display: grid; grid-template-columns: 80px 68px 1fr 110px 24px;
+    gap: 7px; align-items: center; padding: 8px 12px;
+    border-radius: 9px; border: 1.5px solid #e5e7eb; background: #fff; transition: all 0.2s;
+  }
+  .row.correct { border-color: #86efac; background: #f0fdf4; }
+  .row.wrong   { border-color: #fca5a5; background: #fff5f5; }
+
+  .badge-debe  { background:#dbeafe; color:#1d4ed8; font-size:10px; font-weight:800; letter-spacing:1px; padding:3px 7px; border-radius:6px; display:inline-block; text-align:center; }
+  .badge-haber { background:#ede9fe; color:#6d28d9; font-size:10px; font-weight:800; letter-spacing:1px; padding:3px 7px; border-radius:6px; display:inline-block; text-align:center; }
+
+  .inp-codigo, .inp-importe {
+    font-family: monospace; font-size: 13px; font-weight: 700;
+    border: 1.5px solid #d1d5db; border-radius: 7px; padding: 5px 6px;
+    background: #f9fafb; outline: none; width: 100%; color: #1e293b; transition: all 0.2s;
+  }
+  .inp-codigo  { text-align: center; font-size: 14px; }
+  .inp-importe { text-align: right; }
+  .inp-codigo:focus, .inp-importe:focus { border-color: #2d6a4f; background: #f0fdf4; }
+  .inp-ok     { border-color: #86efac !important; background: #dcfce7 !important; }
+  .inp-bad    { border-color: #fca5a5 !important; background: #fee2e2 !important; }
+  .inp-solved { border-color: #86efac !important; background: #dcfce7 !important; font-weight:900; }
+
+  .nombre-cuenta        { font-size: 12px; color: #9ca3af; font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .nombre-cuenta.shown  { color: #374151; }
+  .row-icon { text-align: center; font-size: 15px; }
+
+  /* ── BOTONES ── */
+  .btns { display: flex; gap: 9px; flex-wrap: wrap; margin-bottom: 10px; }
+  .btn-check {
+    padding: 8px 18px; background: #2d6a4f; color: white;
+    border: none; border-radius: 9px; font-size: 13px; font-weight: 700;
+    cursor: pointer; font-family: inherit; transition: background 0.2s;
+    box-shadow: 0 2px 8px rgba(45,106,79,0.25);
+  }
+  .btn-check:hover { background: #1a3a2a; }
+  .btn-retry {
+    padding: 8px 18px; background: #475569; color: white;
+    border: none; border-radius: 9px; font-size: 13px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+  }
+  .btn-calculo {
+    padding: 8px 18px; background: #f3e8ff; color: #6b21a8;
+    border: 1px solid #d8b4fe; border-radius: 9px; font-size: 13px; font-weight: 700;
+    cursor: pointer; font-family: inherit; display: none;
+  }
+  .btn-calculo.visible { display: inline-block; }
+
+  /* ── FEEDBACK ── */
+  .feedback { border-radius: 9px; padding: 11px 14px; font-size: 13px; display: none; margin-bottom: 10px; }
+  .feedback.visible { display: block; }
+  .feedback.ok  { background: #f0fdf4; border: 1px solid #86efac; color: #15803d; font-weight: 600; }
+  .feedback.p1  { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+  .feedback.p2  { background: #fef3c7; border: 1px solid #fbbf24; color: #92400e; }
+  .feedback.p3  { background: #fef9c3; border: 1px solid #f59e0b; color: #92400e; }
+  .feedback.max { background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; }
+  .feedback-title { font-weight: 700; margin-bottom: 5px; }
+  .feedback-pen   { margin-top: 8px; font-size: 12px; color: #b45309; }
+
+  /* ── CÁLCULOS ── */
+  .calculo-box {
+    background: #0f172a; color: #86efac; border-radius: 11px;
+    padding: 15px 17px; font-family: monospace; font-size: 12px;
+    line-height: 1.8; white-space: pre-wrap; display: none; margin-top: 8px;
+  }
+  .calculo-box.visible { display: block; }
+
+  /* ── TABLA CUENTAS ── */
+  .cuentas-section { margin-top: 14px; }
+  .cuentas-toggle {
+    cursor: pointer; font-size: 12px; font-weight: 600; color: #4b5563;
+    padding: 9px 13px; background: white; border-radius: 9px;
+    border: 1px solid #d1e7dd; list-style: none;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .cuentas-body { background: white; border-radius: 9px; border: 1px solid #d1e7dd; overflow: hidden; margin-top: 6px; }
+  .cuenta-row { display: flex; gap: 14px; padding: 7px 15px; font-size: 12px; border-bottom: 1px solid #f3f4f6; }
+  .cuenta-row:nth-child(odd) { background: #f9fafb; }
+  .cuenta-cod { font-family: monospace; font-weight: 800; color: #1a3a2a; min-width: 40px; }
+
+  .footer { text-align: center; font-size: 11px; color: #9ca3af; margin-top: 22px; padding-bottom: 20px; }
+
+  /* ── SEPARADOR entre bloques ── */
+  .sep { border: none; border-top: 1px dashed #d1e7dd; margin: 16px 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="header-icon">🌿</div>
+    <div class="header-title" style="flex:1">
+      <h1>Práctica Interactiva · Efectos Comerciales e Insolvencias</h1>
+      <p>2º C.F.G.M. – Gestión Administrativa · Módulo TEC · ECODESIGN, S.L. – Ejercicio 20XX</p>
+    </div>
+    <div class="header-pts">
+      <div class="label">Puntuación</div>
+      <div class="pts">12 pts</div>
+    </div>
+  </div>
+  <div class="tabs" id="tabs"></div>
+</header>
+
+<div class="container">
+  <div id="panels"></div>
+
+  <div class="cuentas-section">
+    <details>
+      <summary class="cuentas-toggle">📖 Cuentas PGC-PYME necesarias</summary>
+      <div class="cuentas-body">
+        <div class="cuenta-row"><span class="cuenta-cod">430</span><span>Clientes</span></div>
+        <div class="cuenta-row"><span class="cuenta-cod">4309</span><span>Clientes, facturas pendientes de formalizar</span></div>
+        <div class="cuenta-row"><span class="cuenta-cod">431</span><span>Clientes, efectos comerciales a cobrar</span></div>
+        <div class="cuenta-row"><span class="cuenta-cod">4310</span><span>Clientes, efectos comerciales en cartera</span></div>
+        <div class="cuenta-row"><span class="cuenta-cod">4311</span><span>Clientes, efectos comerciales descontados</span></div>
+        <div class="cuenta-row"><span class="cuenta-cod">4312</span><span>Clientes, efectos comerciales en gestión de cobro</span></div>
+        <div class="cuenta-row"><span class="cuenta-cod">4315</span><span>Clientes, efectos comerciales impagados</span></div>
+        <div class="cuenta-row"><span class="cuenta-cod">436</span><span>Clientes de dudoso cobro</span></div>
+        <div class="cuenta-row"><span class="cuenta-cod">477</span><span>HP, IVA repercutido</span></div>
+        <div class="cuenta-row"><span class="cuenta-cod">490</span><span>Deterioro de valor de créditos por operaciones comerciales</span></div>
+        <div class="cuenta-row"><span class="cuenta-cod">5208</span><span>Deudas por efectos descontados</span></div>
+        <div class="cuenta-row"><span class="cuenta-cod">572</span><span>Bancos e instituciones de crédito c/c vista, euros</span></div>
+        <div class="cuenta-row"><span class="cuenta-cod">626</span><span>Servicios bancarios y similares</span></div>
+        <div class="cuenta-row"><span class="cuenta-cod">650</span><span>Pérdidas de créditos comerciales incobrables</span></div>
+        <div class="cuenta-row"><span class="cuenta-cod">665</span><span>Intereses por descuento de efectos y operaciones de factoring</span></div>
+        <div class="cuenta-row"><span class="cuenta-cod">669</span><span>Otros gastos financieros</span></div>
+        <div class="cuenta-row"><span class="cuenta-cod">694</span><span>Pérdidas por deterioro de créditos por operaciones comerciales</span></div>
+        <div class="cuenta-row"><span class="cuenta-cod">700</span><span>Ventas de mercaderías</span></div>
+        <div class="cuenta-row"><span class="cuenta-cod">794</span><span>Reversión del deterioro de créditos por operaciones comerciales</span></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="footer">Salesianos Juan XXIII · Alcoy · Módulo TEC – Técnica Contable · 2º Curso · Efectos e Insolvencias</div>
+</div>
+
+<script>
+const TOLERANCIA = 0.15;
+const MAX_INTENTOS = 4;
+
+// ═══════════════════════════════════════════════════════════════════
+// DATOS DEL EJERCICIO
+// Empresa: ECODESIGN, S.L. — venta de muebles ecológicos
+// ═══════════════════════════════════════════════════════════════════
+const OPS = [
+
+  // ─────────────────────────────────────────────────────────────────
+  // 1. FACTURA PENDIENTE DE FORMALIZAR
+  // ─────────────────────────────────────────────────────────────────
+  {
+    id:1, icono:"📋", fecha:"28 de diciembre", puntos:2.0,
+    titulo:"Venta con factura pendiente de formalizar",
+    contexto:"ECODESIGN, S.L. vende mercaderías al final del ejercicio pero la factura se emitirá en enero del año siguiente.",
+    desc:"El 28 de diciembre, ECODESIGN, S.L. vende mercaderías a MUEBLES VERT, S.A. por importe de 5.800 € más 21% de IVA. Las mercaderías se entregan con el albarán pero la factura se emitirá el 5 de enero del año siguiente. Registra los asientos del 28 de diciembre y del 5 de enero.",
+    bloques:[
+      {
+        titulo:"📅 28/12/20XX — Registro de la venta (sin factura)",
+        asiento:[
+          { lado:"DEBE",  cod:"4309", nom:"Clientes, facturas pendientes de formalizar", imp:5800.00 },
+          { lado:"HABER", cod:"700",  nom:"Ventas de mercaderías",                        imp:5800.00 },
+        ]
+      },
+      {
+        titulo:"📅 05/01/20X1 — Emisión de la factura",
+        asiento:[
+          { lado:"DEBE",  cod:"430",  nom:"Clientes",                                     imp:7018.00 },
+          { lado:"HABER", cod:"4309", nom:"Clientes, facturas pendientes de formalizar",  imp:5800.00 },
+          { lado:"HABER", cod:"477",  nom:"HP, IVA repercutido",                          imp:1218.00 },
+        ]
+      }
+    ],
+    pistas:[
+      "Recuerda: el principio de devengo obliga a registrar la venta cuando se entrega la mercancía, aunque no tengamos la factura. En el primer asiento NO incluyas el IVA porque aún no tienes el documento. ¿Qué cuenta especial usas para ventas sin factura?",
+      "El 28/12 usas c/4309 en el DEBE (derecho sin factura) y c/700 en el HABER solo por la base imponible (5.800 €). El 05/01 ya tienes la factura: activas el IVA (477) y transformas c/4309 en c/430 (cliente normal). Importe total factura: 5.800 × 1,21 = 7.018 €.",
+      "28/12: c/4309 DEBE 5.800 | c/700 HABER 5.800\n05/01: c/430 DEBE 7.018 | c/4309 HABER 5.800 | c/477 HABER 1.218",
+    ],
+    calculo:"Base imponible:    5.800,00 €\nIVA 21%:           5.800 × 0,21 = 1.218,00 €\nTotal con IVA:     7.018,00 €\n\nAsiento 28/12: solo base (sin IVA, sin factura)\nAsiento 05/01: total con IVA, cancela c/4309 y activa c/477"
+  },
+
+  // ─────────────────────────────────────────────────────────────────
+  // 2. EFECTO EN GESTIÓN DE COBRO
+  // ─────────────────────────────────────────────────────────────────
+  {
+    id:2, icono:"🏦", fecha:"10 de marzo", puntos:2.5,
+    titulo:"Efecto comercial en gestión de cobro",
+    contexto:"ECODESIGN cobra una letra de cambio a través del banco. El cliente puede pagar o no al vencimiento.",
+    desc:"El 10 de marzo, ECODESIGN, S.L. vende mercaderías a DECORHOGAR, S.A. por 12.400 € más 21% de IVA. El cliente acepta una letra de cambio con vencimiento el 10 de junio. El 15 de marzo, ECODESIGN entrega la letra al banco para gestión de cobro. Al vencimiento (10 de junio), el banco cobra el banco unos gastos de gestión de 85 € más 21% de IVA. Registra: la venta, la entrega al banco y el cobro al vencimiento (el cliente paga).",
+    bloques:[
+      {
+        titulo:"📅 10/03/20XX — Venta y aceptación de la letra",
+        asiento:[
+          { lado:"DEBE",  cod:"4310", nom:"Clientes, efectos comerciales en cartera", imp:15004.00 },
+          { lado:"HABER", cod:"700",  nom:"Ventas de mercaderías",                    imp:12400.00 },
+          { lado:"HABER", cod:"477",  nom:"HP, IVA repercutido",                      imp:2604.00  },
+        ]
+      },
+      {
+        titulo:"📅 15/03/20XX — Entrega al banco para gestión de cobro",
+        asiento:[
+          { lado:"DEBE",  cod:"4312", nom:"Clientes, efectos comerciales en gestión de cobro", imp:15004.00 },
+          { lado:"HABER", cod:"4310", nom:"Clientes, efectos comerciales en cartera",           imp:15004.00 },
+        ]
+      },
+      {
+        titulo:"📅 10/06/20XX — Cobro al vencimiento (cliente paga)",
+        asiento:[
+          { lado:"DEBE",  cod:"572",  nom:"Bancos",                          imp:14901.16 },
+          { lado:"DEBE",  cod:"626",  nom:"Servicios bancarios y similares", imp:85.00    },
+          { lado:"DEBE",  cod:"472",  nom:"HP, IVA soportado",               imp:17.85    },
+          { lado:"HABER", cod:"4312", nom:"Clientes, efectos comerciales en gestión de cobro", imp:15004.00 },
+        ]
+      }
+    ],
+    pistas:[
+      "Cuando vendes con letra de cambio, el derecho de cobro pasa de c/430 a c/4310 (cartera). Al entregar la letra al banco para gestión de cobro, cambia a c/4312. Al vencimiento, si el cliente paga, el banco ingresa el importe menos sus gastos. ¿Los gastos bancarios de gestión devengán IVA?",
+      "Venta: c/4310 DEBE por el total con IVA (12.400 × 1,21 = 15.004 €). Gestión: traspaso de c/4310 a c/4312. Cobro: banco ingresa 15.004 − 85 − 17,85 (IVA gastos) = 14.901,15 €. Los gastos de gestión sí llevan IVA (21% × 85 = 17,85 €). Usa c/626 para los gastos y c/472 para el IVA soportado.",
+      "10/03: c/4310 DEBE 15.004 | c/700 HABER 12.400 | c/477 HABER 2.604\n15/03: c/4312 DEBE 15.004 | c/4310 HABER 15.004\n10/06: c/572 DEBE 14.901,15 | c/626 DEBE 85 | c/472 DEBE 17,85 | c/4312 HABER 15.004",
+    ],
+    calculo:"Precio venta:       12.400,00 €\nIVA 21%:            12.400 × 0,21 = 2.604,00 €\nTotal letra:        15.004,00 €\n\nGastos gestión:     85,00 €\nIVA gastos 21%:     85 × 0,21 = 17,85 €\nTotal gastos:       102,85 €\n\nBanco ingresa:      15.004,00 − 85,00 − 17,85 = 14.901,15 €"
+  },
+
+  // ─────────────────────────────────────────────────────────────────
+  // 3. EFECTO DESCONTADO
+  // ─────────────────────────────────────────────────────────────────
+  {
+    id:3, icono:"📉", fecha:"1 de abril", puntos:2.5,
+    titulo:"Efecto comercial descontado en el banco",
+    contexto:"ECODESIGN necesita liquidez y lleva una letra al banco para su descuento antes del vencimiento.",
+    desc:"El 1 de abril, ECODESIGN, S.L. tiene en cartera una letra de cambio de TEXTILDECO, S.A. por importe de 9.680 € con vencimiento el 1 de julio. ECODESIGN la descuenta en el banco, que le cobra 210 € de intereses (c/665) y 35 € de comisión (c/669). El banco ingresa el líquido en la cuenta corriente. Al vencimiento (1 de julio), el cliente paga. Registra: el descuento y el cobro al vencimiento.",
+    bloques:[
+      {
+        titulo:"📅 01/04/20XX — Cambio de nombre: cartera → descontados",
+        asiento:[
+          { lado:"DEBE",  cod:"4311", nom:"Clientes, efectos comerciales descontados", imp:9680.00 },
+          { lado:"HABER", cod:"4310", nom:"Clientes, efectos comerciales en cartera",  imp:9680.00 },
+        ]
+      },
+      {
+        titulo:"📅 01/04/20XX — Ingreso del líquido y gastos del descuento",
+        asiento:[
+          { lado:"DEBE",  cod:"572",  nom:"Bancos",                                   imp:9435.00 },
+          { lado:"DEBE",  cod:"665",  nom:"Intereses por descuento de efectos",        imp:210.00  },
+          { lado:"DEBE",  cod:"669",  nom:"Otros gastos financieros",                  imp:35.00   },
+          { lado:"HABER", cod:"5208", nom:"Deudas por efectos descontados",            imp:9680.00 },
+        ]
+      },
+      {
+        titulo:"📅 01/07/20XX — Vencimiento: cliente paga al banco",
+        asiento:[
+          { lado:"DEBE",  cod:"5208", nom:"Deudas por efectos descontados",             imp:9680.00 },
+          { lado:"HABER", cod:"4311", nom:"Clientes, efectos comerciales descontados",  imp:9680.00 },
+        ]
+      }
+    ],
+    pistas:[
+      "El descuento se registra en dos pasos el mismo día: primero cambias el nombre de la letra (de c/4310 a c/4311), y después reflejas el dinero que el banco te ingresa junto con la deuda que contraes con él (c/5208). Los gastos financieros no llevan IVA. ¿Cuánto líquido recibes?",
+      "Paso 1 — cambio de nombre: c/4311 DEBE 9.680 | c/4310 HABER 9.680\nPaso 2 — ingreso banco: c/572 DEBE 9.435 | c/665 DEBE 210 | c/669 DEBE 35 | c/5208 HABER 9.680\nLíquido = 9.680 − 210 − 35 = 9.435 €. Al vencimiento, si paga el cliente: c/5208 DEBE | c/4311 HABER.",
+      "01/04 asiento 1: c/4311 DEBE 9.680 | c/4310 HABER 9.680\n01/04 asiento 2: c/572 DEBE 9.435 | c/665 DEBE 210 | c/669 DEBE 35 | c/5208 HABER 9.680\n01/07: c/5208 DEBE 9.680 | c/4311 HABER 9.680",
+    ],
+    calculo:"Nominal letra:     9.680,00 €\nIntereses (c/665): −  210,00 €\nComisión (c/669):  −   35,00 €\nLíquido recibido:  9.435,00 €\n\nAsiento 1 — Cambio de nombre (misma fecha):\n  c/4311 DEBE 9.680 | c/4310 HABER 9.680\n\nAsiento 2 — Ingreso banco y deuda:\n  c/572 DEBE 9.435 | c/665 DEBE 210 | c/669 DEBE 35 | c/5208 HABER 9.680\n\nAl vencimiento y cobro: se cancelan c/5208 y c/4311"
+  },
+
+  // ─────────────────────────────────────────────────────────────────
+  // 4. PROVISIÓN MÉTODO INDIVIDUALIZADO
+  // ─────────────────────────────────────────────────────────────────
+  {
+    id:4, icono:"⚠️", fecha:"30 de junio", puntos:2.5,
+    titulo:"Insolvencias — Método individualizado",
+    contexto:"ECODESIGN detecta que un cliente concreto tiene problemas serios para pagar. Sigue el método de estimación individual.",
+    desc:"El 30 de junio, ECODESIGN, S.L. tiene un crédito frente a MOBILART, S.A. por importe de 8.250 €. El cliente presenta concurso de acreedores y ECODESIGN estima que no podrá cobrar la totalidad. Decide dotar el deterioro por el importe total. El 15 de noviembre, ECODESIGN consigue cobrar por banco 3.500 €. El resto se da por incobrable definitivamente. Registra: el cambio de nombre, el deterioro, el cobro parcial y la pérdida definitiva.",
+    bloques:[
+      {
+        titulo:"📅 30/06/20XX — Reclasificación a dudoso cobro",
+        asiento:[
+          { lado:"DEBE",  cod:"436", nom:"Clientes de dudoso cobro", imp:8250.00 },
+          { lado:"HABER", cod:"430", nom:"Clientes",                  imp:8250.00 },
+        ]
+      },
+      {
+        titulo:"📅 30/06/20XX — Dotación del deterioro",
+        asiento:[
+          { lado:"DEBE",  cod:"694", nom:"Pérdidas por deterioro de créditos por operaciones comerciales", imp:8250.00 },
+          { lado:"HABER", cod:"490", nom:"Deterioro de valor de créditos por operaciones comerciales",     imp:8250.00 },
+        ]
+      },
+      {
+        titulo:"📅 15/11/20XX — Reversión del deterioro dotado",
+        asiento:[
+          { lado:"DEBE",  cod:"490", nom:"Deterioro de valor de créditos por operaciones comerciales",     imp:8250.00 },
+          { lado:"HABER", cod:"794", nom:"Reversión del deterioro de créditos por operaciones comerciales", imp:8250.00 },
+        ]
+      },
+      {
+        titulo:"📅 15/11/20XX — Cobro parcial y pérdida definitiva del resto",
+        asiento:[
+          { lado:"DEBE",  cod:"572", nom:"Bancos",                                                imp:3500.00 },
+          { lado:"DEBE",  cod:"650", nom:"Pérdidas de créditos comerciales incobrables",          imp:4750.00 },
+          { lado:"HABER", cod:"436", nom:"Clientes de dudoso cobro",                              imp:8250.00 },
+        ]
+      }
+    ],
+    pistas:[
+      "Cuando sospechas que un cliente no va a pagar, primero cambias su nombre a c/436 y dotas el deterioro (c/694/c/490). Al cobrar parcialmente, el proceso se hace en dos asientos: primero revertes todo el deterioro (c/490 DEBE / c/794 HABER) y después registras el cobro real en banco y la pérdida definitiva por lo no cobrado.",
+      "30/06 paso 1: c/436 DEBE 8.250 | c/430 HABER 8.250\n30/06 paso 2: c/694 DEBE 8.250 | c/490 HABER 8.250\n15/11 paso 1 — reversión total: c/490 DEBE 8.250 | c/794 HABER 8.250\n15/11 paso 2 — cobro y pérdida: c/572 DEBE 3.500 | c/650 DEBE 4.750 | c/436 HABER 8.250",
+      "Reversión (15/11): cancela completamente c/490 → c/490 DEBE 8.250 | c/794 HABER 8.250\nCobro y pérdida (15/11): banco cobra 3.500 + pérdida definitiva 4.750 = 8.250 → cancela c/436\nc/572 DEBE 3.500 | c/650 DEBE 4.750 | c/436 HABER 8.250",
+    ],
+    calculo:"Crédito total:      8.250,00 €\nCobrado 15/11:      3.500,00 €\nIncobrable:         8.250 − 3.500 = 4.750,00 €\n\nAsiento 1 — Reversión total del deterioro:\n  c/490 DEBE 8.250 | c/794 HABER 8.250\n\nAsiento 2 — Cobro parcial y baja del crédito:\n  c/572 DEBE 3.500  (cobrado por banco)\n  c/650 DEBE 4.750  (pérdida definitiva)\n  c/436 HABER 8.250 (cancela crédito dudoso)"
+  },
+
+  // ─────────────────────────────────────────────────────────────────
+  // 5. PROVISIÓN MÉTODO GLOBAL
+  // ─────────────────────────────────────────────────────────────────
+  {
+    id:5, icono:"📊", fecha:"31 de diciembre", puntos:2.5,
+    titulo:"Insolvencias — Método global (estimación estadística)",
+    contexto:"Al cierre del ejercicio, ECODESIGN estima una pérdida por insolvencias sobre el total de sus clientes usando el método global.",
+    desc:"Al cierre del ejercicio (31 de diciembre de 20XX), ECODESIGN, S.L. tiene un saldo de clientes de 186.400 € y un saldo de deudores de 43.750 €. Estima que el 4% de esos saldos serán fallidos. El saldo de la cuenta (490) del año anterior es de 7.200 €. Registra: la reversión del deterioro del año anterior y la nueva dotación.",
+    bloques:[
+      {
+        titulo:"📅 31/12/20XX — Reversión del deterioro del año anterior",
+        asiento:[
+          { lado:"DEBE",  cod:"490", nom:"Deterioro de valor de créditos por operaciones comerciales", imp:7200.00 },
+          { lado:"HABER", cod:"794", nom:"Reversión del deterioro de créditos por operaciones comerciales", imp:7200.00 },
+        ]
+      },
+      {
+        titulo:"📅 31/12/20XX — Nueva dotación del deterioro",
+        asiento:[
+          { lado:"DEBE",  cod:"694", nom:"Pérdidas por deterioro de créditos por operaciones comerciales", imp:9206.00 },
+          { lado:"HABER", cod:"490", nom:"Deterioro de valor de créditos por operaciones comerciales",     imp:9206.00 },
+        ]
+      }
+    ],
+    pistas:[
+      "Con el método global, al cierre de cada ejercicio se revierten SIEMPRE los deterioros del año anterior (c/490 DEBE / c/794 HABER) y se dota de nuevo sobre el saldo actual. Calcula el 4% sobre la suma de clientes y deudores. ¿Cuánto es la nueva provisión?",
+      "Reversión: c/490 DEBE 7.200 | c/794 HABER 7.200 (se cancela lo del año anterior)\nBase nueva dotación: 186.400 + 43.750 = 230.150 €\nNueva provisión: 230.150 × 0,04 = 9.206 €\nDotación: c/694 DEBE 9.206 | c/490 HABER 9.206",
+      "Base = clientes + deudores = 186.400 + 43.750 = 230.150 €\n4% × 230.150 = 9.206 €\nPrimer asiento: revierta los 7.200 € del año anterior\nSegundo asiento: dota los nuevos 9.206 €",
+    ],
+    calculo:"Base de cálculo:\n  Clientes:   186.400 €\n  Deudores:    43.750 €\n  Total:      230.150 €\n\nNueva dotación: 230.150 × 0,04 = 9.206,00 €\n\nAsiento 1 — Reversión año anterior:\n  c/490 DEBE 7.200 | c/794 HABER 7.200\n\nAsiento 2 — Nueva dotación:\n  c/694 DEBE 9.206 | c/490 HABER 9.206\n\n(El saldo final de c/490 queda en 9.206 €)"
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════════
+// ESTADO
+// ═══════════════════════════════════════════════════════════════════
+const state = OPS.map(op => ({
+  intentos: 0,
+  submitted: false,
+  values: op.bloques.map(b => b.asiento.map(() => ({ cod:"", imp:"" }))),
+}));
+
+// ═══════════════════════════════════════════════════════════════════
+// CONSTRUCCIÓN DE TABS
+// ═══════════════════════════════════════════════════════════════════
+function buildTabs() {
+  const tabs = document.getElementById("tabs");
+  OPS.forEach((op, i) => {
+    const btn = document.createElement("button");
+    btn.className = "tab-btn" + (i === 0 ? " active" : "");
+    btn.dataset.idx = i;
+    btn.innerHTML = `<span class="tab-icon">${op.icono}</span><div class="tab-text"><div class="tab-fecha">${op.fecha}</div><div>${op.titulo}</div></div>`;
+    btn.addEventListener("click", () => switchTab(i));
+    tabs.appendChild(btn);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CONSTRUCCIÓN DE PANELS
+// ═══════════════════════════════════════════════════════════════════
+function buildPanels() {
+  const container = document.getElementById("panels");
+  OPS.forEach((op, i) => {
+    const div = document.createElement("div");
+    div.className = "op-panel" + (i === 0 ? " active" : "");
+    div.id = `panel-${i}`;
+
+    // Bloques de asiento HTML
+    const bloquesHTML = op.bloques.map((bloque, bi) => `
+      <div class="asiento-bloque">
+        <div class="asiento-bloque-titulo">${bloque.titulo}</div>
+        <div class="table-header">
+          <span>Posición</span><span>Código</span><span>Nombre de cuenta</span><span class="right">Importe (€)</span><span></span>
+        </div>
+        <div class="rows" id="rows-${i}-${bi}">
+          ${bloque.asiento.map((r, j) => `
+            <div class="row" id="row-${i}-${bi}-${j}">
+              <span class="${r.lado==='DEBE'?'badge-debe':'badge-haber'}">${r.lado}</span>
+              <input class="inp-codigo" id="cod-${i}-${bi}-${j}" type="text" maxlength="4" placeholder="000" />
+              <div class="nombre-cuenta" id="nom-${i}-${bi}-${j}">— nombre de cuenta —</div>
+              <input class="inp-importe" id="imp-${i}-${bi}-${j}" type="number" step="0.01" placeholder="0,00" />
+              <div class="row-icon" id="ico-${i}-${bi}-${j}"></div>
+            </div>`).join("")}
+        </div>
+        ${bi < op.bloques.length - 1 ? '<hr class="sep">' : ''}
+      </div>`).join("");
+
+    div.innerHTML = `
+      <div class="op-header">
+        <div class="op-num">${op.id}</div>
+        <div>
+          <h2 class="op-titulo">${op.titulo}</h2>
+          <span class="op-sub">${op.fecha} · ${op.puntos} pts</span>
+        </div>
+        <span class="op-counter">${i+1} / ${OPS.length}</span>
+      </div>
+      <div class="panel">
+        <div class="contexto">
+          <span class="contexto-icon">📌</span>
+          <span>${op.contexto}</span>
+        </div>
+        <div class="enunciado">${op.desc}</div>
+        <button class="pista-toggle" id="ptoggle-${i}">💡 Ver pista inicial</button>
+        <div class="pista-box" id="pista-${i}">${op.pistas[0]}</div>
+        ${bloquesHTML}
+        <div class="btns">
+          <button class="btn-check" id="btn-check-${i}">✔ Comprobar todos los asientos</button>
+          <button class="btn-retry" id="btn-retry-${i}" style="display:none">🔄 Reintentar</button>
+          <button class="btn-calculo" id="btn-calc-${i}">📐 Ver cálculos</button>
+        </div>
+        <div class="feedback" id="fb-${i}"></div>
+        <div class="calculo-box" id="calc-${i}">${op.calculo}</div>
+      </div>`;
+
+    container.appendChild(div);
+
+    // Pista toggle
+    document.getElementById(`ptoggle-${i}`).addEventListener("click", function() {
+      const box = document.getElementById(`pista-${i}`);
+      const v = box.classList.toggle("visible");
+      this.textContent = v ? "💡 Ocultar pista" : "💡 Ver pista inicial";
+    });
+
+    document.getElementById(`btn-check-${i}`).addEventListener("click", () => checkOp(i));
+    document.getElementById(`btn-retry-${i}`).addEventListener("click", () => retryOp(i));
+    document.getElementById(`btn-calc-${i}`).addEventListener("click", () => {
+      const box = document.getElementById(`calc-${i}`);
+      const btn = document.getElementById(`btn-calc-${i}`);
+      const v = box.classList.toggle("visible");
+      btn.textContent = v ? "📐 Ocultar cálculos" : "📐 Ver cálculos";
+    });
+  });
+}
+
+function switchTab(idx) {
+  document.querySelectorAll(".tab-btn").forEach((b,i) => b.classList.toggle("active", i===idx));
+  document.querySelectorAll(".op-panel").forEach((p,i) => p.classList.toggle("active", i===idx));
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// LÓGICA DE CORRECCIÓN
+// ═══════════════════════════════════════════════════════════════════
+function checkOp(i) {
+  const op = OPS[i];
+  const s = state[i];
+  if (s.intentos >= MAX_INTENTOS) return;
+
+  // Leer y evaluar
+  let totalFilas = 0, errores = 0;
+  const results = op.bloques.map((bloque, bi) =>
+    bloque.asiento.map((r, j) => {
+      const codVal = document.getElementById(`cod-${i}-${bi}-${j}`).value;
+      const impVal = document.getElementById(`imp-${i}-${bi}-${j}`).value;
+      s.values[bi][j] = { cod: codVal, imp: impVal };
+      const codOk = codVal.trim() === r.cod;
+      const impOk = Math.abs(parseFloat(impVal) - r.imp) <= TOLERANCIA;
+      totalFilas++;
+      if (!codOk || !impOk) errores++;
+      return { codOk, impOk };
+    })
+  );
+
+  const allOk = errores === 0;
+  if (!allOk) s.intentos++;
+  s.submitted = true;
+
+  const nowSolved = s.intentos >= MAX_INTENTOS;
+
+  // Pintar filas
+  op.bloques.forEach((bloque, bi) => {
+    bloque.asiento.forEach((r, j) => {
+      const row   = document.getElementById(`row-${i}-${bi}-${j}`);
+      const codI  = document.getElementById(`cod-${i}-${bi}-${j}`);
+      const impI  = document.getElementById(`imp-${i}-${bi}-${j}`);
+      const nom   = document.getElementById(`nom-${i}-${bi}-${j}`);
+      const ico   = document.getElementById(`ico-${i}-${bi}-${j}`);
+      const res   = results[bi][j];
+
+      if (nowSolved || (res.codOk && res.impOk)) {
+        row.className = "row correct";
+        codI.value = r.cod; codI.className = "inp-codigo inp-solved"; codI.readOnly = true;
+        impI.value = r.imp.toFixed(2); impI.className = "inp-importe inp-solved"; impI.readOnly = true;
+        nom.textContent = r.nom; nom.className = "nombre-cuenta shown";
+        ico.textContent = "✅";
+      } else {
+        row.className = "row wrong";
+        codI.className = "inp-codigo " + (res.codOk ? "inp-ok" : "inp-bad");
+        impI.className = "inp-importe " + (res.impOk ? "inp-ok" : "inp-bad");
+        nom.textContent = r.nom; nom.className = "nombre-cuenta shown";
+        ico.textContent = "❌";
+      }
+    });
+  });
+
+  // Botones
+  const btnCheck = document.getElementById(`btn-check-${i}`);
+  const btnRetry = document.getElementById(`btn-retry-${i}`);
+  const btnCalc  = document.getElementById(`btn-calc-${i}`);
+
+  if (allOk || nowSolved) {
+    btnCheck.style.display = "none";
+    btnRetry.style.display = "none";
+    if (nowSolved || s.intentos >= 3) btnCalc.classList.add("visible");
+  } else {
+    btnCheck.style.display = "none";
+    btnRetry.style.display = "inline-block";
+    if (s.intentos >= 3) btnCalc.classList.add("visible");
+  }
+
+  // Feedback
+  const fb = document.getElementById(`fb-${i}`);
+  fb.classList.remove("ok","p1","p2","p3","max");
+
+  if (allOk) {
+    const pen   = (s.intentos === 0 ? 0 : (s.intentos) * op.puntos * 0.2);
+    const nota  = Math.max(0, op.puntos - pen).toFixed(2);
+    // intentos no se incrementó si allOk
+    fb.className = "feedback visible ok";
+    fb.innerHTML = `🎉 ¡Todos los asientos correctos! Nota: <strong>${nota} pts</strong> de ${op.puntos} posibles.`;
+  } else if (nowSolved) {
+    fb.className = "feedback visible max";
+    fb.innerHTML = `📋 Máximo de intentos alcanzado. Los asientos correctos aparecen arriba. Nota: <strong>0 pts</strong>.`;
+  } else {
+    const clases    = ["","p1","p2","p3"];
+    const etiquetas = ["","💡 Pista básica","💡💡 Pista avanzada","📐 Cálculos disponibles"];
+    const pen    = (s.intentos * op.puntos * 0.2).toFixed(2);
+    const notaMax = Math.max(0, op.puntos - s.intentos * op.puntos * 0.2).toFixed(2);
+    const pistaIdx = Math.min(s.intentos - 1, op.pistas.length - 1);
+    fb.className = `feedback visible ${clases[s.intentos]}`;
+    fb.innerHTML = `
+      <div class="feedback-title">${etiquetas[s.intentos]} · Intento ${s.intentos}/${MAX_INTENTOS-1}</div>
+      <div>${op.pistas[pistaIdx]}</div>
+      <div class="feedback-pen">⚠️ Penalización acumulada: −${pen} pts · Nota máxima ahora: <strong>${notaMax} pts</strong></div>`;
+  }
+}
+
+function retryOp(i) {
+  const op = OPS[i];
+  const s  = state[i];
+  s.submitted = false;
+  s.values = op.bloques.map(b => b.asiento.map(() => ({ cod:"", imp:"" })));
+
+  op.bloques.forEach((bloque, bi) => {
+    bloque.asiento.forEach((r, j) => {
+      const row  = document.getElementById(`row-${i}-${bi}-${j}`);
+      const codI = document.getElementById(`cod-${i}-${bi}-${j}`);
+      const impI = document.getElementById(`imp-${i}-${bi}-${j}`);
+      const nom  = document.getElementById(`nom-${i}-${bi}-${j}`);
+      const ico  = document.getElementById(`ico-${i}-${bi}-${j}`);
+      row.className = "row";
+      codI.value = ""; codI.className = "inp-codigo"; codI.readOnly = false;
+      impI.value = ""; impI.className = "inp-importe"; impI.readOnly = false;
+      nom.textContent = "— nombre de cuenta —"; nom.className = "nombre-cuenta";
+      ico.textContent = "";
+    });
+  });
+
+  document.getElementById(`btn-check-${i}`).style.display = "inline-block";
+  document.getElementById(`btn-retry-${i}`).style.display = "none";
+  document.getElementById(`fb-${i}`).className = "feedback";
+  const calcBox = document.getElementById(`calc-${i}`);
+  calcBox.classList.remove("visible");
+  const btnCalc = document.getElementById(`btn-calc-${i}`);
+  if (s.intentos < 3) btnCalc.classList.remove("visible");
+  btnCalc.textContent = "📐 Ver cálculos";
+}
+
+// ── INIT ──
+buildTabs();
+buildPanels();
+</script>
+</body>
+</html>

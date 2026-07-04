@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Ciclo de Vida del Inmovilizado - Simulador Interactivo</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+const PHASES = ["intro", "compra", "amortizacion", "deterioro", "baja", "resumen", "quiz"];
+const PHASE_LABELS = ["Inicio", "Compra", "Amortización", "Deterioro", "Baja", "Resumen", "Quiz"];
+
+const BIENES_MATERIAL = [
+  { code: "211", name: "Construcciones", coefMax: 3, periodMax: 68 },
+  { code: "212", name: "Instalaciones técnicas", coefMax: 12, periodMax: 18 },
+  { code: "213", name: "Maquinaria", coefMax: 12, periodMax: 18 },
+  { code: "214", name: "Utillaje", coefMax: 30, periodMax: 8 },
+  { code: "216", name: "Mobiliario", coefMax: 10, periodMax: 20 },
+  { code: "217", name: "Equipos para procesos de información", coefMax: 25, periodMax: 8 },
+  { code: "218", name: "Elementos de transporte", coefMax: 16, periodMax: 14 },
+];
+
+const BIENES_INTANGIBLE = [
+  { code: "200", name: "Investigación", coefMax: null, periodMax: null, vidaUtil: 5 },
+  { code: "201", name: "Desarrollo", coefMax: null, periodMax: null, vidaUtil: 5 },
+  { code: "203", name: "Propiedad industrial", coefMax: null, periodMax: null, vidaUtil: 10 },
+  { code: "206", name: "Aplicaciones informáticas", coefMax: null, periodMax: null, vidaUtil: 6 },
+];
+
+const EMPRESAS = [
+  "Tecnova Solutions, S.L.",
+  "Mediterráneo Digital, S.L.",
+  "Grupo Tramontana, S.A.",
+  "Ibérica de Servicios, S.L.",
+];
+
+function formatNum(n) {
+  if (n === null || n === undefined || isNaN(n)) return "0,00";
+  const num = Number(n);
+  const fixed = Math.abs(num).toFixed(2);
+  const [intPart, decPart] = fixed.split(".");
+  const withDots = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return (num < 0 ? "-" : "") + withDots + "," + decPart;
+}
+
+function Asiento({ fecha, lineas, title }) {
+  const totalDebe = lineas.filter(l => l.lado === "D").reduce((s, l) => s + l.importe, 0);
+  const totalHaber = lineas.filter(l => l.lado === "H").reduce((s, l) => s + l.importe, 0);
+  return (
+    <div style={{
+      background: "linear-gradient(135deg, #fefefe 0%, #f8f7f2 100%)",
+      border: "1px solid #d4c9a8",
+      borderRadius: 12,
+      padding: "16px 20px",
+      margin: "12px 0",
+      fontFamily: "'Courier Prime', 'Courier New', monospace",
+      fontSize: 13,
+      boxShadow: "0 2px 8px rgba(140,120,80,0.08)",
+    }}>
+      {title && <div style={{ fontSize: 11, color: "#8a7e5a", marginBottom: 6, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>{title}</div>}
+      <div style={{ textAlign: "center", fontWeight: 700, marginBottom: 10, color: "#4a4233", borderBottom: "1px dashed #d4c9a8", paddingBottom: 6 }}>
+        — {fecha} —
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr auto auto 1fr", gap: "2px 8px", alignItems: "start" }}>
+        <div style={{ fontWeight: 700, color: "#6b5e3e", borderBottom: "1px solid #d4c9a8", paddingBottom: 2 }}>Debe</div>
+        <div></div>
+        <div></div>
+        <div style={{ fontWeight: 700, color: "#6b5e3e", textAlign: "right", borderBottom: "1px solid #d4c9a8", paddingBottom: 2 }}>Haber</div>
+        {lineas.map((l, i) => (
+          l.lado === "D" ? (
+            <React.Fragment key={i}>
+              <div style={{ padding: "3px 0" }}>
+                <span style={{ color: "#2d6a4f", fontWeight: 700 }}>{formatNum(l.importe)}</span>
+                {" "}
+                <span style={{ color: "#6b5e3e" }}>({l.cuenta})</span>
+                {" "}
+                <span style={{ color: "#4a4233" }}>{l.nombre}</span>
+              </div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </React.Fragment>
+          ) : (
+            <React.Fragment key={i}>
+              <div></div>
+              <div></div>
+              <div style={{ padding: "3px 0", textAlign: "right", color: "#6b5e3e" }}>a</div>
+              <div style={{ padding: "3px 0", textAlign: "right" }}>
+                <span style={{ color: "#6b5e3e" }}>({l.cuenta})</span>
+                {" "}
+                <span style={{ color: "#4a4233" }}>{l.nombre}</span>
+                {" "}
+                <span style={{ color: "#c0392b", fontWeight: 700 }}>{formatNum(l.importe)}</span>
+              </div>
+            </React.Fragment>
+          )
+        ))}
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, paddingTop: 6, borderTop: "2px solid #d4c9a8", fontWeight: 700, fontSize: 12 }}>
+        <span style={{ color: "#2d6a4f" }}>Total Debe: {formatNum(totalDebe)}</span>
+        <span style={{ color: "#c0392b" }}>Total Haber: {formatNum(totalHaber)}</span>
+      </div>
+    </div>
+  );
+}
+
+function MiniChart({ data, width = 400, height = 180 }) {
+  if (!data || data.length === 0) return null;
+  const maxVal = Math.max(...data.map(d => d.valor));
+  const minVal = 0;
+  const range = maxVal - minVal || 1;
+  const padX = 50, padY = 25, padBottom = 30;
+  const chartW = width - padX * 2;
+  const chartH = height - padY - padBottom;
+
+  const points = data.map((d, i) => {
+    const x = padX + (i / Math.max(data.length - 1, 1)) * chartW;
+    const y = padY + chartH - ((d.valor - minVal) / range) * chartH;
+    return { x, y, ...d };
+  });
+
+  const pathD = points.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ");
+  const areaD = pathD + ` L ${points[points.length - 1].x} ${padY + chartH} L ${points[0].x} ${padY + chartH} Z`;
+
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} style={{ width: "100%", maxWidth: width, height: "auto" }}>
+      <defs>
+        <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2d6a4f" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#2d6a4f" stopOpacity="0.02" />
+        </linearGradient>
+      </defs>
+      {[0, 0.25, 0.5, 0.75, 1].map((pct, i) => {
+        const y = padY + chartH - pct * chartH;
+        const val = minVal + pct * range;
+        return (
+          <g key={i}>
+            <line x1={padX} y1={y} x2={width - padX} y2={y} stroke="#e0d8c0" strokeWidth="0.5" />
+            <text x={padX - 6} y={y + 4} textAnchor="end" fontSize="9" fill="#8a7e5a" fontFamily="DM Sans">{formatNum(val)}</text>
+          </g>
+        );
+      })}
+      <path d={areaD} fill="url(#chartGrad)" />
+      <path d={pathD} fill="none" stroke="#2d6a4f" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      {points.map((p, i) => (
+        <g key={i}>
+          <circle cx={p.x} cy={p.y} r="4" fill="#fff" stroke="#2d6a4f" strokeWidth="2" />
+          <text x={p.x} y={padY + chartH + 16} textAnchor="middle" fontSize="9" fill="#6b5e3e" fontFamily="DM Sans">{p.label}</text>
+        </g>
+      ))}
+      <text x={width / 2} y={height - 2} textAnchor="middle" fontSize="10" fill="#8a7e5a" fontFamily="DM Sans" fontWeight="600">Valor Neto Contable (€)</text>
+    </svg>
+  );
+}
+
+function InputField({ label, value, onChange, type = "number", suffix, options, disabled, min, max, step, helpText }) {
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#4a4233", marginBottom: 4, fontFamily: "'DM Sans', sans-serif" }}>
+        {label}
+      </label>
+      {options ? (
+        <select
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          disabled={disabled}
+          style={{
+            width: "100%", padding: "8px 10px", borderRadius: 8, border: "1.5px solid #d4c9a8",
+            background: disabled ? "#f0ede4" : "#fff", fontSize: 14, color: "#4a4233",
+            fontFamily: "'DM Sans', sans-serif", outline: "none",
+          }}
+        >
+          {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+        </select>
+      ) : (
+        <div style={{ position: "relative" }}>
+          <input
+            type={type}
+            value={value}
+            onChange={e => onChange(type === "number" ? parseFloat(e.target.value) || 0 : e.target.value)}
+            disabled={disabled}
+            min={min}
+            max={max}
+            step={step || (type === "number" ? "0.01" : undefined)}
+            style={{
+              width: "100%", padding: "8px 10px", paddingRight: suffix ? 30 : 10,
+              borderRadius: 8, border: "1.5px solid #d4c9a8",
+              background: disabled ? "#f0ede4" : "#fff", fontSize: 14, color: "#4a4233",
+              fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box",
+            }}
+          />
+          {suffix && <span style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", fontSize: 13, color: "#8a7e5a" }}>{suffix}</span>}
+        </div>
+      )}
+      {helpText && <div style={{ fontSize: 11, color: "#8a7e5a", marginTop: 3 }}>{helpText}</div>}
+    </div>
+  );
+}
+
+function PhaseIntro({ onNext }) {
+  const [empresa] = useState(EMPRESAS[Math.floor(Math.random() * EMPRESAS.length)]);
+  return (
+    <div style={{ textAlign: "center", padding: "20px 0" }}>
+      <div style={{ fontSize: 48, marginBottom: 16 }}>🏭</div>
+      <h2 style={{ fontSize: 22, color: "#2d6a4f", margin: "0 0 12px", fontFamily: "'Playfair Display', Georgia, serif" }}>
+        El Ciclo de Vida del Inmovilizado
+      </h2>
+      <p style={{ fontSize: 15, color: "#4a4233", lineHeight: 1.7, maxWidth: 500, margin: "0 auto 20px" }}>
+        Vas a acompañar a <strong>{empresa}</strong> en la vida completa de un bien de inmovilizado: desde su adquisición hasta su salida de la empresa.
+      </p>
+      <div style={{
+        background: "linear-gradient(135deg, #f0f7f4 0%, #e8f0e5 100%)",
+        borderRadius: 12, padding: "16px 20px", maxWidth: 420, margin: "0 auto 24px",
+        border: "1px solid #c8dcc0",
+      }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: "#2d6a4f", marginBottom: 8 }}>Recorrerás 4 fases:</div>
+        {["Compra — Adquisición y valoración inicial", "Amortización — Depreciación sistemática", "Deterioro — Pérdidas de valor reversibles", "Baja — Venta o salida del patrimonio"].map((t, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 0", fontSize: 13, color: "#4a4233" }}>
+            <span style={{ background: "#2d6a4f", color: "#fff", borderRadius: "50%", width: 22, height: 22, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{i + 1}</span>
+            {t}
+          </div>
+        ))}
+      </div>
+      <p style={{ fontSize: 13, color: "#8a7e5a", marginBottom: 20 }}>
+        En cada fase verás el asiento contable generado y un gráfico de evolución del valor del bien.
+      </p>
+      <button onClick={onNext} style={{
+        background: "linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%)",
+        color: "#fff", border: "none", borderRadius: 10, padding: "12px 32px",
+        fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+        boxShadow: "0 4px 12px rgba(45,106,79,0.3)",
+        transition: "transform 0.15s, box-shadow 0.15s",
+      }}
+        onMouseOver={e => { e.target.style.transform = "translateY(-1px)"; e.target.style.boxShadow = "0 6px 16px rgba(45,106,79,0.4)"; }}
+        onMouseOut={e => { e.target.style.transform = ""; e.target.style.boxShadow = "0 4px 12px rgba(45,106,79,0.3)"; }}
+      >
+        Comenzar simulación →
+      </button>
+    </div>
+  );
+}
+
+function PhaseCompra({ config, setConfig, onNext }) {
+  const [tipo, setTipo] = useState("material");
+  const allBienes = tipo === "material" ? BIENES_MATERIAL : BIENES_INTANGIBLE;
+  const [bienIdx, setBienIdx] = useState(0);
+  const bien = allBienes[bienIdx];
+
+  const [precioFactura, setPrecioFactura] = useState(25000);
+  const [descuento, setDescuento] = useState(0);
+  const [gastosTransporte, setGastosTransporte] = useState(0);
+  const [gastosMontaje, setGastosMontaje] = useState(0);
+  const [formaPago, setFormaPago] = useState("contado_banco");
+  const [anticipoPrevio, setAnticipoPrevio] = useState(false);
+  const [importeAnticipo, setImporteAnticipo] = useState(0);
+  const [fechaCompra, setFechaCompra] = useState("01/01/20X0");
+  const [mesCompra, setMesCompra] = useState(1);
+
+  const importeDescuento = precioFactura * (descuento / 100);
+  const precioAdquisicion = precioFactura - importeDescuento + gastosTransporte + gastosMontaje;
+  const ivaRate = 0.21;
+  const baseImponibleSinAnticipo = anticipoPrevio ? precioAdquisicion - importeAnticipo : precioAdquisicion;
+  const ivaSoportado = anticipoPrevio ? baseImponibleSinAnticipo * ivaRate : precioAdquisicion * ivaRate;
+  const totalPagar = precioAdquisicion + ivaSoportado;
+
+  const cuentaInmovilizado = bien.code;
+  const nombreCuenta = bien.name;
+
+  const generarAsientoCompra = () => {
+    const lineas = [];
+    lineas.push({ lado: "D", cuenta: cuentaInmovilizado, nombre: nombreCuenta, importe: precioAdquisicion });
+
+    if (anticipoPrevio) {
+      const ivaAnticipo = importeAnticipo * ivaRate;
+      const ivaDiferencia = (precioAdquisicion - importeAnticipo) * ivaRate;
+      lineas.push({ lado: "D", cuenta: "472", nombre: "H.P., IVA soportado", importe: ivaDiferencia });
+      const cuentaAnticipo = tipo === "material" ? "239" : "209";
+      const nombreAnticipo = tipo === "material" ? "Anticipos para inmovilizaciones materiales" : "Anticipos para inmovilizaciones intangibles";
+      lineas.push({ lado: "H", cuenta: cuentaAnticipo, nombre: nombreAnticipo, importe: importeAnticipo });
+
+      if (formaPago === "contado_banco") {
+        lineas.push({ lado: "H", cuenta: "572", nombre: "Bancos, c/c", importe: (precioAdquisicion - importeAnticipo) + ivaDiferencia });
+      } else if (formaPago === "contado_caja") {
+        lineas.push({ lado: "H", cuenta: "570", nombre: "Caja, euros", importe: (precioAdquisicion - importeAnticipo) + ivaDiferencia });
+      } else if (formaPago === "proveedor_inmov") {
+        const cuentaProv = "523";
+        lineas.push({ lado: "H", cuenta: cuentaProv, nombre: "Proveedores de inmovilizado a c/p", importe: (precioAdquisicion - importeAnticipo) + ivaDiferencia });
+      } else if (formaPago === "efectos") {
+        lineas.push({ lado: "H", cuenta: "525", nombre: "Efectos a pagar a corto plazo", importe: (precioAdquisicion - importeAnticipo) + ivaDiferencia });
+      }
+    } else {
+      lineas.push({ lado: "D", cuenta: "472", nombre: "H.P., IVA soportado", importe: precioAdquisicion * ivaRate });
+      if (formaPago === "contado_banco") {
+        lineas.push({ lado: "H", cuenta: "572", nombre: "Bancos, c/c", importe: totalPagar });
+      } else if (formaPago === "contado_caja") {
+        lineas.push({ lado: "H", cuenta: "570", nombre: "Caja, euros", importe: totalPagar });
+      } else if (formaPago === "proveedor_inmov") {
+        lineas.push({ lado: "H", cuenta: "523", nombre: "Proveedores de inmovilizado a c/p", importe: totalPagar });
+      } else if (formaPago === "efectos") {
+        lineas.push({ lado: "H", cuenta: "525", nombre: "Efectos a pagar a corto plazo", importe: totalPagar });
+      } else if (formaPago === "mixto") {
+        const parteBanco = Math.round(totalPagar * 0.4 * 100) / 100;
+        const parteProveedor = Math.round((totalPagar - parteBanco) * 100) / 100;
+        lineas.push({ lado: "H", cuenta: "572", nombre: "Bancos, c/c", importe: parteBanco });
+        lineas.push({ lado: "H", cuenta: "525", nombre: "Efectos a pagar a corto plazo", importe: parteProveedor });
+      }
+    }
+    return lineas;
+  };
+
+  const handleNext = () => {
+    setConfig({
+      ...config,
+      tipo,
+      bien,
+      cuentaInmovilizado,
+      nombreCuenta,
+      precioAdquisicion,
+      fechaCompra,
+      mesCompra,
+      asientoCompra: generarAsientoCompra(),
+    });
+    onNext();
+  };
+
+  return (
+    <div>
+      <h3 style={{ fontSize: 18, color: "#2d6a4f", margin: "0 0 4px", fontFamily: "'Playfair Display', Georgia, serif" }}>
+        Fase 1: Adquisición del inmovilizado
+      </h3>
+      <p style={{ fontSize: 13, color: "#6b5e3e", margin: "0 0 16px" }}>
+        Configura la compra del bien. El precio de adquisición = importe factura − descuentos + gastos adicionales.
+      </p>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        <div>
+          <InputField label="Tipo de inmovilizado" value={tipo} onChange={v => { setTipo(v); setBienIdx(0); }}
+            options={[{ value: "material", label: "Material (subgrupo 21)" }, { value: "intangible", label: "Intangible (subgrupo 20)" }]} />
+          <InputField label="Elemento" value={bienIdx} onChange={v => setBienIdx(parseInt(v))}
+            options={allBienes.map((b, i) => ({ value: i, label: `(${b.code}) ${b.name}` }))} />
+          <InputField label="Mes de compra" value={mesCompra} onChange={v => setMesCompra(parseInt(v))} type="number" min={1} max={12} step={1}
+            helpText="Mes (1-12). Importante para el prorrateo de la amortización." />
+          <InputField label="Importe facturado" value={precioFactura} onChange={setPrecioFactura} suffix="€" />
+          <InputField label="Descuento comercial" value={descuento} onChange={setDescuento} suffix="%" min={0} max={50} />
+        </div>
+        <div>
+          <InputField label="Gastos de transporte" value={gastosTransporte} onChange={setGastosTransporte} suffix="€" />
+          <InputField label="Gastos de montaje/instalación" value={gastosMontaje} onChange={setGastosMontaje} suffix="€" />
+          <InputField label="Forma de pago" value={formaPago} onChange={setFormaPago}
+            options={[
+              { value: "contado_banco", label: "Transferencia bancaria" },
+              { value: "contado_caja", label: "Efectivo (caja)" },
+              { value: "proveedor_inmov", label: "A crédito (proveedor de inmovilizado)" },
+              { value: "efectos", label: "Pagaré (efectos a pagar)" },
+              { value: "mixto", label: "Mixto (40% banco + 60% pagaré)" },
+            ]} />
+          <div style={{ marginBottom: 14 }}>
+            <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#4a4233", cursor: "pointer" }}>
+              <input type="checkbox" checked={anticipoPrevio} onChange={e => setAnticipoPrevio(e.target.checked)} />
+              Se realizó un anticipo previo
+            </label>
+          </div>
+          {anticipoPrevio && (
+            <InputField label="Importe del anticipo (sin IVA)" value={importeAnticipo} onChange={setImporteAnticipo} suffix="€"
+              helpText="Importe base del anticipo, sin incluir IVA" />
+          )}
+        </div>
+      </div>
+
+      <div style={{
+        background: "linear-gradient(135deg, #f8f5e6 0%, #f5f0d8 100%)",
+        borderRadius: 10, padding: 16, margin: "16px 0",
+        border: "1px solid #e0d8a8",
+      }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: "#6b5e3e", marginBottom: 8 }}>📋 Cálculo del Precio de Adquisición</div>
+        <div style={{ fontSize: 13, color: "#4a4233", lineHeight: 1.8 }}>
+          Importe facturado: {formatNum(precioFactura)} €<br />
+          {descuento > 0 && <>− Descuento ({descuento}%): −{formatNum(importeDescuento)} €<br /></>}
+          {gastosTransporte > 0 && <>+ Gastos transporte: +{formatNum(gastosTransporte)} €<br /></>}
+          {gastosMontaje > 0 && <>+ Gastos montaje: +{formatNum(gastosMontaje)} €<br /></>}
+          <strong style={{ color: "#2d6a4f", fontSize: 15 }}>Precio de adquisición: {formatNum(precioAdquisicion)} €</strong>
+        </div>
+      </div>
+
+      <Asiento fecha={`${String(mesCompra).padStart(2, "0")}/01/20X0`} lineas={generarAsientoCompra()} title="Asiento de compra" />
+
+      <div style={{ textAlign: "right", marginTop: 16 }}>
+        <button onClick={handleNext} style={{
+          background: "linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%)",
+          color: "#fff", border: "none", borderRadius: 8, padding: "10px 24px",
+          fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+        }}>
+          Siguiente: Amortización →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function PhaseAmortizacion({ config, setConfig, onNext }) {
+  const { bien, tipo, precioAdquisicion, mesCompra } = config;
+  const [metodo, setMetodo] = useState("lineal_vida");
+  const [vidaUtil, setVidaUtil] = useState(tipo === "intangible" ? (bien.vidaUtil || 5) : 10);
+  const [valorResidual, setValorResidual] = useState(0);
+  const [unidadesTotales, setUnidadesTotales] = useState(500000);
+  const [produccionAnual, setProduccionAnual] = useState(() => {
+    const arr = [];
+    for (let i = 0; i < 10; i++) arr.push(50000);
+    return arr;
+  });
+
+  const mesesPrimerAnio = 13 - mesCompra;
+  const base = precioAdquisicion - valorResidual;
+
+  const calcularTabla = () => {
+    const tabla = [];
+    if (metodo === "lineal_vida") {
+      const cuotaAnual = base / vidaUtil;
+      let acumulada = 0;
+      for (let i = 0; i < vidaUtil; i++) {
+        let cuota = cuotaAnual;
+        if (i === 0 && mesCompra > 1) cuota = cuotaAnual * (mesesPrimerAnio / 12);
+        if (i === vidaUtil - 1 && mesCompra > 1) cuota = cuotaAnual * ((12 - mesesPrimerAnio) / 12);
+        cuota = Math.round(cuota * 100) / 100;
+        acumulada += cuota;
+        tabla.push({
+          anio: i + 1,
+          label: `20X${i}`,
+          cuota,
+          acumulada: Math.round(acumulada * 100) / 100,
+          vnc: Math.round((precioAdquisicion - acumulada) * 100) / 100,
+        });
+      }
+      if (mesCompra > 1) {
+        const cuotaExtra = cuotaAnual * ((12 - mesesPrimerAnio) / 12);
+        acumulada += Math.round(cuotaExtra * 100) / 100;
+        tabla.push({
+          anio: vidaUtil + 1,
+          label: `20X${vidaUtil}`,
+          cuota: Math.round(cuotaExtra * 100) / 100,
+          acumulada: Math.round(acumulada * 100) / 100,
+          vnc: Math.round((precioAdquisicion - acumulada) * 100) / 100,
+        });
+      }
+    } else if (metodo === "lineal_porcentaje") {
+      const coefMax = bien.coefMax || 12;
+      const periodMax = bien.periodMax || 18;
+      const porcMin = 100 / periodMax;
+      const porcMax = coefMax;
+      const porc = (porcMin + porcMax) / 2;
+      const cuotaAnual = precioAdquisicion * (porc / 100);
+      let acumulada = 0;
+      const anios = Math.ceil(precioAdquisicion / cuotaAnual) + 1;
+      for (let i = 0; i < Math.min(anios, 30); i++) {
+        let cuota = cuotaAnual;
+        if (i === 0 && mesCompra > 1) cuota = cuotaAnual * (mesesPrimerAnio / 12);
+        cuota = Math.min(cuota, precioAdquisicion - acumulada);
+        if (cuota <= 0) break;
+        cuota = Math.round(cuota * 100) / 100;
+        acumulada += cuota;
+        tabla.push({
+          anio: i + 1, label: `20X${i}`, cuota,
+          acumulada: Math.round(acumulada * 100) / 100,
+          vnc: Math.round((precioAdquisicion - acumulada) * 100) / 100,
+        });
+      }
+    } else if (metodo === "decreciente") {
+      const n = vidaUtil;
+      let coef = n <= 5 ? 1.5 : n <= 8 ? 2 : 2.5;
+      const porcLineal = 100 / n;
+      let porcConstante = porcLineal * coef;
+      if (porcConstante < 11) porcConstante = 11;
+      let pendiente = precioAdquisicion;
+      let acumulada = 0;
+      for (let i = 0; i < n; i++) {
+        let cuota;
+        if (i === n - 1) {
+          cuota = pendiente;
+        } else {
+          cuota = pendiente * (porcConstante / 100);
+          if (i === 0 && mesCompra > 1) cuota = cuota * (mesesPrimerAnio / 12);
+        }
+        cuota = Math.round(cuota * 100) / 100;
+        acumulada += cuota;
+        pendiente = precioAdquisicion - acumulada;
+        tabla.push({
+          anio: i + 1, label: `20X${i}`, cuota,
+          acumulada: Math.round(acumulada * 100) / 100,
+          vnc: Math.round(pendiente * 100) / 100,
+        });
+      }
+    } else if (metodo === "digitos") {
+      const n = vidaUtil;
+      const sumaDigitos = (n * (n + 1)) / 2;
+      let acumulada = 0;
+      for (let i = 0; i < n; i++) {
+        const digito = n - i;
+        let cuota = (base / sumaDigitos) * digito;
+        if (i === 0 && mesCompra > 1) cuota = cuota * (mesesPrimerAnio / 12);
+        cuota = Math.round(cuota * 100) / 100;
+        acumulada += cuota;
+        tabla.push({
+          anio: i + 1, label: `20X${i}`, cuota,
+          acumulada: Math.round(acumulada * 100) / 100,
+          vnc: Math.round((precioAdquisicion - acumulada) * 100) / 100,
+        });
+      }
+    } else if (metodo === "tecnico") {
+      let acumulada = 0;
+      for (let i = 0; i < vidaUtil; i++) {
+        const uds = produccionAnual[i] || 0;
+        let cuota = (base / unidadesTotales) * uds;
+        cuota = Math.round(cuota * 100) / 100;
+        acumulada += cuota;
+        tabla.push({
+          anio: i + 1, label: `20X${i}`, cuota,
+          acumulada: Math.round(acumulada * 100) / 100,
+          vnc: Math.round((precioAdquisicion - acumulada) * 100) / 100,
+        });
+      }
+    }
+    return tabla;
+  };
+
+  const tabla = calcularTabla();
+  const cuentaAmort = tipo === "material" ? "681" : "680";
+  const nombreAmort = tipo === "material" ? "Amortización del inmovilizado material" : "Amortización del inmovilizado intangible";
+  const cuentaAcum = tipo === "material" ? "281" : "280";
+  const nombreAcum = tipo === "material" ? "Amort. acumulada del inmov. material" : "Amort. acumulada del inmov. intangible";
+
+  const handleNext = () => {
+    setConfig({
+      ...config,
+      metodoAmort: metodo,
+      vidaUtil,
+      valorResidual,
+      tablaAmortizacion: tabla,
+      cuentaAmort, nombreAmort, cuentaAcum, nombreAcum,
+    });
+    onNext();
+  };
+
+  return (
+    <div>
+      <h3 style={{ fontSize: 18, color: "#2d6a4f", margin: "0 0 4px", fontFamily: "'Playfair Display', Georgia, serif" }}>
+        Fase 2: Amortización del inmovilizado
+      </h3>
+      <p style={{ fontSize: 13, color: "#6b5e3e", margin: "0 0 16px" }}>
+        La amortización refleja la depreciación sistemática del bien. Elige el método y los parámetros.
+      </p>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        <div>
+          <InputField label="Método de amortización" value={metodo} onChange={setMetodo}
+            options={[
+              { value: "lineal_vida", label: "Lineal (por vida útil)" },
+              ...(tipo === "material" ? [{ value: "lineal_porcentaje", label: "Lineal (por tablas de Hacienda)" }] : []),
+              ...(tipo === "material" ? [{ value: "decreciente", label: "Decreciente (% fijo sobre base decreciente)" }] : []),
+              { value: "digitos", label: "Decreciente (números dígitos)" },
+              ...(tipo === "material" ? [{ value: "tecnico", label: "Sistema técnico (por producción)" }] : []),
+            ]} />
+          <InputField label="Vida útil (años)" value={vidaUtil} onChange={v => setVidaUtil(parseInt(v) || 1)} type="number" min={1} max={50} step={1}
+            helpText={tipo === "material" && bien.coefMax ? `Tablas: coef. máx. ${bien.coefMax}%, periodo máx. ${bien.periodMax} años` : ""} />
+          {(metodo === "lineal_vida" || metodo === "digitos") && (
+            <InputField label="Valor residual" value={valorResidual} onChange={setValorResidual} suffix="€"
+              helpText="Valor estimado al final de la vida útil" />
+          )}
+        </div>
+        <div>
+          {metodo === "tecnico" && (
+            <>
+              <InputField label="Producción total estimada (unidades)" value={unidadesTotales} onChange={v => setUnidadesTotales(parseInt(v) || 1)} type="number" />
+              <div style={{ fontSize: 12, fontWeight: 600, color: "#4a4233", marginBottom: 6 }}>Producción por año:</div>
+              {Array.from({ length: Math.min(vidaUtil, 10) }).map((_, i) => (
+                <div key={i} style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 4 }}>
+                  <span style={{ fontSize: 11, color: "#8a7e5a", width: 40 }}>Año {i + 1}:</span>
+                  <input type="number" value={produccionAnual[i] || 0}
+                    onChange={e => { const a = [...produccionAnual]; a[i] = parseInt(e.target.value) || 0; setProduccionAnual(a); }}
+                    style={{ width: 80, padding: "4px 6px", borderRadius: 6, border: "1px solid #d4c9a8", fontSize: 12 }} />
+                </div>
+              ))}
+            </>
+          )}
+        </div>
+      </div>
+
+      {tabla.length > 0 && (
+        <>
+          <div style={{
+            background: "#fafaf5", borderRadius: 10, padding: 16, margin: "16px 0",
+            border: "1px solid #e0dcd0", overflowX: "auto",
+          }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#2d6a4f", marginBottom: 10 }}>📊 Tabla de amortización</div>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12, fontFamily: "'DM Sans', sans-serif" }}>
+              <thead>
+                <tr style={{ background: "#2d6a4f", color: "#fff" }}>
+                  <th style={{ padding: "6px 10px", textAlign: "left" }}>Año</th>
+                  <th style={{ padding: "6px 10px", textAlign: "right" }}>Cuota</th>
+                  <th style={{ padding: "6px 10px", textAlign: "right" }}>Amort. acumulada</th>
+                  <th style={{ padding: "6px 10px", textAlign: "right" }}>Valor neto contable</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tabla.map((row, i) => (
+                  <tr key={i} style={{ background: i % 2 === 0 ? "#fff" : "#f8f7f2" }}>
+                    <td style={{ padding: "5px 10px" }}>{row.label}</td>
+                    <td style={{ padding: "5px 10px", textAlign: "right" }}>{formatNum(row.cuota)} €</td>
+                    <td style={{ padding: "5px 10px", textAlign: "right" }}>{formatNum(row.acumulada)} €</td>
+                    <td style={{ padding: "5px 10px", textAlign: "right", fontWeight: 600, color: "#2d6a4f" }}>{formatNum(row.vnc)} €</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <MiniChart data={[
+            { label: "Compra", valor: precioAdquisicion },
+            ...tabla.map(r => ({ label: r.label, valor: r.vnc }))
+          ]} />
+
+          <Asiento fecha="31/12/20X0" lineas={[
+            { lado: "D", cuenta: cuentaAmort, nombre: nombreAmort, importe: tabla[0]?.cuota || 0 },
+            { lado: "H", cuenta: cuentaAcum, nombre: nombreAcum, importe: tabla[0]?.cuota || 0 },
+          ]} title="Asiento tipo de amortización (primer año)" />
+        </>
+      )}
+
+      <div style={{ textAlign: "right", marginTop: 16 }}>
+        <button onClick={handleNext} style={{
+          background: "linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%)",
+          color: "#fff", border: "none", borderRadius: 8, padding: "10px 24px",
+          fontSize: 14, fontWeight: 600, cursor: "pointer",
+        }}>
+          Siguiente: Deterioro →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function PhaseDeterioro({ config, setConfig, onNext }) {
+  const { tipo, precioAdquisicion, tablaAmortizacion } = config;
+  const [aplicarDeterioro, setAplicarDeterioro] = useState(false);
+  const [anioDeterioro, setAnioDeterioro] = useState(2);
+  const [valorRazonable, setValorRazonable] = useState(0);
+
+  const rowDeterioro = tablaAmortizacion[anioDeterioro - 1];
+  const vnc = rowDeterioro ? rowDeterioro.vnc : precioAdquisicion;
+  const importeDeterioro = aplicarDeterioro ? Math.max(0, vnc - valorRazonable) : 0;
+
+  const cuentaPerdida = tipo === "material" ? "691" : "690";
+  const nombrePerdida = tipo === "material" ? "Pérdidas por deterioro del inmov. material" : "Pérdidas por deterioro del inmov. intangible";
+  const cuentaDeterioro = tipo === "material" ? "291" : "290";
+  const nombreDeterioro = tipo === "material" ? "Deterioro de valor del inmov. material" : "Deterioro de valor del inmov. intangible";
+
+  const handleNext = () => {
+    setConfig({
+      ...config,
+      aplicarDeterioro,
+      anioDeterioro: aplicarDeterioro ? anioDeterioro : null,
+      importeDeterioro,
+      valorRazonable: aplicarDeterioro ? valorRazonable : null,
+      cuentaPerdida, nombrePerdida, cuentaDeterioro, nombreDeterioro,
+    });
+    onNext();
+  };
+
+  return (
+    <div>
+      <h3 style={{ fontSize: 18, color: "#2d6a4f", margin: "0 0 4px", fontFamily: "'Playfair Display', Georgia, serif" }}>
+        Fase 3: Deterioro de valor
+      </h3>
+      <p style={{ fontSize: 13, color: "#6b5e3e", margin: "0 0 16px" }}>
+        El deterioro se produce cuando el valor de mercado o razonable del bien es inferior a su valor neto contable. Es una pérdida reversible.
+      </p>
+
+      <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14, color: "#4a4233", cursor: "pointer", marginBottom: 16 }}>
+        <input type="checkbox" checked={aplicarDeterioro} onChange={e => setAplicarDeterioro(e.target.checked)} style={{ width: 18, height: 18 }} />
+        <strong>Aplicar deterioro de valor en esta simulación</strong>
+      </label>
+
+      {aplicarDeterioro && (
+        <>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <InputField label="¿En qué año se detecta el deterioro?" value={anioDeterioro}
+              onChange={v => setAnioDeterioro(parseInt(v) || 1)} type="number" min={1} max={tablaAmortizacion.length} step={1} />
+            <InputField label="Valor razonable (de mercado)" value={valorRazonable} onChange={setValorRazonable} suffix="€"
+              helpText="El mayor entre: valor de mercado y valor en uso" />
+          </div>
+
+          <div style={{
+            background: "linear-gradient(135deg, #fef3e6 0%, #fdecd4 100%)",
+            borderRadius: 10, padding: 16, margin: "16px 0", border: "1px solid #e8d4a8",
+          }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#b45309", marginBottom: 8 }}>⚠️ Cálculo del deterioro</div>
+            <div style={{ fontSize: 13, color: "#4a4233", lineHeight: 1.8 }}>
+              Valor neto contable a 31/12 del año {anioDeterioro}: <strong>{formatNum(vnc)} €</strong><br />
+              Valor razonable: <strong>{formatNum(valorRazonable)} €</strong><br />
+              {vnc > valorRazonable ? (
+                <span style={{ color: "#c0392b" }}>
+                  <strong>Deterioro a contabilizar: {formatNum(importeDeterioro)} €</strong> (VNC &gt; Valor razonable → hay deterioro)
+                </span>
+              ) : (
+                <span style={{ color: "#2d6a4f" }}>
+                  <strong>No procede deterioro</strong> (Valor razonable ≥ VNC)
+                </span>
+              )}
+            </div>
+          </div>
+
+          {importeDeterioro > 0 && (
+            <Asiento fecha={`31/12/20X${anioDeterioro - 1}`} lineas={[
+              { lado: "D", cuenta: cuentaPerdida, nombre: nombrePerdida, importe: importeDeterioro },
+              { lado: "H", cuenta: cuentaDeterioro, nombre: nombreDeterioro, importe: importeDeterioro },
+            ]} title="Asiento de deterioro de valor" />
+          )}
+        </>
+      )}
+
+      {!aplicarDeterioro && (
+        <div style={{
+          background: "#f0f7f4", borderRadius: 10, padding: 20, textAlign: "center",
+          border: "1px solid #c8dcc0", margin: "20px 0",
+        }}>
+          <div style={{ fontSize: 32, marginBottom: 8 }}>✅</div>
+          <p style={{ fontSize: 14, color: "#2d6a4f", margin: 0 }}>
+            En esta simulación no se produce deterioro de valor. El bien mantiene su valor de mercado por encima del valor neto contable.
+          </p>
+        </div>
+      )}
+
+      <div style={{ textAlign: "right", marginTop: 16 }}>
+        <button onClick={handleNext} style={{
+          background: "linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%)",
+          color: "#fff", border: "none", borderRadius: 8, padding: "10px 24px",
+          fontSize: 14, fontWeight: 600, cursor: "pointer",
+        }}>
+          Siguiente: Baja del inmovilizado →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function PhaseBaja({ config, setConfig, onNext }) {
+  const { tipo, precioAdquisicion, tablaAmortizacion, cuentaInmovilizado, nombreCuenta, cuentaAcum, nombreAcum, aplicarDeterioro, importeDeterioro, cuentaDeterioro, nombreDeterioro } = config;
+  const [tipoBaja, setTipoBaja] = useState("venta");
+  const [anioBaja, setAnioBaja] = useState(Math.min(3, tablaAmortizacion.length));
+  const [mesBaja, setMesBaja] = useState(6);
+  const [precioVenta, setPrecioVenta] = useState(0);
+  const [formaCobro, setFormaCobro] = useState("banco");
+
+  const rowAnterior = tablaAmortizacion[anioBaja - 2] || { acumulada: 0 };
+  const rowActual = tablaAmortizacion[anioBaja - 1] || tablaAmortizacion[tablaAmortizacion.length - 1];
+  const cuotaAnual = rowActual ? rowActual.cuota : 0;
+  const amortProporcional = Math.round(cuotaAnual * (mesBaja / 12) * 100) / 100;
+  const amortAcumuladaTotal = Math.round((rowAnterior.acumulada + amortProporcional) * 100) / 100;
+  const deterioroAcum = (aplicarDeterioro && config.anioDeterioro && anioBaja > config.anioDeterioro) ? importeDeterioro : 0;
+  const vnc = Math.round((precioAdquisicion - amortAcumuladaTotal - deterioroAcum) * 100) / 100;
+  const resultado = precioVenta - vnc;
+
+  const cuentaBeneficio = tipo === "material" ? "771" : "770";
+  const nombreBeneficio = tipo === "material" ? "Beneficios procedentes del inmov. material" : "Beneficios procedentes del inmov. intangible";
+  const cuentaPerdida = tipo === "material" ? "671" : "670";
+  const nombrePerdidaVenta = tipo === "material" ? "Pérdidas procedentes del inmov. material" : "Pérdidas procedentes del inmov. intangible";
+
+  const generarAsientoBaja = () => {
+    const lineas = [];
+    if (tipoBaja === "venta") {
+      const iva = Math.round(precioVenta * 0.21 * 100) / 100;
+      const totalCobro = precioVenta + iva;
+
+      // Asiento de amortización proporcional
+      // Asiento de venta
+      if (amortAcumuladaTotal > 0) {
+        lineas.push({ lado: "D", cuenta: config.cuentaAcum.replace("2", "2"), nombre: nombreAcum, importe: amortAcumuladaTotal });
+      }
+      if (deterioroAcum > 0) {
+        lineas.push({ lado: "D", cuenta: cuentaDeterioro, nombre: nombreDeterioro, importe: deterioroAcum });
+      }
+      if (formaCobro === "banco") {
+        lineas.push({ lado: "D", cuenta: "572", nombre: "Bancos, c/c", importe: totalCobro });
+      } else if (formaCobro === "credito_cp") {
+        lineas.push({ lado: "D", cuenta: "543", nombre: "Créditos a c/p por enajenación de inmov.", importe: totalCobro });
+      } else if (formaCobro === "mixto_cobro") {
+        lineas.push({ lado: "D", cuenta: "572", nombre: "Bancos, c/c", importe: Math.round(totalCobro / 2 * 100) / 100 });
+        lineas.push({ lado: "D", cuenta: "253", nombre: "Créditos a l/p por enajenación de inmov.", importe: Math.round(totalCobro / 2 * 100) / 100 });
+      }
+      if (resultado < 0) {
+        lineas.push({ lado: "D", cuenta: cuentaPerdida, nombre: nombrePerdidaVenta, importe: Math.abs(resultado) });
+      }
+      lineas.push({ lado: "H", cuenta: cuentaInmovilizado, nombre: nombreCuenta, importe: precioAdquisicion });
+      lineas.push({ lado: "H", cuenta: "477", nombre: "H.P., IVA repercutido", importe: iva });
+      if (resultado > 0) {
+        lineas.push({ lado: "H", cuenta: cuentaBeneficio, nombre: nombreBeneficio, importe: resultado });
+      }
+    } else {
+      // Baja por siniestro
+      lineas.push({ lado: "D", cuenta: config.cuentaAcum, nombre: nombreAcum, importe: amortAcumuladaTotal });
+      if (deterioroAcum > 0) {
+        lineas.push({ lado: "D", cuenta: cuentaDeterioro, nombre: nombreDeterioro, importe: deterioroAcum });
+      }
+      lineas.push({ lado: "D", cuenta: "678", nombre: "Gastos excepcionales", importe: vnc });
+      lineas.push({ lado: "H", cuenta: cuentaInmovilizado, nombre: nombreCuenta, importe: precioAdquisicion });
+    }
+    return lineas;
+  };
+
+  const handleNext = () => {
+    setConfig({
+      ...config,
+      tipoBaja,
+      anioBaja,
+      mesBaja,
+      precioVenta: tipoBaja === "venta" ? precioVenta : 0,
+      vncBaja: vnc,
+      resultadoBaja: tipoBaja === "venta" ? resultado : -vnc,
+      amortAcumuladaBaja: amortAcumuladaTotal,
+      asientoBaja: generarAsientoBaja(),
+    });
+    onNext();
+  };
+
+  return (
+    <div>
+      <h3 style={{ fontSize: 18, color: "#2d6a4f", margin: "0 0 4px", fontFamily: "'Playfair Display', Georgia, serif" }}>
+        Fase 4: Baja del inmovilizado
+      </h3>
+      <p style={{ fontSize: 13, color: "#6b5e3e", margin: "0 0 16px" }}>
+        El bien sale del patrimonio de la empresa. Puede ser por venta (enajenación) o por causas extraordinarias (siniestro, obsolescencia...).
+      </p>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        <div>
+          <InputField label="Motivo de la baja" value={tipoBaja} onChange={setTipoBaja}
+            options={[
+              { value: "venta", label: "Venta (enajenación)" },
+              { value: "siniestro", label: "Siniestro / motivo extraordinario" },
+            ]} />
+          <InputField label="Año de la baja" value={anioBaja} onChange={v => setAnioBaja(parseInt(v) || 1)}
+            type="number" min={1} max={tablaAmortizacion.length} step={1} />
+          <InputField label="Mes de la baja" value={mesBaja} onChange={v => setMesBaja(parseInt(v) || 1)}
+            type="number" min={1} max={12} step={1}
+            helpText="Hay que amortizar proporcionalmente hasta este mes" />
+        </div>
+        <div>
+          {tipoBaja === "venta" && (
+            <>
+              <InputField label="Precio de venta (sin IVA)" value={precioVenta} onChange={setPrecioVenta} suffix="€" />
+              <InputField label="Forma de cobro" value={formaCobro} onChange={setFormaCobro}
+                options={[
+                  { value: "banco", label: "Transferencia bancaria" },
+                  { value: "credito_cp", label: "A crédito (cobro a corto plazo)" },
+                  { value: "mixto_cobro", label: "Mixto (50% banco + 50% crédito l/p)" },
+                ]} />
+            </>
+          )}
+        </div>
+      </div>
+
+      <div style={{
+        background: "linear-gradient(135deg, #f0f0fa 0%, #e8e8f5 100%)",
+        borderRadius: 10, padding: 16, margin: "16px 0", border: "1px solid #c8c8e0",
+      }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: "#4a3f8a", marginBottom: 8 }}>🔢 Cálculos previos al asiento de baja</div>
+        <div style={{ fontSize: 13, color: "#4a4233", lineHeight: 1.8 }}>
+          Precio de adquisición: {formatNum(precioAdquisicion)} €<br />
+          Amort. acumulada hasta la baja: {formatNum(amortAcumuladaTotal)} € <span style={{ fontSize: 11, color: "#8a7e5a" }}>(incluye prorrateo de {mesBaja} meses del año {anioBaja})</span><br />
+          {deterioroAcum > 0 && <>Deterioro acumulado: {formatNum(deterioroAcum)} €<br /></>}
+          <strong>Valor neto contable en el momento de la baja: {formatNum(vnc)} €</strong><br />
+          {tipoBaja === "venta" && (
+            <>
+              Precio de venta: {formatNum(precioVenta)} €<br />
+              <strong style={{ color: resultado >= 0 ? "#2d6a4f" : "#c0392b" }}>
+                {resultado >= 0 ? `Beneficio: ${formatNum(resultado)} €` : `Pérdida: ${formatNum(Math.abs(resultado))} €`}
+              </strong>
+            </>
+          )}
+        </div>
+      </div>
+
+      {tipoBaja === "venta" && amortProporcional > 0 && (
+        <Asiento
+          fecha={`${String(mesBaja).padStart(2, "0")}/01/20X${anioBaja - 1}`}
+          lineas={[
+            { lado: "D", cuenta: config.cuentaAmort, nombre: config.nombreAmort, importe: amortProporcional },
+            { lado: "H", cuenta: config.cuentaAcum, nombre: nombreAcum, importe: amortProporcional },
+          ]}
+          title={`Amortización proporcional (${mesBaja} meses del año ${anioBaja})`}
+        />
+      )}
+
+      <Asiento
+        fecha={`${String(mesBaja).padStart(2, "0")}/01/20X${anioBaja - 1}`}
+        lineas={generarAsientoBaja()}
+        title={tipoBaja === "venta" ? "Asiento de venta del inmovilizado" : "Asiento de baja por siniestro"}
+      />
+
+      <div style={{ textAlign: "right", marginTop: 16 }}>
+        <button onClick={handleNext} style={{
+          background: "linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%)",
+          color: "#fff", border: "none", borderRadius: 8, padding: "10px 24px",
+          fontSize: 14, fontWeight: 600, cursor: "pointer",
+        }}>
+          Ver resumen completo →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function PhaseResumen({ config, onNext }) {
+  const { nombreCuenta, precioAdquisicion, tablaAmortizacion, aplicarDeterioro, importeDeterioro, tipoBaja, precioVenta, vncBaja, resultadoBaja, asientoCompra, asientoBaja, metodoAmort, vidaUtil, anioBaja, mesBaja } = config;
+
+  const chartData = [
+    { label: "Compra", valor: precioAdquisicion },
+    ...tablaAmortizacion.slice(0, anioBaja).map(r => ({ label: r.label, valor: r.vnc })),
+  ];
+  if (aplicarDeterioro && importeDeterioro > 0) {
+    const idx = config.anioDeterioro;
+    if (idx && chartData[idx]) {
+      chartData[idx].valor = Math.max(0, chartData[idx].valor - importeDeterioro);
+    }
+  }
+
+  const metodoNombres = {
+    lineal_vida: "Lineal (por vida útil)",
+    lineal_porcentaje: "Lineal (por tablas de Hacienda)",
+    decreciente: "Decreciente (% fijo sobre base decreciente)",
+    digitos: "Decreciente (números dígitos)",
+    tecnico: "Sistema técnico (por producción)",
+  };
+
+  return (
+    <div>
+      <h3 style={{ fontSize: 18, color: "#2d6a4f", margin: "0 0 4px", fontFamily: "'Playfair Display', Georgia, serif" }}>
+        📋 Resumen del ciclo de vida
+      </h3>
+      <p style={{ fontSize: 13, color: "#6b5e3e", margin: "0 0 16px" }}>
+        Visión completa de todas las operaciones realizadas con el bien de inmovilizado.
+      </p>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 10, marginBottom: 20 }}>
+        {[
+          { label: "Bien", value: nombreCuenta, icon: "🏗️" },
+          { label: "P. Adquisición", value: `${formatNum(precioAdquisicion)} €`, icon: "💰" },
+          { label: "Amortización", value: metodoNombres[metodoAmort] || metodoAmort, icon: "📉" },
+          { label: "Resultado baja", value: resultadoBaja >= 0 ? `+${formatNum(resultadoBaja)} €` : `${formatNum(resultadoBaja)} €`, icon: tipoBaja === "venta" ? "🤝" : "⚡", color: resultadoBaja >= 0 ? "#2d6a4f" : "#c0392b" },
+        ].map((card, i) => (
+          <div key={i} style={{
+            background: "#fff", borderRadius: 10, padding: 14, textAlign: "center",
+            border: "1px solid #e0dcd0", boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
+          }}>
+            <div style={{ fontSize: 24, marginBottom: 4 }}>{card.icon}</div>
+            <div style={{ fontSize: 10, color: "#8a7e5a", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{card.label}</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: card.color || "#4a4233", marginTop: 2 }}>{card.value}</div>
+          </div>
+        ))}
+      </div>
+
+      <MiniChart data={chartData} width={500} height={200} />
+
+      <div style={{ marginTop: 20 }}>
+        <Asiento fecha={`Compra`} lineas={asientoCompra} title="1️⃣ Asiento de compra" />
+        <Asiento fecha="31/12/20X0" lineas={[
+          { lado: "D", cuenta: config.cuentaAmort, nombre: config.nombreAmort, importe: tablaAmortizacion[0]?.cuota || 0 },
+          { lado: "H", cuenta: config.cuentaAcum, nombre: config.nombreAcum, importe: tablaAmortizacion[0]?.cuota || 0 },
+        ]} title="2️⃣ Asiento tipo de amortización" />
+        {aplicarDeterioro && importeDeterioro > 0 && (
+          <Asiento fecha={`31/12/20X${config.anioDeterioro - 1}`} lineas={[
+            { lado: "D", cuenta: config.cuentaPerdida, nombre: config.nombrePerdida, importe: importeDeterioro },
+            { lado: "H", cuenta: config.cuentaDeterioro, nombre: config.nombreDeterioro, importe: importeDeterioro },
+          ]} title="3️⃣ Asiento de deterioro" />
+        )}
+        <Asiento fecha={`${String(mesBaja).padStart(2, "0")}/20X${anioBaja - 1}`} lineas={asientoBaja} title={`4️⃣ Asiento de ${tipoBaja === "venta" ? "venta" : "baja por siniestro"}`} />
+      </div>
+
+      <div style={{ textAlign: "right", marginTop: 16 }}>
+        <button onClick={onNext} style={{
+          background: "linear-gradient(135deg, #b45309 0%, #92400e 100%)",
+          color: "#fff", border: "none", borderRadius: 8, padding: "10px 24px",
+          fontSize: 14, fontWeight: 600, cursor: "pointer",
+        }}>
+          Ir al Quiz de comprensión →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+const QUIZ_QUESTIONS = [
+  {
+    q: "¿Qué incluye el precio de adquisición de un inmovilizado?",
+    options: [
+      "Solo el importe de la factura",
+      "Importe factura + IVA soportado",
+      "Importe factura − descuentos + gastos adicionales (transporte, montaje...)",
+      "Importe factura + gastos financieros",
+    ],
+    correct: 2,
+    explanation: "El precio de adquisición es el importe facturado, menos los descuentos, más todos los gastos necesarios para poner el bien en condiciones de funcionamiento (transporte, montaje, instalación...). El IVA NO se incluye si es deducible.",
+  },
+  {
+    q: "Al comprar inmovilizado, ¿por qué NO usamos la cuenta (400) Proveedores?",
+    options: [
+      "Porque el inmovilizado no tiene IVA",
+      "Porque son operaciones no comerciales, y usamos (173) o (523) Proveedores de inmovilizado",
+      "Porque el inmovilizado siempre se paga al contado",
+      "Porque la cuenta 400 solo es para compras internacionales",
+    ],
+    correct: 1,
+    explanation: "Las compras de inmovilizado son operaciones no comerciales (no son la actividad habitual de la empresa). Por eso usamos cuentas específicas: (173) Proveedores de inmovilizado a l/p o (523) a c/p, según el plazo de pago.",
+  },
+  {
+    q: "Si una empresa compra maquinaria el 1 de septiembre, ¿cómo afecta a la amortización del primer año?",
+    options: [
+      "Se amortiza el año completo",
+      "No se amortiza hasta el año siguiente",
+      "Se amortiza proporcionalmente: solo los meses desde septiembre a diciembre (4 meses)",
+      "Se amortiza la mitad del año",
+    ],
+    correct: 2,
+    explanation: "La amortización se calcula proporcionalmente al tiempo que el bien ha estado en la empresa. Si entra en septiembre, en el primer ejercicio solo amortizamos 4 meses (septiembre a diciembre). Esto se llama prorrateo.",
+  },
+  {
+    q: "¿Cuándo se produce un deterioro de valor del inmovilizado?",
+    options: [
+      "Cuando el bien se rompe o avería",
+      "Cuando el valor de mercado o razonable es inferior al valor neto contable",
+      "Cuando la amortización acumulada supera el 50% del coste",
+      "Siempre al final del ejercicio económico",
+    ],
+    correct: 1,
+    explanation: "El deterioro se registra cuando el importe recuperable del bien (el mayor entre su valor razonable y su valor en uso) es inferior a su valor neto contable. Es una pérdida reversible, a diferencia de la amortización.",
+  },
+  {
+    q: "Al vender un inmovilizado material con beneficio, ¿qué cuenta utilizamos para registrar dicho beneficio?",
+    options: [
+      "(700) Ventas de mercaderías",
+      "(771) Beneficios procedentes del inmovilizado material",
+      "(477) H.P., IVA repercutido",
+      "(572) Bancos, c/c",
+    ],
+    correct: 1,
+    explanation: "El beneficio por venta de inmovilizado material se registra en la cuenta (771). Si fuera intangible, usaríamos la (770). Estas cuentas recogen la diferencia positiva entre el precio de venta y el valor neto contable del bien.",
+  },
+  {
+    q: "Al dar de baja un inmovilizado por venta, ¿por qué importe se abona (da de baja) la cuenta del bien?",
+    options: [
+      "Por el precio de venta",
+      "Por el valor neto contable",
+      "Por su precio de adquisición original",
+      "Por la amortización acumulada",
+    ],
+    correct: 2,
+    explanation: "El inmovilizado siempre se da de baja por su precio de adquisición (el importe por el que está registrado en la cuenta). La amortización acumulada se cancela por separado en el Debe, y la diferencia con el precio de venta genera el beneficio o pérdida.",
+  },
+  {
+    q: "¿Qué cuenta se utiliza para dar de baja un inmovilizado destruido por una inundación?",
+    options: [
+      "(671) Pérdidas procedentes del inmovilizado material",
+      "(678) Gastos excepcionales",
+      "(691) Pérdidas por deterioro del inmovilizado material",
+      "(659) Otras dotaciones para operaciones comerciales",
+    ],
+    correct: 1,
+    explanation: "Las bajas por motivos extraordinarios (siniestros, catástrofes naturales, accidentes...) se registran como (678) Gastos excepcionales. La cuenta (671) es para pérdidas por venta, y la (691) para deterioros de valor.",
+  },
+  {
+    q: "En el libro de bienes de inversión, ¿qué información se registra de cada bien?",
+    options: [
+      "Solo el nombre y el precio de compra",
+      "Descripción, fecha de adquisición, precio de adquisición, amortización acumulada, bajas y ajustes",
+      "Solo los asientos contables relacionados",
+      "El presupuesto y las ofertas recibidas",
+    ],
+    correct: 1,
+    explanation: "El libro de bienes de inversión es obligatorio para el control del IVA y debe contener la identificación del bien, fecha y precio de adquisición, cuotas de IVA, amortizaciones, y cualquier baja o regularización.",
+  },
+];
+
+function PhaseQuiz({ onRestart }) {
+  const [current, setCurrent] = useState(0);
+  const [selected, setSelected] = useState(null);
+  const [showResult, setShowResult] = useState(false);
+  const [score, setScore] = useState(0);
+  const [finished, setFinished] = useState(false);
+  const [answers, setAnswers] = useState([]);
+
+  const question = QUIZ_QUESTIONS[current];
+
+  const handleSelect = (idx) => {
+    if (showResult) return;
+    setSelected(idx);
+  };
+
+  const handleConfirm = () => {
+    if (selected === null) return;
+    const isCorrect = selected === question.correct;
+    if (isCorrect) setScore(s => s + 1);
+    setAnswers([...answers, { q: current, selected, correct: question.correct, isCorrect }]);
+    setShowResult(true);
+  };
+
+  const handleNext = () => {
+    if (current < QUIZ_QUESTIONS.length - 1) {
+      setCurrent(c => c + 1);
+      setSelected(null);
+      setShowResult(false);
+    } else {
+      setFinished(true);
+    }
+  };
+
+  if (finished) {
+    const pct = Math.round((score / QUIZ_QUESTIONS.length) * 100);
+    return (
+      <div style={{ textAlign: "center", padding: "20px 0" }}>
+        <div style={{ fontSize: 48, marginBottom: 12 }}>{pct >= 75 ? "🏆" : pct >= 50 ? "👍" : "📚"}</div>
+        <h3 style={{ fontSize: 22, color: "#2d6a4f", margin: "0 0 8px", fontFamily: "'Playfair Display', Georgia, serif" }}>
+          Resultado del Quiz
+        </h3>
+        <div style={{
+          fontSize: 36, fontWeight: 800, color: pct >= 75 ? "#2d6a4f" : pct >= 50 ? "#b45309" : "#c0392b",
+          margin: "12px 0",
+        }}>
+          {score} / {QUIZ_QUESTIONS.length}
+        </div>
+        <p style={{ fontSize: 15, color: "#4a4233", marginBottom: 4 }}>
+          {pct >= 75 ? "¡Excelente! Dominas el ciclo de vida del inmovilizado." :
+            pct >= 50 ? "¡Buen trabajo! Repasa las preguntas que has fallado." :
+              "Necesitas repasar. Vuelve a ejecutar la simulación prestando atención a cada fase."}
+        </p>
+        <div style={{
+          background: "#fafaf5", borderRadius: 10, padding: 16, margin: "20px auto",
+          maxWidth: 500, border: "1px solid #e0dcd0", textAlign: "left",
+        }}>
+          {answers.map((a, i) => (
+            <div key={i} style={{ display: "flex", gap: 8, alignItems: "flex-start", padding: "6px 0", borderBottom: i < answers.length - 1 ? "1px solid #f0ede4" : "none" }}>
+              <span style={{ fontSize: 16, flexShrink: 0 }}>{a.isCorrect ? "✅" : "❌"}</span>
+              <span style={{ fontSize: 12, color: "#4a4233" }}>
+                Pregunta {i + 1}: {a.isCorrect ? "Correcto" : `Incorrecto — ${QUIZ_QUESTIONS[i].explanation}`}
+              </span>
+            </div>
+          ))}
+        </div>
+        <button onClick={onRestart} style={{
+          background: "linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%)",
+          color: "#fff", border: "none", borderRadius: 8, padding: "10px 24px",
+          fontSize: 14, fontWeight: 600, cursor: "pointer", marginTop: 12,
+        }}>
+          🔄 Reiniciar simulación
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h3 style={{ fontSize: 18, color: "#2d6a4f", margin: "0 0 4px", fontFamily: "'Playfair Display', Georgia, serif" }}>
+        Quiz de comprensión
+      </h3>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+        <span style={{ fontSize: 12, color: "#8a7e5a" }}>Pregunta {current + 1} de {QUIZ_QUESTIONS.length}</span>
+        <span style={{ fontSize: 12, color: "#2d6a4f", fontWeight: 600 }}>Aciertos: {score}</span>
+      </div>
+
+      <div style={{ background: "#fff", borderRadius: 10, padding: 20, border: "1px solid #e0dcd0", marginBottom: 16 }}>
+        <p style={{ fontSize: 15, fontWeight: 600, color: "#4a4233", margin: "0 0 16px", lineHeight: 1.5 }}>
+          {question.q}
+        </p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {question.options.map((opt, i) => {
+            let bg = "#fafaf5";
+            let border = "1.5px solid #e0dcd0";
+            let color = "#4a4233";
+            if (showResult) {
+              if (i === question.correct) { bg = "#e6f4ea"; border = "1.5px solid #2d6a4f"; color = "#1b4332"; }
+              else if (i === selected && i !== question.correct) { bg = "#fde8e8"; border = "1.5px solid #c0392b"; color = "#991b1b"; }
+            } else if (i === selected) {
+              bg = "#f0f7f4"; border = "1.5px solid #2d6a4f";
+            }
+            return (
+              <div key={i} onClick={() => handleSelect(i)} style={{
+                background: bg, border, borderRadius: 8, padding: "10px 14px",
+                cursor: showResult ? "default" : "pointer", color, fontSize: 13,
+                transition: "all 0.15s",
+                display: "flex", alignItems: "center", gap: 10,
+              }}>
+                <span style={{
+                  width: 22, height: 22, borderRadius: "50%", border: `2px solid ${i === selected ? "#2d6a4f" : "#d4c9a8"}`,
+                  display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                  background: i === selected ? "#2d6a4f" : "transparent", color: i === selected ? "#fff" : "transparent",
+                  fontSize: 12, fontWeight: 700,
+                }}>
+                  {String.fromCharCode(65 + i)}
+                </span>
+                {opt}
+              </div>
+            );
+          })}
+        </div>
+
+        {showResult && (
+          <div style={{
+            marginTop: 14, padding: 12, borderRadius: 8,
+            background: selected === question.correct ? "#e6f4ea" : "#fef3e6",
+            border: `1px solid ${selected === question.correct ? "#c8dcc0" : "#e8d4a8"}`,
+            fontSize: 13, color: "#4a4233", lineHeight: 1.6,
+          }}>
+            <strong>{selected === question.correct ? "✅ ¡Correcto!" : "❌ Incorrecto"}</strong><br />
+            {question.explanation}
+          </div>
+        )}
+      </div>
+
+      <div style={{ textAlign: "right" }}>
+        {!showResult ? (
+          <button onClick={handleConfirm} disabled={selected === null} style={{
+            background: selected !== null ? "linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%)" : "#ccc",
+            color: "#fff", border: "none", borderRadius: 8, padding: "10px 24px",
+            fontSize: 14, fontWeight: 600, cursor: selected !== null ? "pointer" : "default",
+          }}>
+            Comprobar respuesta
+          </button>
+        ) : (
+          <button onClick={handleNext} style={{
+            background: "linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%)",
+            color: "#fff", border: "none", borderRadius: 8, padding: "10px 24px",
+            fontSize: 14, fontWeight: 600, cursor: "pointer",
+          }}>
+            {current < QUIZ_QUESTIONS.length - 1 ? "Siguiente pregunta →" : "Ver resultado final"}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const App = function CicloVidaInmovilizado() {
+  const [phase, setPhase] = useState(0);
+  const [config, setConfig] = useState({});
+
+  const goNext = () => setPhase(p => Math.min(p + 1, PHASES.length - 1));
+  const goBack = () => setPhase(p => Math.max(p - 1, 0));
+  const restart = () => { setPhase(0); setConfig({}); };
+
+  return (
+    <div style={{
+      fontFamily: "'DM Sans', sans-serif",
+      minHeight: "100vh",
+      background: "linear-gradient(180deg, #f5f3eb 0%, #ede9dd 100%)",
+    }}>
+      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet" />
+
+      {/* Header */}
+      <div style={{
+        background: "linear-gradient(135deg, #1b4332 0%, #2d6a4f 50%, #40916c 100%)",
+        padding: "20px 24px 16px",
+        color: "#fff",
+      }}>
+        <div style={{ maxWidth: 800, margin: "0 auto" }}>
+          <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: 2, opacity: 0.7, marginBottom: 4 }}>
+            Tratamiento de la Documentación Contable · CFGM Gestión Administrativa
+          </div>
+          <h1 style={{ fontSize: 24, margin: "0 0 12px", fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700 }}>
+            El Ciclo de Vida del Inmovilizado
+          </h1>
+
+          {/* Progress bar */}
+          <div style={{ display: "flex", gap: 3, alignItems: "center" }}>
+            {PHASE_LABELS.map((label, i) => (
+              <div key={i} style={{ flex: 1, textAlign: "center" }}>
+                <div style={{
+                  height: 4, borderRadius: 2,
+                  background: i <= phase ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.2)",
+                  transition: "background 0.3s",
+                  marginBottom: 4,
+                }} />
+                <span style={{
+                  fontSize: 9, textTransform: "uppercase", letterSpacing: 0.5,
+                  opacity: i === phase ? 1 : 0.5, fontWeight: i === phase ? 700 : 400,
+                }}>
+                  {label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px 20px 40px" }}>
+        <div style={{
+          background: "#fff",
+          borderRadius: 16,
+          padding: "24px 28px",
+          boxShadow: "0 4px 20px rgba(100,90,60,0.08)",
+          border: "1px solid #e8e4d8",
+        }}>
+          {phase > 0 && phase < 6 && (
+            <button onClick={goBack} style={{
+              background: "none", border: "1px solid #d4c9a8", borderRadius: 6,
+              padding: "4px 12px", fontSize: 12, color: "#8a7e5a", cursor: "pointer",
+              marginBottom: 12, fontFamily: "'DM Sans', sans-serif",
+            }}>
+              ← Volver
+            </button>
+          )}
+
+          {phase === 0 && <PhaseIntro onNext={goNext} />}
+          {phase === 1 && <PhaseCompra config={config} setConfig={setConfig} onNext={goNext} />}
+          {phase === 2 && <PhaseAmortizacion config={config} setConfig={setConfig} onNext={goNext} />}
+          {phase === 3 && <PhaseDeterioro config={config} setConfig={setConfig} onNext={goNext} />}
+          {phase === 4 && <PhaseBaja config={config} setConfig={setConfig} onNext={goNext} />}
+          {phase === 5 && <PhaseResumen config={config} onNext={goNext} />}
+          {phase === 6 && <PhaseQuiz onRestart={restart} />}
+        </div>
+
+        {/* Footer */}
+        <div style={{ textAlign: "center", marginTop: 20, fontSize: 11, color: "#a09880" }}>
+          Recurso educativo interactivo · RAs: RA2 (predominante), RA3, RA1, RA4 · PGC-PYME
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+</script>
+</body>
+</html>

@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examen · Operaciones de Cierre del Ejercicio</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--bg:#f0f4fa;--wh:#fff;--bd:#d5ddf0;--ac:#1a5fa8;--al:#e3edf9;--gr:#1a7a45;--gl:#e4f4ec;--re:#b91c1c;--rl:#fee2e2;--or:#b45309;--ol:#fff7ed;--tx:#1a2340;--mu:#6b7c9e;--sh:0 2px 10px rgba(26,95,168,.09);--db:#1a5fa8;--hb:#b94a00;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Quicksand',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;}
+.hdr{background:linear-gradient(135deg,#0f2d6b 0%,#1a5fa8 100%);color:#fff;padding:22px 34px 18px;position:relative;overflow:hidden;}
+.hdr::after{content:'∑';position:absolute;right:28px;top:-12px;font-size:130px;opacity:.05;font-family:'IBM Plex Mono',monospace;}
+.badge{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);padding:3px 12px;border-radius:20px;display:inline-block;margin-bottom:9px;}
+.hdr h1{font-size:clamp(17px,3vw,26px);font-weight:800;margin-bottom:3px;}
+.hdr .sub{font-size:12px;opacity:.75;margin-bottom:12px;}
+.mrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.mc{font-family:'IBM Plex Mono',monospace;font-size:11px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:3px 10px;border-radius:6px;color:rgba(255,255,255,.9);}
+.mc b{color:#fff;}
+.wc{font-family:'IBM Plex Mono',monospace;font-size:11px;background:rgba(255,200,50,.18);border:1px solid rgba(255,200,50,.35);color:#ffe566;padding:4px 12px;border-radius:6px;}
+.sf{background:var(--wh);border-bottom:2px solid var(--bd);padding:12px 34px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.sf label{font-size:12px;font-weight:700;color:var(--mu);white-space:nowrap;}
+.sf input{font-family:'Quicksand',sans-serif;font-size:13px;font-weight:600;border:1.5px solid var(--bd);border-radius:6px;padding:5px 11px;outline:none;color:var(--tx);background:#f8faff;transition:border-color .2s;}
+.sf input:focus{border-color:var(--ac);}
+.nm{width:200px;}.grp{width:95px;}
+.pb{background:var(--wh);border-bottom:1px solid var(--bd);padding:9px 34px;display:flex;gap:5px;flex-wrap:wrap;}
+.ps{font-family:'IBM Plex Mono',monospace;font-size:11px;padding:4px 12px;border-radius:20px;border:1.5px solid var(--bd);color:var(--mu);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.ps:hover{border-color:var(--ac);color:var(--ac);}
+.ps.active{background:var(--ac);color:#fff;border-color:var(--ac);}
+.ps.done{border-color:var(--gr);color:var(--gr);}
+.ps.done.active{background:var(--gr);color:#fff;}
+.mn{max-width:960px;margin:0 auto;padding:24px 16px 100px;}
+.sc{display:none;}
+.sc.active{display:block;animation:fu .3s ease;}
+@keyframes fu{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.sh{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.sh h2{font-size:16px;font-weight:800;}
+.pb2{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--al);border:1px solid #b5d0ef;color:var(--ac);padding:3px 12px;border-radius:20px;}
+.cd{background:var(--wh);border:1px solid var(--bd);border-radius:12px;padding:18px 20px;margin-bottom:15px;box-shadow:var(--sh);}
+.ct{font-size:14px;font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:6px;}
+.cs{font-size:13px;color:var(--mu);margin-bottom:11px;line-height:1.6;}
+.en{background:#f4f7fe;border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:8px;padding:13px 17px;margin-bottom:13px;font-size:13px;line-height:1.85;color:#2d3a5a;}
+.en strong{color:var(--ac);}
+.dr{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px;}
+.dc{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--al);border:1px solid #b5d0ef;border-radius:5px;padding:3px 8px;color:var(--ac);}
+.ht{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#4c51b5;padding:8px 11px;background:#ede7f6;border-radius:6px;border-left:3px solid #7986cb;margin-bottom:11px;line-height:1.7;}
+.dp{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px;padding:9px;background:#f8faff;border-radius:8px;border:1px dashed var(--bd);}
+.di{font-family:'IBM Plex Mono',monospace;font-size:11px;background:#fff;border:1.5px solid var(--ac);border-radius:6px;padding:5px 10px;cursor:grab;color:var(--ac);font-weight:600;user-select:none;transition:all .18s;}
+.di:active{cursor:grabbing;transform:scale(1.04);}
+.di.used{opacity:.3;pointer-events:none;}
+.dz{border:2px dashed var(--bd);border-radius:6px;min-height:32px;min-width:110px;padding:3px 8px;display:inline-flex;align-items:center;justify-content:center;background:#f8faff;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#aab4cc;transition:all .2s;vertical-align:middle;}
+.dz.over{border-color:var(--ac);background:var(--al);}
+.dz.filled{border-color:var(--gr);background:var(--gl);color:var(--gr);font-weight:600;}
+.dz.wrong{border-color:var(--re);background:var(--rl);color:var(--re);}
+.aw{background:var(--wh);border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-bottom:12px;box-shadow:var(--sh);}
+.ah{background:#eef3fb;padding:5px 13px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;color:var(--mu);text-transform:uppercase;display:flex;justify-content:space-between;}
+.ah .fe{color:var(--ac);font-weight:600;}
+.at{width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',monospace;font-size:12px;}
+.at th{padding:5px 11px;font-size:9px;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--bd);background:#f5f8fe;}
+.thd{text-align:left;color:var(--db);}.thc{text-align:center;color:var(--mu);width:52%;}.thh{text-align:right;color:var(--hb);}
+.at td{padding:5px 11px;border-top:1px solid #f0f3fa;vertical-align:middle;}
+.rh td{padding-left:34px;}
+.rh .tc{text-align:left;color:var(--mu);font-style:italic;}
+.rh .tc::before{content:'a ';color:var(--hb);}
+.ii{background:#f8faff;border:1.5px solid var(--bd);border-radius:5px;color:var(--tx);font-family:'IBM Plex Mono',monospace;font-size:12px;padding:4px 6px;outline:none;transition:border-color .2s,background .2s;}
+.ii:focus{border-color:var(--ac);background:#eef3fb;}
+.ii.ok{border-color:var(--gr)!important;background:var(--gl)!important;color:var(--gr)!important;}
+.ii.er{border-color:var(--re)!important;background:var(--rl)!important;color:var(--re)!important;}
+.fi{width:78px;text-align:right;}.fc{width:50px;text-align:center;}.fn{width:180px;}
+.gt{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:12px;border-radius:8px;overflow:hidden;border:1px solid var(--bd);}
+.gt th{background:#eef3fb;padding:7px 10px;text-align:left;font-size:11px;letter-spacing:.4px;color:var(--ac);font-weight:700;}
+.gt td{padding:7px 10px;border-top:1px solid var(--bd);vertical-align:middle;}
+.gt tr:hover td{background:#f8faff;}
+.is{font-family:'Quicksand',sans-serif;font-size:12px;font-weight:600;border:1.5px solid var(--bd);border-radius:5px;padding:3px 6px;background:#f8faff;color:var(--tx);outline:none;cursor:pointer;}
+.is.ok{border-color:var(--gr)!important;background:var(--gl)!important;color:var(--gr)!important;}
+.is.er{border-color:var(--re)!important;background:var(--rl)!important;color:var(--re)!important;}
+.br{display:flex;gap:7px;margin-top:13px;flex-wrap:wrap;}
+.btn{font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;padding:8px 19px;border-radius:7px;border:none;cursor:pointer;transition:all .18s;}
+.bc{background:var(--ac);color:#fff;}.bc:hover{filter:brightness(1.1);}
+.bv{background:transparent;border:1.5px solid #90a4ae;color:#546e7a;}.bv:hover{border-color:var(--or);color:var(--or);}
+.bs{background:transparent;border:1.5px solid #d5ddf0;color:#90a4ae;}
+.bn{background:var(--gr);color:#fff;}.bn:hover{filter:brightness(1.1);}
+.bp{background:#0f2d6b;color:#fff;}.bp:hover{filter:brightness(1.15);}
+.fb{margin-top:10px;padding:11px 14px;border-radius:8px;font-size:13px;line-height:1.6;display:none;}
+.fb.show{display:block;animation:fu .2s;}
+.fb.ok{background:var(--gl);border:1px solid #9dd4b3;color:var(--gr);}
+.fb.er{background:var(--rl);border:1px solid #fca5a5;color:var(--re);}
+.rc{background:var(--wh);border:1px solid var(--bd);border-radius:14px;padding:26px;text-align:center;box-shadow:var(--sh);margin-bottom:16px;}
+.nb{font-size:66px;font-weight:800;color:var(--ac);line-height:1;margin:12px 0;}
+.nb.nt{color:var(--gr);}.nb.su{color:var(--re);}
+.rt{width:100%;border-collapse:collapse;margin-top:16px;font-size:13px;}
+.rt th{background:#eef3fb;padding:7px 12px;text-align:left;color:var(--ac);font-weight:700;}
+.rt td{padding:7px 12px;border-top:1px solid var(--bd);}
+.nf{position:fixed;bottom:0;left:0;right:0;background:var(--wh);border-top:1px solid var(--bd);padding:10px 34px;display:flex;justify-content:space-between;align-items:center;z-index:100;box-shadow:0 -2px 10px rgba(0,0,0,.06);}
+.ns{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--mu);}
+.ns strong{color:var(--ac);font-size:15px;}
+.sep{font-size:11px;color:var(--mu);font-family:'IBM Plex Mono',monospace;margin:10px 0 6px;padding-top:8px;border-top:1px dashed var(--bd);}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="badge">TDC · Tratamiento de la Documentación Contable</div>
+  <h1>Examen · Operaciones de Cierre del Ejercicio</h1>
+  <div class="sub">Salesianos Juan XXIII · Alcoy · CFGM Gestión Administrativa · Curso 202X–202X</div>
+  <div class="mrow">
+    <div class="mc">⏱ Duración: <b>60 min</b></div>
+    <div class="mc">📊 Nota: <b>10 pts</b></div>
+    <div class="mc">📝 <b>5 bloques</b> · 2 pts cada uno</div>
+    <div class="wc">⚠ 3 intentos · Intento 2: −20% · Intento 3: −40%</div>
+  </div>
+</div>
+
+<div class="sf">
+  <label>Nombre y apellidos:</label><input class="nm" id="sn" type="text" placeholder="Tu nombre completo">
+  <label>Grupo:</label><input class="grp" id="sg" type="text" placeholder="Ej: 1ºA">
+  <label>Fecha:</label><input id="sd" type="date">
+</div>
+
+<div class="pb">
+  <button class="ps active" onclick="goS(0)" id="ps0">1 · Existencias</button>
+  <button class="ps" onclick="goS(1)" id="ps1">2 · Arqueo caja</button>
+  <button class="ps" onclick="goS(2)" id="ps2">3 · Periodificación</button>
+  <button class="ps" onclick="goS(3)" id="ps3">4 · Reclasificación</button>
+  <button class="ps" onclick="goS(4)" id="ps4">5 · Conciliación</button>
+  <button class="ps" onclick="goS(5)" id="ps5">📊 Resultado</button>
+</div>
+
+<div class="mn">
+
+<!-- ══════════════════════════════════════════
+     BLOQUE 1 · VARIACIÓN DE EXISTENCIAS
+     4 ejercicios: 1A drag (mercad+mat.prim), 1B inputs finales,
+     1C drag (prod.terminados+subproductos), 1D inputs finales prod.
+══════════════════════════════════════════ -->
+<div class="sc active" id="s0">
+  <div class="sh"><h2>📦 Bloque 1 · Variación de Existencias</h2><div class="pb2">2 puntos · 4 ejercicios</div></div>
+
+  <!-- 1A: DRAG mercaderías y materias primas -->
+  <div class="cd">
+    <div class="ct">📋 Ej. 1A — Arrastra las cuentas al asiento de cancelación de existencias iniciales</div>
+    <div class="en">
+      <strong>Distribuciones Norte, S.A.</strong> · Cierre 31/12/20X1<br>
+      <ul style="margin:7px 0 0 18px;line-height:2.2;">
+        <li>Existencias iniciales <strong>mercaderías: 18.400 €</strong> · Finales: <strong>22.750 €</strong></li>
+        <li>Existencias iniciales <strong>materias primas: 5.200 €</strong> · Finales: <strong>3.800 €</strong></li>
+      </ul>
+    </div>
+    <div class="ht">💡 Cancelación de existencias iniciales: la cuenta de existencias al DEBE, la cuenta de variación al HABER. Registro de finales: al revés.</div>
+    <div class="dp" id="dp1a">
+      <div class="di" draggable="true" id="d1a1" data-val="300">(300) Mercaderías</div>
+      <div class="di" draggable="true" id="d1a2" data-val="310">(310) Materias primas</div>
+      <div class="di" draggable="true" id="d1a3" data-val="610">(610) Var.exist. mercad.</div>
+      <div class="di" draggable="true" id="d1a4" data-val="611">(611) Var.exist. mat.p.</div>
+      <div class="di" draggable="true" id="d1a5" data-val="700">(700) Ventas mercad. ✗</div>
+      <div class="di" draggable="true" id="d1a6" data-val="600">(600) Compras ✗</div>
+    </div>
+    <div class="aw">
+      <div class="ah"><span>Asiento 1 · Cancelación exist. iniciales mercaderías</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Cuenta</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td style="color:var(--db);font-weight:600">18.400</td>
+            <td style="text-align:center"><div class="dz" id="dz1a1" data-ans="610" ondragover="dov(event)" ondrop="ddr(event,'dz1a1')">suelta aquí</div></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><div class="dz" id="dz1a2" data-ans="300" ondragover="dov(event)" ondrop="ddr(event,'dz1a2')">suelta aquí</div></td>
+            <td style="color:var(--hb);font-weight:600;text-align:right">18.400</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="aw">
+      <div class="ah"><span>Asiento 2 · Cancelación exist. iniciales materias primas</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Cuenta</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td style="color:var(--db);font-weight:600">5.200</td>
+            <td style="text-align:center"><div class="dz" id="dz1a3" data-ans="611" ondragover="dov(event)" ondrop="ddr(event,'dz1a3')">suelta aquí</div></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><div class="dz" id="dz1a4" data-ans="310" ondragover="dov(event)" ondrop="ddr(event,'dz1a4')">suelta aquí</div></td>
+            <td style="color:var(--hb);font-weight:600;text-align:right">5.200</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 1B: INPUTS finales mercaderías y materias primas -->
+  <div class="cd">
+    <div class="ct">✏️ Ej. 1B — Registra las existencias finales (introduce código e importe)</div>
+    <div class="cs">Completa los asientos de registro de existencias finales. Los importes y la posición Debe/Haber son los contrarios a los de cancelación.</div>
+    <div class="sep">Asiento 3 · Existencias finales mercaderías (22.750 €)</div>
+    <div class="aw">
+      <div class="ah"><span>Exist. finales — mercaderías</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="e1-d1" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="e1-c1" type="text" placeholder="cód"> <input class="ii fn" id="e1-n1" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="e1-c2" type="text" placeholder="cód"> <input class="ii fn" id="e1-n2" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="e1-h1" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sep">Asiento 4 · Existencias finales materias primas (3.800 €)</div>
+    <div class="aw">
+      <div class="ah"><span>Exist. finales — materias primas</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="e1-d2" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="e1-c3" type="text" placeholder="cód"> <input class="ii fn" id="e1-n3" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="e1-c4" type="text" placeholder="cód"> <input class="ii fn" id="e1-n4" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="e1-h2" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 1C: DRAG productos terminados y subproductos — SIN dar las cuentas -->
+  <div class="cd">
+    <div class="ct">📋 Ej. 1C — Productos terminados y subproductos: arrastra la clasificación correcta</div>
+    <div class="en">
+      La misma empresa también fabrica sus propios artículos. Datos al 31/12/20X1:
+      <ul style="margin:7px 0 0 18px;line-height:2.2;">
+        <li>Existencias iniciales de <strong>productos terminados: 9.600 €</strong> · Finales: <strong>7.200 €</strong></li>
+        <li>Existencias iniciales de <strong>subproductos: 1.800 €</strong> · Finales: <strong>2.400 €</strong></li>
+      </ul>
+      <div class="dr">
+        <span class="dc">E.ini. prod.term.: 9.600 €</span><span class="dc">E.fin. prod.term.: 7.200 €</span>
+        <span class="dc">E.ini. subprod.: 1.800 €</span><span class="dc">E.fin. subprod.: 2.400 €</span>
+      </div>
+    </div>
+
+    <p style="font-size:12px;font-weight:700;color:var(--mu);margin-bottom:8px;font-family:'IBM Plex Mono',monospace;">Identifica qué tipo de variación corresponde a cada almacén:</p>
+    <div class="dp" id="dp1c">
+      <div class="di" draggable="true" id="d1c1" data-val="GASTO">↑ GASTO · Variación DEBE</div>
+      <div class="di" draggable="true" id="d1c2" data-val="INGRESO">↓ INGRESO · Variación HABER</div>
+      <div class="di" draggable="true" id="d1c3" data-val="GASTO">↑ GASTO · Variación DEBE</div>
+      <div class="di" draggable="true" id="d1c4" data-val="INGRESO">↓ INGRESO · Variación HABER</div>
+    </div>
+    <table class="gt">
+      <thead><tr><th>Almacén</th><th>Variación</th><th>Tipo</th></tr></thead>
+      <tbody>
+        <tr><td>Productos terminados: 9.600 → 7.200 (−2.400 €)</td>
+          <td style="font-family:'IBM Plex Mono',monospace;font-size:12px">Disminución</td>
+          <td><div class="dz" id="dz1c1" data-ans="GASTO" ondragover="dov(event)" ondrop="ddr(event,'dz1c1')">suelta aquí</div></td></tr>
+        <tr><td>Subproductos: 1.800 → 2.400 (+600 €)</td>
+          <td style="font-family:'IBM Plex Mono',monospace;font-size:12px">Aumento</td>
+          <td><div class="dz" id="dz1c2" data-ans="INGRESO" ondragover="dov(event)" ondrop="ddr(event,'dz1c2')">suelta aquí</div></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 1D: INPUTS completos prod. terminados y subproductos — el alumno busca las cuentas -->
+  <div class="cd">
+    <div class="ct">✏️ Ej. 1D — Contabiliza los 4 asientos de regularización (busca tú las cuentas)</div>
+    <div class="cs">Sin pistas de cuentas: busca en el PGC los códigos correctos para productos terminados (35x) y sus variaciones (71x). Completa cancelación y registro de existencias finales.</div>
+    <div class="sep">Asiento 5 · Cancelación exist. iniciales productos terminados (9.600 €)</div>
+    <div class="aw">
+      <div class="ah"><span>Cancelación prod. terminados iniciales</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="e1-d3" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="e1-c5" type="text" placeholder="cód"> <input class="ii fn" id="e1-n5" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="e1-c6" type="text" placeholder="cód"> <input class="ii fn" id="e1-n6" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="e1-h3" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sep">Asiento 6 · Registro exist. finales productos terminados (7.200 €)</div>
+    <div class="aw">
+      <div class="ah"><span>Exist. finales prod. terminados</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="e1-d4" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="e1-c7" type="text" placeholder="cód"> <input class="ii fn" id="e1-n7" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="e1-c8" type="text" placeholder="cód"> <input class="ii fn" id="e1-n8" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="e1-h4" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sep">Asiento 7 · Cancelación exist. iniciales subproductos (1.800 €)</div>
+    <div class="aw">
+      <div class="ah"><span>Cancelación subproductos iniciales</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="e1-d5" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="e1-c9" type="text" placeholder="cód"> <input class="ii fn" id="e1-n9" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="e1-c10" type="text" placeholder="cód"> <input class="ii fn" id="e1-n10" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="e1-h5" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sep">Asiento 8 · Registro exist. finales subproductos (2.400 €)</div>
+    <div class="aw">
+      <div class="ah"><span>Exist. finales subproductos</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="e1-d6" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="e1-c11" type="text" placeholder="cód"> <input class="ii fn" id="e1-n11" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="e1-c12" type="text" placeholder="cód"> <input class="ii fn" id="e1-n12" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="e1-h6" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="br">
+    <button class="btn bc" onclick="chk0()">✓ Comprobar bloque 1</button>
+    <button class="btn bv" onclick="rev0()">👁 Ver solución</button>
+    <button class="btn bn" onclick="goS(1)">Siguiente →</button>
+  </div>
+  <div class="fb" id="fb0"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     BLOQUE 2 · ARQUEO DE CAJA
+══════════════════════════════════════════ -->
+<div class="sc" id="s1">
+  <div class="sh"><h2>💰 Bloque 2 · Arqueo de Caja</h2><div class="pb2">2 puntos</div></div>
+  <div class="cd">
+    <div class="ct">🔍 Ejercicio 2 — Recuento, diferencias y asientos de regularización</div>
+    <div class="en">
+      <strong>Comercial Mediterráneo, S.L.</strong> realiza el arqueo de caja el 31/12/20X1. Saldo contable (570) Caja: <strong>2.875 €</strong>.<br><br>
+      Efectivo encontrado en caja:
+      <ul style="margin:6px 0 0 18px;line-height:2.2;">
+        <li>Billetes: 3 × 100 € + 4 × 50 € + 6 × 20 € + 5 × 10 €</li>
+        <li>Monedas: 12 × 2 € + 8 × 1 € + 10 × 0,50 €</li>
+      </ul>
+      Documentos encontrados en el cajón:
+      <ul style="margin:6px 0 0 18px;line-height:2.2;">
+        <li>Ticket de material de oficina: <strong>65 €</strong> (sin IVA) — pagado con caja, no contabilizado</li>
+        <li>Cobro en metálico de cliente: <strong>310 €</strong> — anotado en papel, no registrado en sistema</li>
+      </ul>
+      <div class="dr"><span class="dc">Saldo contable: 2.875 €</span><span class="dc">Gasto sin contab.: 65 €</span><span class="dc">Cobro sin contab.: 310 €</span></div>
+    </div>
+    <div class="ht">💡 El efectivo físico es solo el dinero en metálico (billetes + monedas). Tras contabilizar los ajustes, el saldo correcto = contable − gastos + cobros. Si persiste una diferencia inexplicable, se lleva a la cuenta (555) Partidas pendientes de aplicación.</div>
+
+    <p style="font-size:12px;font-weight:700;color:var(--mu);margin-bottom:8px;font-family:'IBM Plex Mono',monospace;">Paso 1 — Recuento del efectivo físico</p>
+    <table class="gt">
+      <thead><tr><th>Concepto</th><th>Operación</th><th>Importe</th></tr></thead>
+      <tbody>
+        <tr><td>Billetes</td><td style="font-family:'IBM Plex Mono',monospace;font-size:12px">3×100 + 4×50 + 6×20 + 5×10</td><td><input class="ii fi" id="a-b" type="number" placeholder="€"></td></tr>
+        <tr><td>Monedas</td><td style="font-family:'IBM Plex Mono',monospace;font-size:12px">12×2 + 8×1 + 10×0,50</td><td><input class="ii fi" id="a-m" type="number" placeholder="€"></td></tr>
+        <tr><td><strong>Total efectivo físico</strong></td><td></td><td><input class="ii fi" id="a-t" type="number" placeholder="€"></td></tr>
+        <tr><td>Saldo contable (570)</td><td></td><td style="font-family:'IBM Plex Mono',monospace;font-weight:600">2.875 €</td></tr>
+        <tr><td><strong>Diferencia (+ sobrante / − faltante)</strong></td><td></td><td><input class="ii fi" id="a-d" type="number" placeholder="€"></td></tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:12px;font-weight:700;color:var(--mu);margin:11px 0 7px;font-family:'IBM Plex Mono',monospace;">Paso 2 — Asientos de regularización (operaciones no contabilizadas)</p>
+    <div class="sep">Asiento 1 · Material de oficina (65 €, sin IVA)</div>
+    <div class="aw">
+      <div class="ah"><span>Gasto material oficina</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="a-d1" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="a-c1" type="text" placeholder="cód"> <input class="ii fn" id="a-n1" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="a-c2" type="text" placeholder="cód"> <input class="ii fn" id="a-n2" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="a-h1" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sep">Asiento 2 · Cobro de cliente en metálico (310 €)</div>
+    <div class="aw">
+      <div class="ah"><span>Cobro cliente</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="a-d2" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="a-c3" type="text" placeholder="cód"> <input class="ii fn" id="a-n3" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="a-c4" type="text" placeholder="cód"> <input class="ii fn" id="a-n4" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="a-h2" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-size:12px;font-weight:700;color:var(--mu);margin:11px 0 7px;font-family:'IBM Plex Mono',monospace;">Paso 3 — Saldo de (570) Caja tras los dos asientos anteriores</p>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
+      <span>2.875 − 65 + 310 =</span>
+      <input class="ii fi" id="a-s" type="number" placeholder="saldo ajustado" style="width:110px">
+    </div>
+
+    <p style="font-size:12px;font-weight:700;color:var(--mu);margin:14px 0 7px;font-family:'IBM Plex Mono',monospace;">Paso 4 — Asiento de ajuste por diferencia de caja inexplicable</p>
+
+    <div class="sep">Asiento 3 · Diferencia de caja → (555) Partidas pendientes de aplicación</div>
+    <div class="aw">
+      <div class="ah"><span>Ajuste diferencia de caja</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="a-d3" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="a-c5" type="text" placeholder="cód"> <input class="ii fn" id="a-n5" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="a-c6" type="text" placeholder="cód"> <input class="ii fn" id="a-n6" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="a-h3" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:12px;font-weight:700;color:var(--mu);margin:8px 0 5px;font-family:'IBM Plex Mono',monospace;">Saldo final de (570) Caja tras el asiento 3:</p>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
+      <span>3.120 − 2.413 =</span>
+      <input class="ii fi" id="a-sf" type="number" placeholder="saldo final" style="width:110px">
+    </div>
+  </div>
+  <div class="br">
+    <button class="btn bc" onclick="chk1()">✓ Comprobar bloque 2</button>
+    <button class="btn bv" onclick="rev1()">👁 Ver solución</button>
+    <button class="btn bn" onclick="goS(2)">Siguiente →</button>
+  </div>
+  <div class="fb" id="fb1"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     BLOQUE 3 · PERIODIFICACIÓN (6 casos)
+     Cuentas: 480, 485, 625, 627, 623, 705, 752
+══════════════════════════════════════════ -->
+<div class="sc" id="s2">
+  <div class="sh"><h2>📅 Bloque 3 · Periodificación de Gastos e Ingresos</h2><div class="pb2">2 puntos · 6 casos</div></div>
+  <div class="cd">
+    <div class="ct">📋 Ej. 3A — Clasifica y calcula el importe a periodificar (arrastra la cuenta)</div>
+    <div class="en">
+      <strong>Servicios Digitales, S.L.</strong> detecta al 31/12/20X1 las siguientes operaciones:
+      <ol style="margin:8px 0 0 18px;line-height:2.3;">
+        <li>El <strong>1/10/20X1</strong> pagó prima de seguro <em>trianual</em>: <strong>3.600 €</strong> (cubre 1/10/X1 al 30/09/X4)</li>
+        <li>El <strong>1/11/20X1</strong> cobró por adelantado alquiler de local: <strong>900 €</strong> (nov.X1 – abr.X2, 6 meses)</li>
+        <li>El <strong>1/07/20X1</strong> pagó suscripción software anual: <strong>600 €</strong> (1/07/X1 al 30/06/X2)</li>
+        <li>El <strong>1/04/20X1</strong> pagó publicidad en redes por <strong>2.400 €</strong> para una campaña de 2 años (abr.X1 – mar.X3)</li>
+        <li>El <strong>1/01/20X1</strong> contrató mantenimiento de maquinaria por <strong>1.800 €</strong> anuales anticipados (X1–X2 completo, pagado al inicio de X2)</li>
+        <li>El <strong>1/09/20X1</strong> vendió licencias de software cobradas por adelantado: <strong>4.800 €</strong> (sep.X1 – ago.X3, 24 meses)</li>
+      </ol>
+    </div>
+
+    <div class="dp" id="dp3a">
+      <div class="di" draggable="true" id="d3a1" data-val="480a">(480) Gastos anticipados</div>
+      <div class="di" draggable="true" id="d3a2" data-val="480b">(480) Gastos anticipados</div>
+      <div class="di" draggable="true" id="d3a3" data-val="480c">(480) Gastos anticipados</div>
+      <div class="di" draggable="true" id="d3a4" data-val="485a">(485) Ingresos anticipados</div>
+      <div class="di" draggable="true" id="d3a5" data-val="485b">(485) Ingresos anticipados</div>
+      <div class="di" draggable="true" id="d3a6" data-val="300">✗ (300) Mercaderías</div>
+    </div>
+    <table class="gt">
+      <thead><tr><th>#</th><th>Operación</th><th>Meses prox.ej.</th><th>Importe a periodif.</th><th>Cuenta</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Seguro trianual 3.600 €</td>
+          <td><input class="ii" id="p-m1" type="number" placeholder="meses" style="width:58px"></td>
+          <td><input class="ii fi" id="p-i1" type="number" placeholder="€"></td>
+          <td><div class="dz" id="dz3a1" data-ans="480" ondragover="dov(event)" ondrop="ddr(event,'dz3a1')" style="min-width:100px">suelta aquí</div></td></tr>
+        <tr><td>2</td><td>Alquiler cobrado 900 €</td>
+          <td><input class="ii" id="p-m2" type="number" placeholder="meses" style="width:58px"></td>
+          <td><input class="ii fi" id="p-i2" type="number" placeholder="€"></td>
+          <td><div class="dz" id="dz3a2" data-ans="485" ondragover="dov(event)" ondrop="ddr(event,'dz3a2')" style="min-width:100px">suelta aquí</div></td></tr>
+        <tr><td>3</td><td>Software 600 €</td>
+          <td><input class="ii" id="p-m3" type="number" placeholder="meses" style="width:58px"></td>
+          <td><input class="ii fi" id="p-i3" type="number" placeholder="€"></td>
+          <td><div class="dz" id="dz3a3" data-ans="480" ondragover="dov(event)" ondrop="ddr(event,'dz3a3')" style="min-width:100px">suelta aquí</div></td></tr>
+        <tr><td>4</td><td>Publicidad 2.400 € (2 años)</td>
+          <td><input class="ii" id="p-m4" type="number" placeholder="meses" style="width:58px"></td>
+          <td><input class="ii fi" id="p-i4" type="number" placeholder="€"></td>
+          <td><div class="dz" id="dz3a4" data-ans="480" ondragover="dov(event)" ondrop="ddr(event,'dz3a4')" style="min-width:100px">suelta aquí</div></td></tr>
+        <tr><td>5</td><td>Mantenimiento 1.800 € (pagado en X1 para X2)</td>
+          <td><input class="ii" id="p-m5" type="number" placeholder="meses" style="width:58px"></td>
+          <td><input class="ii fi" id="p-i5" type="number" placeholder="€"></td>
+          <td><div class="dz" id="dz3a5" data-ans="480" ondragover="dov(event)" ondrop="ddr(event,'dz3a5')" style="min-width:100px">suelta aquí</div></td></tr>
+        <tr><td>6</td><td>Licencias cobradas 4.800 € (24 m.)</td>
+          <td><input class="ii" id="p-m6" type="number" placeholder="meses" style="width:58px"></td>
+          <td><input class="ii fi" id="p-i6" type="number" placeholder="€"></td>
+          <td><div class="dz" id="dz3a6" data-ans="485" ondragover="dov(event)" ondrop="ddr(event,'dz3a6')" style="min-width:100px">suelta aquí</div></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="cd">
+    <div class="ct">✏️ Ej. 3B — Asientos de periodificación al 31/12/20X1</div>
+    <div class="cs">Contabiliza los seis asientos con código de cuenta, nombre e importes. Para la contrapartida usa las cuentas del gasto/ingreso original.</div>
+
+    <div class="sep">Asiento 1 · Seguro trianual — gasto anticipado</div>
+    <div class="aw">
+      <div class="ah"><span>Periodificación seguro trianual</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="p-d1" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="p-c1" type="text" placeholder="cód"> <input class="ii fn" id="p-n1" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="p-c2" type="text" placeholder="cód"> <input class="ii fn" id="p-n2" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="p-h1" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sep">Asiento 2 · Alquiler cobrado — ingreso anticipado</div>
+    <div class="aw">
+      <div class="ah"><span>Periodificación alquiler cobrado</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="p-d2" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="p-c3" type="text" placeholder="cód"> <input class="ii fn" id="p-n3" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="p-c4" type="text" placeholder="cód"> <input class="ii fn" id="p-n4" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="p-h2" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sep">Asiento 3 · Software — gasto anticipado</div>
+    <div class="aw">
+      <div class="ah"><span>Periodificación software</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="p-d3" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="p-c5" type="text" placeholder="cód"> <input class="ii fn" id="p-n5" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="p-c6" type="text" placeholder="cód"> <input class="ii fn" id="p-n6" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="p-h3" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sep">Asiento 4 · Publicidad bianual — gasto anticipado</div>
+    <div class="aw">
+      <div class="ah"><span>Periodificación publicidad</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="p-d4" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="p-c7" type="text" placeholder="cód"> <input class="ii fn" id="p-n7" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="p-c8" type="text" placeholder="cód"> <input class="ii fn" id="p-n8" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="p-h4" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sep">Asiento 5 · Mantenimiento maquinaria — gasto anticipado (X2 completo)</div>
+    <div class="aw">
+      <div class="ah"><span>Periodificación mantenimiento</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="p-d5" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="p-c9" type="text" placeholder="cód"> <input class="ii fn" id="p-n9" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="p-c10" type="text" placeholder="cód"> <input class="ii fn" id="p-n10" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="p-h5" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sep">Asiento 6 · Licencias cobradas — ingreso anticipado (meses restantes futuros)</div>
+    <div class="aw">
+      <div class="ah"><span>Periodificación licencias software</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="p-d6" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="p-c11" type="text" placeholder="cód"> <input class="ii fn" id="p-n11" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="p-c12" type="text" placeholder="cód"> <input class="ii fn" id="p-n12" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="p-h6" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="br">
+    <button class="btn bc" onclick="chk2()">✓ Comprobar bloque 3</button>
+    <button class="btn bv" onclick="rev2()">👁 Ver solución</button>
+    <button class="btn bn" onclick="goS(3)">Siguiente →</button>
+  </div>
+  <div class="fb" id="fb2"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     BLOQUE 4 · RECLASIFICACIÓN (ampliado)
+     Original: préstamo 8000, crédito cliente 15000, préstamo 30000, intereses 750
+     Nuevos: proveedores inmovilizado, créditos enajenación, fianzas recibidas
+══════════════════════════════════════════ -->
+<div class="sc" id="s3">
+  <div class="sh"><h2>🔄 Bloque 4 · Reclasificación de Deudas y Créditos</h2><div class="pb2">2 puntos</div></div>
+
+  <div class="cd">
+    <div class="ct">📋 Ej. 4A — Arrastra: ¿corto o largo plazo? (7 elementos)</div>
+    <div class="en">
+      <strong>Constructora Levante, S.A.</strong> revisa todos sus saldos a largo plazo al 31/12/20X1:
+      <ol style="margin:8px 0 0 18px;line-height:2.3;">
+        <li>Préstamo bancario L/P: cuota de <strong>8.000 €</strong> vence en los próximos 12 meses</li>
+        <li>Crédito concedido a cliente: vencimiento a <strong>18 meses</strong> (15.000 €)</li>
+        <li>Préstamo L/P restante: vence en <strong>3 años</strong> (30.000 €)</li>
+        <li>Intereses devengados por cobrar de un préstamo: vencen en <strong>6 meses</strong> (750 €)</li>
+        <li>Proveedor de inmovilizado L/P: factura de maquinaria pendiente de pago, vence en <strong>8 meses</strong> (12.000 €)</li>
+        <li>Crédito por enajenación de inmovilizado: cobro pendiente por venta de un local, vence a <strong>2 años</strong> (25.000 €)</li>
+        <li>Fianza recibida de un arrendatario: contrato de arrendamiento de <strong>5 años</strong>, todavía quedan 4 años (3.000 €)</li>
+      </ol>
+    </div>
+    <div class="ht">💡 Vencimiento ≤ 12 meses → C/P. Vencimiento &gt; 12 meses → L/P. Las fianzas recibidas siguen el plazo del contrato del que derivan. Cuentas C/P: (520), (523), (524), (527). Cuentas L/P: (170), (173), (253), (180).</div>
+    <div class="dp" id="dp4a">
+      <div class="di" draggable="true" id="d4a1" data-val="CP">→ Corto plazo (C/P)</div>
+      <div class="di" draggable="true" id="d4a2" data-val="CP">→ Corto plazo (C/P)</div>
+      <div class="di" draggable="true" id="d4a3" data-val="CP">→ Corto plazo (C/P)</div>
+      <div class="di" draggable="true" id="d4a4" data-val="LP">→ Largo plazo (L/P)</div>
+      <div class="di" draggable="true" id="d4a5" data-val="LP">→ Largo plazo (L/P)</div>
+      <div class="di" draggable="true" id="d4a6" data-val="LP">→ Largo plazo (L/P)</div>
+      <div class="di" draggable="true" id="d4a7" data-val="LP">→ Largo plazo (L/P)</div>
+    </div>
+    <table class="gt">
+      <thead><tr><th>Elemento</th><th>Clasificación</th></tr></thead>
+      <tbody>
+        <tr><td>Cuota préstamo bancario 8.000 € (vence &lt;12 m.)</td><td><div class="dz" id="dz4a1" data-ans="CP" ondragover="dov(event)" ondrop="ddr(event,'dz4a1')">suelta aquí</div></td></tr>
+        <tr><td>Crédito a cliente 15.000 € (18 meses)</td><td><div class="dz" id="dz4a2" data-ans="LP" ondragover="dov(event)" ondrop="ddr(event,'dz4a2')">suelta aquí</div></td></tr>
+        <tr><td>Préstamo restante 30.000 € (3 años)</td><td><div class="dz" id="dz4a3" data-ans="LP" ondragover="dov(event)" ondrop="ddr(event,'dz4a3')">suelta aquí</div></td></tr>
+        <tr><td>Intereses devengados 750 € (6 meses)</td><td><div class="dz" id="dz4a4" data-ans="CP" ondragover="dov(event)" ondrop="ddr(event,'dz4a4')">suelta aquí</div></td></tr>
+        <tr><td>Proveedor inmovilizado 12.000 € (8 meses)</td><td><div class="dz" id="dz4a5" data-ans="CP" ondragover="dov(event)" ondrop="ddr(event,'dz4a5')">suelta aquí</div></td></tr>
+        <tr><td>Crédito enajenación local 25.000 € (2 años)</td><td><div class="dz" id="dz4a6" data-ans="LP" ondragover="dov(event)" ondrop="ddr(event,'dz4a6')">suelta aquí</div></td></tr>
+        <tr><td>Fianza recibida 3.000 € (contrato 5 años, 4 restantes)</td><td><div class="dz" id="dz4a7" data-ans="LP" ondragover="dov(event)" ondrop="ddr(event,'dz4a7')">suelta aquí</div></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="cd">
+    <div class="ct">✏️ Ej. 4B — Asientos de reclasificación (solo los elementos que cambian)</div>
+    <div class="cs">Contabiliza el traspaso de los elementos que deben pasar al corto plazo.</div>
+
+
+    <div class="sep">Asiento 1 · Traspaso cuota préstamo bancario (8.000 €)</div>
+    <div class="aw">
+      <div class="ah"><span>Reclasificación préstamo bancario</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="r-d1" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="r-c1" type="text" placeholder="cód"> <input class="ii fn" id="r-n1" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="r-c2" type="text" placeholder="cód"> <input class="ii fn" id="r-n2" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="r-h1" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sep">Asiento 2 · Intereses devengados por cobrar (750 €)</div>
+    <div class="aw">
+      <div class="ah"><span>Registro intereses devengados</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="r-d2" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="r-c3" type="text" placeholder="cód"> <input class="ii fn" id="r-n3" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="r-c4" type="text" placeholder="cód"> <input class="ii fn" id="r-n4" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="r-h2" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sep">Asiento 3 · Traspaso proveedor de inmovilizado (12.000 €)</div>
+    <div class="aw">
+      <div class="ah"><span>Reclasificación proveedor inmovilizado</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="r-d3" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="r-c5" type="text" placeholder="cód"> <input class="ii fn" id="r-n5" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="r-c6" type="text" placeholder="cód"> <input class="ii fn" id="r-n6" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="r-h3" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="background:var(--ol);border:1px solid #fcd9a0;border-radius:7px;padding:10px 14px;font-size:12px;margin-top:8px;">
+      📌 <strong>Recuerda justificar</strong>: el crédito por enajenación del local (25.000 €, 2 años) permanece en <em>(253) Créditos a l/p</em> y la fianza recibida (3.000 €, 4 años restantes) permanece en <em>(180) Fianzas recibidas a l/p</em> → <strong>ninguno de los dos genera asiento de reclasificación</strong>.
+    </div>
+  </div>
+
+  <div class="br">
+    <button class="btn bc" onclick="chk3()">✓ Comprobar bloque 4</button>
+    <button class="btn bv" onclick="rev3()">👁 Ver solución</button>
+    <button class="btn bn" onclick="goS(4)">Siguiente →</button>
+  </div>
+  <div class="fb" id="fb3"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     BLOQUE 5 · CONCILIACIÓN BANCARIA
+══════════════════════════════════════════ -->
+<div class="sc" id="s4">
+  <div class="sh"><h2>🏦 Bloque 5 · Conciliación Bancaria</h2><div class="pb2">2 puntos</div></div>
+  <div class="cd">
+    <div class="ct">📋 Ej. 5A — Clasifica las diferencias (Tipo A / Tipo B)</div>
+    <div class="en">
+      <strong>Importaciones Blay, S.L.</strong> — conciliación al 31/12/20X1.<br>
+      Saldo libros (572): <strong>12.640 €</strong> · Saldo extracto bancario: <strong>11.890 €</strong><br><br>
+      Diferencias detectadas:
+      <ul style="margin:7px 0 0 18px;line-height:2.2;">
+        <li>El banco cargó el <strong>seguro de crédito: 320 €</strong> — no contabilizado</li>
+        <li>El banco aplicó <strong>comisiones de mantenimiento: 75 €</strong> — no contabilizadas</li>
+        <li>El banco abonó <strong>intereses a favor: 95 €</strong> — no contabilizados</li>
+        <li>La empresa emitió <strong>transferencia de 980 €</strong> a proveedor — banco no la ha procesado aún</li>
+        <li>Cliente ingresó <strong>550 €</strong> — ya contabilizado por la empresa, no aparece en extracto</li>
+      </ul>
+      <div class="dr"><span class="dc">Saldo libros: 12.640 €</span><span class="dc">Saldo extracto: 11.890 €</span></div>
+    </div>
+    <div class="ht">💡 Tipo A: la empresa ya la contabilizó pero el banco no la procesó → sin asiento. Tipo B: el banco la realizó pero la empresa no la contabilizó → sí genera asiento de ajuste.</div>
+    <table class="gt">
+      <thead><tr><th>Operación</th><th>Tipo (A / B)</th><th>¿Asiento?</th></tr></thead>
+      <tbody>
+        <tr><td>Seguro crédito 320 €</td><td><select class="is" id="c-t1"><option value="">--</option><option>A</option><option>B</option></select></td><td><select class="is" id="c-a1"><option value="">--</option><option>Sí</option><option>No</option></select></td></tr>
+        <tr><td>Comisiones 75 €</td><td><select class="is" id="c-t2"><option value="">--</option><option>A</option><option>B</option></select></td><td><select class="is" id="c-a2"><option value="">--</option><option>Sí</option><option>No</option></select></td></tr>
+        <tr><td>Intereses a favor 95 €</td><td><select class="is" id="c-t3"><option value="">--</option><option>A</option><option>B</option></select></td><td><select class="is" id="c-a3"><option value="">--</option><option>Sí</option><option>No</option></select></td></tr>
+        <tr><td>Transferencia a proveedor 980 €</td><td><select class="is" id="c-t4"><option value="">--</option><option>A</option><option>B</option></select></td><td><select class="is" id="c-a4"><option value="">--</option><option>Sí</option><option>No</option></select></td></tr>
+        <tr><td>Cobro cliente 550 €</td><td><select class="is" id="c-t5"><option value="">--</option><option>A</option><option>B</option></select></td><td><select class="is" id="c-a5"><option value="">--</option><option>Sí</option><option>No</option></select></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="cd">
+    <div class="ct">✏️ Ej. 5B — Asientos de ajuste y verificación</div>
+    <div class="sep">Asiento 1 · Seguro de crédito (320 €)</div>
+    <div class="aw">
+      <div class="ah"><span>Gasto seguro</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="c-d1" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="c-c1" type="text" placeholder="cód"> <input class="ii fn" id="c-n1" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="c-c2" type="text" placeholder="cód"> <input class="ii fn" id="c-n2" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="c-h1" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sep">Asiento 2 · Comisiones bancarias (75 €)</div>
+    <div class="aw">
+      <div class="ah"><span>Comisiones</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="c-d2" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="c-c3" type="text" placeholder="cód"> <input class="ii fn" id="c-n3" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="c-c4" type="text" placeholder="cód"> <input class="ii fn" id="c-n4" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="c-h2" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sep">Asiento 3 · Intereses a favor (95 €)</div>
+    <div class="aw">
+      <div class="ah"><span>Intereses bancarios</span><span class="fe">31/12/20X1</span></div>
+      <table class="at"><thead><tr><th class="thd">DEBE</th><th class="thc">Código · Nombre</th><th class="thh">HABER</th></tr></thead>
+        <tbody>
+          <tr><td><input class="ii fi" id="c-d3" type="number" placeholder="importe"></td>
+            <td style="text-align:center"><input class="ii fc" id="c-c5" type="text" placeholder="cód"> <input class="ii fn" id="c-n5" type="text" placeholder="Nombre cuenta"></td><td></td></tr>
+          <tr class="rh"><td></td>
+            <td class="tc"><input class="ii fc" id="c-c6" type="text" placeholder="cód"> <input class="ii fn" id="c-n6" type="text" placeholder="Nombre cuenta"></td>
+            <td><input class="ii fi" id="c-h3" type="number" placeholder="importe"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:12px;font-weight:700;color:var(--mu);margin:12px 0 7px;font-family:'IBM Plex Mono',monospace;">Verificación del cuadre</p>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
+      <span>12.640 − 320 − 75 + 95 =</span>
+      <input class="ii fi" id="c-aj" type="number" placeholder="saldo ajustado" style="width:128px">
+    </div>
+  </div>
+  <div class="br">
+    <button class="btn bc" onclick="chk4()">✓ Comprobar bloque 5</button>
+    <button class="btn bv" onclick="rev4()">👁 Ver solución</button>
+    <button class="btn bn" onclick="finalizar()">📊 Ver resultado →</button>
+  </div>
+  <div class="fb" id="fb4"></div>
+</div>
+
+<!-- ══ RESULTADO ══ -->
+<div class="sc" id="s5">
+  <div class="rc">
+    <div style="font-size:12px;color:var(--mu);font-weight:700;letter-spacing:1px;text-transform:uppercase">Resultado del examen</div>
+    <div class="nb" id="nfin">—</div>
+    <div style="font-size:13px;color:var(--mu)" id="int-lbl">Intento 1 de 3</div>
+    <div style="font-size:12px;margin-top:5px;color:var(--mu)" id="int-exp"></div>
+    <table class="rt">
+      <thead><tr><th>Bloque</th><th>Tema</th><th>Pts. brutos</th><th>Pts. ajustados</th><th>Máx.</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Variación de existencias</td><td id="r0b">—</td><td id="r0a">—</td><td>2</td></tr>
+        <tr><td>2</td><td>Arqueo de caja</td><td id="r1b">—</td><td id="r1a">—</td><td>2</td></tr>
+        <tr><td>3</td><td>Periodificación</td><td id="r2b">—</td><td id="r2a">—</td><td>2</td></tr>
+        <tr><td>4</td><td>Reclasificación</td><td id="r3b">—</td><td id="r3a">—</td><td>2</td></tr>
+        <tr><td>5</td><td>Conciliación bancaria</td><td id="r4b">—</td><td id="r4a">—</td><td>2</td></tr>
+        <tr style="font-weight:700;background:#eef3fb"><td colspan="2">TOTAL</td><td id="rtb">—</td><td id="rta">—</td><td>10</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div id="div-ri" style="background:var(--ol);border:1px solid #fcd9a0;border-radius:10px;padding:13px 17px;margin-bottom:13px;font-size:13px;display:none;">
+    <strong>Puedes volver a intentarlo.</strong> Ten en cuenta que la penalización se aplicará sobre tu nota bruta.
+    <div style="margin-top:9px"><button class="btn bc" onclick="nuevoInt()">🔄 Nuevo intento</button></div>
+  </div>
+  <div id="div-ag" style="background:var(--rl);border:1px solid #fca5a5;border-radius:10px;padding:13px 17px;margin-bottom:13px;font-size:13px;display:none;">
+    <strong>Has agotado los 3 intentos.</strong> La nota que consta es la del último intento.
+  </div>
+  <div class="br" style="justify-content:center;margin-top:8px;">
+    <button class="btn bp" onclick="hacerPDF()">⬇ Descargar resultados en PDF</button>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<div class="nf">
+  <div class="ns">Intento: <strong id="nv-int">1</strong>/3 &nbsp;·&nbsp; Puntuación parcial: <strong id="nv-pts">0,00</strong>/10</div>
+  <div style="display:flex;gap:6px;">
+    <button class="btn bs" onclick="goS(Math.max(0,cs-1))">← Ant.</button>
+    <button class="btn bc" onclick="goS(Math.min(5,cs+1))">Sig. →</button>
+  </div>
+</div>
+
+<script>
+var cs=0,intento=1,scores=[0,0,0,0,0];
+var FAC=[1,0.8,0.6];
+
+var CTAS={'170':'Deudas a l/p con entidades de crédito','173':'Proveedores de inmovilizado a l/p','180':'Fianzas recibidas a l/p','253':'Créditos a l/p','300':'Mercaderías','310':'Materias primas','350':'Productos terminados','355':'Subproductos, residuos y materiales recuperados','430':'Clientes','480':'Gastos anticipados','485':'Ingresos anticipados','520':'Deudas a c/p con entidades de crédito','523':'Proveedores de inmovilizado a c/p','546':'Intereses a c/p de créditos','555':'Partidas pendientes de aplicación','570':'Caja','572':'Bancos c/c','610':'Variación de existencias de mercaderías','611':'Variación de existencias de materias primas','623':'Reparaciones y conservación','625':'Primas de seguros','626':'Servicios bancarios y similares','627':'Publicidad, propaganda y relaciones públicas','628':'Suministros','629':'Otros servicios','640':'Sueldos y salarios','705':'Prestaciones de servicios','710':'Variación de existencias de productos en curso','712':'Variación de existencias de productos terminados y semiterminados','752':'Ingresos por arrendamientos','769':'Otros ingresos financieros','700':'Ventas de mercaderías'};
+
+// Pares código→nombre para autocomplete
+var AC=[['e1-c1','e1-n1'],['e1-c2','e1-n2'],['e1-c3','e1-n3'],['e1-c4','e1-n4'],['e1-c5','e1-n5'],['e1-c6','e1-n6'],['e1-c7','e1-n7'],['e1-c8','e1-n8'],['e1-c9','e1-n9'],['e1-c10','e1-n10'],['e1-c11','e1-n11'],['e1-c12','e1-n12'],['a-c1','a-n1'],['a-c2','a-n2'],['a-c3','a-n3'],['a-c4','a-n4'],['a-c5','a-n5'],['a-c6','a-n6'],['p-c1','p-n1'],['p-c2','p-n2'],['p-c3','p-n3'],['p-c4','p-n4'],['p-c5','p-n5'],['p-c6','p-n6'],['p-c7','p-n7'],['p-c8','p-n8'],['p-c9','p-n9'],['p-c10','p-n10'],['p-c11','p-n11'],['p-c12','p-n12'],['r-c1','r-n1'],['r-c2','r-n2'],['r-c3','r-n3'],['r-c4','r-n4'],['r-c5','r-n5'],['r-c6','r-n6'],['c-c1','c-n1'],['c-c2','c-n2'],['c-c3','c-n3'],['c-c4','c-n4'],['c-c5','c-n5'],['c-c6','c-n6']];
+
+document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('sd').value=new Date().toISOString().split('T')[0];
+  AC.forEach(function(p){
+    var ce=document.getElementById(p[0]),ne=document.getElementById(p[1]);
+    if(!ce||!ne)return;
+    ce.addEventListener('input',function(){
+      var v=ce.value.trim();
+      if(CTAS[v]){ne.value=CTAS[v];ne.style.cssText='background:#dceeff;border-color:#90caf9;color:#1565c0;';setTimeout(function(){ne.style.background='#e3f2fd';},500);}
+      else if(!v){ne.value='';ne.style.cssText='';}
+    });
+  });
+  document.querySelectorAll('.di').forEach(function(el){el.addEventListener('dragstart',function(e){e.dataTransfer.setData('text/plain',el.id);});});
+});
+
+function goS(n){document.querySelectorAll('.sc').forEach(function(s,i){s.classList.toggle('active',i===n);});document.querySelectorAll('.ps').forEach(function(p,i){p.classList.toggle('active',i===n);});cs=n;window.scrollTo(0,0);}
+
+function dov(e){e.preventDefault();e.currentTarget.classList.add('over');}
+function ddr(e,dz){
+  e.preventDefault();var el=document.getElementById(dz);el.classList.remove('over');
+  var sid=e.dataTransfer.getData('text/plain'),src=document.getElementById(sid);if(!src)return;
+  var ans=el.getAttribute('data-ans'),val=src.getAttribute('data-val');
+  // Para 480 y 485 aceptamos variantes con sufijo
+  var ok=(val===ans)||(ans==='480'&&val.startsWith('480'))||(ans==='485'&&val.startsWith('485'));
+  el.textContent=src.textContent;el.className='dz '+(ok?'filled':'wrong');
+  if(ok)src.classList.add('used');
+}
+function fv(id){var e=document.getElementById(id);return e?e.value.trim():'';}
+function fn(id){var e=document.getElementById(id);return e?parseFloat(e.value)||0:0;}
+function mk(id,ok){var e=document.getElementById(id);if(!e||e.value==='')return;e.classList.toggle('ok',ok);e.classList.toggle('er',!ok);}
+function cN(id,v){var ok=Math.abs(fn(id)-v)<0.05;mk(id,ok);return ok;}
+function cT(id,v){var ev=fv(id).toLowerCase(),cv=v.toLowerCase();var ok=ev.length>=2&&(ev.includes(cv)||cv.includes(ev.substring(0,6)));mk(id,ok);return ok;}
+function cS(id,v){var ok=fv(id)===v;var e=document.getElementById(id);if(e&&e.value!==''){e.classList.toggle('ok',ok);e.classList.toggle('er',!ok);}return ok;}
+function cDZ(id){var e=document.getElementById(id);return e&&e.classList.contains('filled');}
+function sF(id,v){var e=document.getElementById(id);if(!e)return;e.value=v;e.classList.add('ok');e.classList.remove('er');e.style.cssText='';}
+function sS(id,v){var e=document.getElementById(id);if(!e)return;e.value=v;e.classList.add('ok');e.classList.remove('er');}
+function sfb(id,ok,msg){var e=document.getElementById(id);e.className='fb show '+(ok?'ok':'er');e.innerHTML=msg;}
+function prc(s,c,t){scores[s]=Math.round((c/t)*2*100)/100;upNav();document.getElementById('ps'+s).classList.add('done');}
+function upNav(){var sm=scores.reduce(function(a,b){return a+b;},0);document.getElementById('nv-pts').textContent=(Math.round(sm*100)/100).toFixed(2).replace('.',',');}
+
+// ══ BLOQUE 1 ══
+// A: drag 610/300, 611/310
+// B: 22750 DEBE(300) HABER(610); 3800 DEBE(310) HABER(611)
+// C: drag GASTO prod.terminados, INGRESO subproductos
+// D: 
+//   As5: 9600 DEBE(350) HABER(712) — cancelar prod.term. iniciales → producción DEBE, variación HABER
+//        Nota: cancelación = 350 DEBE, 712 HABER (como si fuera un "desstock" previo)
+//   As6: 7200 DEBE(712) HABER(350) — registrar prod.term. finales (disminución → gasto → 712 DEBE)
+//        Wait — el PGC dice: registro exist. finales siempre: DEBE la variación si finales<iniciales (712 DEBE), HABER la cuenta de existencias (350)
+//        Y cancelación iniciales: DEBE la cuenta de existencias (350), HABER la variación (712)
+//        As5 (cancel init): 9600 D(350) / H(712)
+//        As6 (reg fin, 7200<9600, gasto): 7200 D(712) / H(350) [variación al DEBE porque DISMINUCIÓN=gasto]
+//        Wait, that's the opposite. Let me think:
+//        Standard method: 
+//          Cancel iniciales: DEBE cuenta existencias / HABER variación → (350) D 9600 / (712) H 9600
+//          Reg finales: DEBE variación / HABER cuenta exist → (712) D 7200 / (350) H 7200
+//          Net effect on 712: H 9600 - D 7200 = 2400 HABER net → ingreso? No! finales < iniciales = GASTO.
+//          That's wrong. Let me reconsider:
+//        Standard PGC regularización existencias:
+//          Step 1 cancel init: DEBE (610/712) variación / HABER (300/350) existencias = clear the opening stock
+//            So: (712) DEBE 9600 / (350) HABER 9600
+//          Step 2 reg fin: DEBE (300/350) existencias / HABER (610/712) variación = load closing stock  
+//            So: (350) DEBE 7200 / (712) HABER 7200
+//          Net on (712): DEBE 9600 - HABER 7200 = DEBE net 2400 = GASTO ✓ (finales < iniciales)
+//        So:
+//          As5 (cancel prod.term init): 9600 D(712) / H(350)
+//          As6 (reg prod.term fin): 7200 D(350) / H(712)
+//          As7 (cancel subprod init): 1800 D(712*) / H(355) — subprod uses 712 too? No.
+//            Subproductos use account (712) "Variación de existencias de productos terminados y semiterminados"
+//            Actually PGC: (710) = WIP, (712) = productos terminados y semiterminados del grupo 35
+//            Subproductos (355) use (712) as well. Let's keep (712) for both.
+//          As7: 1800 D(712) / H(355)
+//          As8: 2400 D(355) / H(712) [finales > iniciales = ingreso, (712) HABER]
+
+function chk0(){
+  var all=[
+    // 1A drag
+    cDZ('dz1a1'),cDZ('dz1a2'),cDZ('dz1a3'),cDZ('dz1a4'),
+    // 1B inputs
+    cN('e1-d1',22750),cT('e1-c1','300'),cT('e1-n1','mercader'),cT('e1-c2','610'),cT('e1-n2','variaci'),cN('e1-h1',22750),
+    cN('e1-d2',3800),cT('e1-c3','310'),cT('e1-n3','materia'),cT('e1-c4','611'),cT('e1-n4','variaci'),cN('e1-h2',3800),
+    // 1C drag
+    cDZ('dz1c1'),cDZ('dz1c2'),
+    // 1D: As5 cancel prod.term init: 9600 D(712)/H(350)
+    cN('e1-d3',9600),cT('e1-c5','712'),cT('e1-n5','variaci'),cT('e1-c6','350'),cT('e1-n6','terminado'),cN('e1-h3',9600),
+    // As6 reg prod.term fin: 7200 D(350)/H(712)
+    cN('e1-d4',7200),cT('e1-c7','350'),cT('e1-n7','terminado'),cT('e1-c8','712'),cT('e1-n8','variaci'),cN('e1-h4',7200),
+    // As7 cancel subprod init: 1800 D(712)/H(355)
+    cN('e1-d5',1800),cT('e1-c9','712'),cT('e1-n9','variaci'),cT('e1-c10','355'),cT('e1-n10','subproducto'),cN('e1-h5',1800),
+    // As8 reg subprod fin: 2400 D(355)/H(712)
+    cN('e1-d6',2400),cT('e1-c11','355'),cT('e1-n11','subproducto'),cT('e1-c12','712'),cT('e1-n12','variaci'),cN('e1-h6',2400)
+  ];
+  var c=all.filter(Boolean).length;prc(0,c,all.length);
+  sfb('fb0',c===all.length,
+    c===all.length?'✅ ¡Perfecto! Regularización completa. (712) DEBE al cancelar iniciales, (712) HABER al registrar finales. Prod.term: disminución=gasto. Subprod.: aumento=ingreso.':
+    '⚠ '+c+'/'+all.length+' correctos. Clave: cancelar init → DEBE(712)/HABER(350 o 355). Registrar fin → DEBE(350 o 355)/HABER(712).');
+}
+function rev0(){
+  [['dz1a1','(610) Var.exist. mercad.'],['dz1a2','(300) Mercaderías'],['dz1a3','(611) Var.exist. mat.p.'],['dz1a4','(310) Materias primas'],['dz1c1','↑ GASTO · Variación DEBE'],['dz1c2','↓ INGRESO · Variación HABER']].forEach(function(d){var e=document.getElementById(d[0]);if(e){e.textContent=d[1];e.className='dz filled';}});
+  // 1B
+  sF('e1-d1',22750);sF('e1-c1','300');sF('e1-n1','Mercaderías');sF('e1-c2','610');sF('e1-n2','Variación de existencias de mercaderías');sF('e1-h1',22750);
+  sF('e1-d2',3800);sF('e1-c3','310');sF('e1-n3','Materias primas');sF('e1-c4','611');sF('e1-n4','Variación de existencias de materias primas');sF('e1-h2',3800);
+  // 1D
+  sF('e1-d3',9600);sF('e1-c5','712');sF('e1-n5','Variación de existencias de productos terminados y semiterminados');sF('e1-c6','350');sF('e1-n6','Productos terminados');sF('e1-h3',9600);
+  sF('e1-d4',7200);sF('e1-c7','350');sF('e1-n7','Productos terminados');sF('e1-c8','712');sF('e1-n8','Variación de existencias de productos terminados y semiterminados');sF('e1-h4',7200);
+  sF('e1-d5',1800);sF('e1-c9','712');sF('e1-n9','Variación de existencias de productos terminados y semiterminados');sF('e1-c10','355');sF('e1-n10','Subproductos, residuos y materiales recuperados');sF('e1-h5',1800);
+  sF('e1-d6',2400);sF('e1-c11','355');sF('e1-n11','Subproductos, residuos y materiales recuperados');sF('e1-c12','712');sF('e1-n12','Variación de existencias de productos terminados y semiterminados');sF('e1-h6',2400);
+  sfb('fb0',true,'👁 Solución completa. Cuenta (712) para prod. terminados y subproductos.');
+}
+
+// ══ BLOQUE 2 ══
+// Billetes: 670, Monedas: 37, Total: 707, Dif: 707-2875=-2168
+// Saldo ajustado tras as1+as2: 2875-65+310=3120
+// Diferencia inexplicable: 3120-707=2413 → (555) DEBE / (570) HABER (reduce caja)
+// Saldo final (570): 3120-2413=707 ✓ = físico
+function chk1(){
+  var all=[
+    cN('a-b',670),cN('a-m',37),cN('a-t',707),cN('a-d',-2168),
+    cN('a-d1',65),cT('a-c1','629'),cT('a-n1','otro'),cT('a-c2','570'),cT('a-n2','caja'),cN('a-h1',65),
+    cN('a-d2',310),cT('a-c3','570'),cT('a-n3','caja'),cT('a-c4','430'),cT('a-n4','client'),cN('a-h2',310),
+    cN('a-s',3120),
+    cN('a-d3',2413),cT('a-c5','555'),cT('a-n5','partida'),cT('a-c6','570'),cT('a-n6','caja'),cN('a-h3',2413),
+    cN('a-sf',707)
+  ];
+  var c=all.filter(Boolean).length;prc(1,c,all.length);
+  sfb('fb1',c===all.length,
+    c===all.length?'✅ Correcto. Efectivo físico=707€. Dif. contable=−2.168€. Saldo ajustado=3.120€. Diferencia inexplicable 2.413€→(555)DEBE/(570)HABER. Saldo final caja=707€.':
+    '⚠ '+c+'/'+all.length+' correctos. Billetes=670, monedas=37, total=707. Saldo ajustado=3.120. Asiento ajuste: 2.413 DEBE(555)/HABER(570). Saldo final=707€.');
+}
+function rev1(){
+  sF('a-b',670);sF('a-m',37);sF('a-t',707);sF('a-d',-2168);
+  sF('a-d1',65);sF('a-c1','629');sF('a-n1','Otros servicios');sF('a-c2','570');sF('a-n2','Caja');sF('a-h1',65);
+  sF('a-d2',310);sF('a-c3','570');sF('a-n3','Caja');sF('a-c4','430');sF('a-n4','Clientes');sF('a-h2',310);
+  sF('a-s',3120);
+  sF('a-d3',2413);sF('a-c5','555');sF('a-n5','Partidas pendientes de aplicación');sF('a-c6','570');sF('a-n6','Caja');sF('a-h3',2413);
+  sF('a-sf',707);
+  sfb('fb1',true,'👁 Solución completa. La cuenta (555) recoge la diferencia hasta su investigación.');
+}
+
+// ══ BLOQUE 3 ══
+// 1. Seguro trianual 3.600€: 1/10/X1-30/09/X4=36m total; X1 got 3m (oct-dic); remaining=33m → 33/36×3600=3300 (480)/(625)
+// 2. Alquiler cobrado 900€: nov-abr=6m total; X1=2m(nov-dic); X2=4m → 4/6×900=600 (752)/(485)
+// 3. Software 600€: 1/07-30/06=12m; X1=6m; X2=6m → 6/12×600=300 (480)/(628)
+// 4. Publicidad bianual 2.400€: abr X1-mar X3=24m; X1=9m(abr-dic); remaining=15m → 15/24×2400=1500 (480)/(627)
+// 5. Mantenimiento 1.800€: pagado en X1 para uso en X2 completamente → 12/12×1800=1800 (480)/(623)
+// 6. Licencias 4.800€: sep X1-ago X3=24m; X1=4m(sep-dic); remaining=20m → 20/24×4800=4000 (705)/(485)
+function chk2(){
+  var all=[
+    // tabla
+    cN('p-m1',33),cN('p-i1',3300),cDZ('dz3a1'),
+    cN('p-m2',4),cN('p-i2',600),cDZ('dz3a2'),
+    cN('p-m3',6),cN('p-i3',300),cDZ('dz3a3'),
+    cN('p-m4',15),cN('p-i4',1500),cDZ('dz3a4'),
+    cN('p-m5',12),cN('p-i5',1800),cDZ('dz3a5'),
+    cN('p-m6',20),cN('p-i6',4000),cDZ('dz3a6'),
+    // asientos
+    cN('p-d1',3300),cT('p-c1','480'),cT('p-n1','anticipado'),cT('p-c2','625'),cT('p-n2','segur'),cN('p-h1',3300),
+    cN('p-d2',600),cT('p-c3','752'),cT('p-n3','arrendamiento'),cT('p-c4','485'),cT('p-n4','anticipado'),cN('p-h2',600),
+    cN('p-d3',300),cT('p-c5','480'),cT('p-n5','anticipado'),cT('p-c6','628'),cT('p-n6','suministro'),cN('p-h3',300),
+    cN('p-d4',1500),cT('p-c7','480'),cT('p-n7','anticipado'),cT('p-c8','627'),cT('p-n8','publicidad'),cN('p-h4',1500),
+    cN('p-d5',1800),cT('p-c9','480'),cT('p-n9','anticipado'),cT('p-c10','623'),cT('p-n10','reparaci'),cN('p-h5',1800),
+    cN('p-d6',4000),cT('p-c11','705'),cT('p-n11','prestaci'),cT('p-c12','485'),cT('p-n12','anticipado'),cN('p-h6',4000)
+  ];
+  var c=all.filter(Boolean).length;prc(2,c,all.length);
+  sfb('fb2',c===all.length,
+    c===all.length?'✅ ¡Perfecto! Seguro 33m→3.300. Alquiler 4m→600. Software 6m→300. Publicidad 15m→1.500. Mant. 12m→1.800. Licencias 20m→4.000.':
+    '⚠ '+c+'/'+all.length+' correctos. Clave: calcular meses que corresponden al futuro. Seguro: 33m/36×3.600=3.300. Licencias: 20m/24×4.800=4.000. Alquiler→(752). Mantenimiento→(623). Publicidad→(627).');
+}
+function rev2(){
+  sF('p-m1',33);sF('p-i1',3300);document.getElementById('dz3a1').textContent='(480) Gastos anticipados';document.getElementById('dz3a1').className='dz filled';
+  sF('p-m2',4);sF('p-i2',600);document.getElementById('dz3a2').textContent='(485) Ingresos anticipados';document.getElementById('dz3a2').className='dz filled';
+  sF('p-m3',6);sF('p-i3',300);document.getElementById('dz3a3').textContent='(480) Gastos anticipados';document.getElementById('dz3a3').className='dz filled';
+  sF('p-m4',15);sF('p-i4',1500);document.getElementById('dz3a4').textContent='(480) Gastos anticipados';document.getElementById('dz3a4').className='dz filled';
+  sF('p-m5',12);sF('p-i5',1800);document.getElementById('dz3a5').textContent='(480) Gastos anticipados';document.getElementById('dz3a5').className='dz filled';
+  sF('p-m6',20);sF('p-i6',4000);document.getElementById('dz3a6').textContent='(485) Ingresos anticipados';document.getElementById('dz3a6').className='dz filled';
+  sF('p-d1',3300);sF('p-c1','480');sF('p-n1','Gastos anticipados');sF('p-c2','625');sF('p-n2','Primas de seguros');sF('p-h1',3300);
+  sF('p-d2',600);sF('p-c3','752');sF('p-n3','Ingresos por arrendamientos');sF('p-c4','485');sF('p-n4','Ingresos anticipados');sF('p-h2',600);
+  sF('p-d3',300);sF('p-c5','480');sF('p-n5','Gastos anticipados');sF('p-c6','628');sF('p-n6','Suministros');sF('p-h3',300);
+  sF('p-d4',1500);sF('p-c7','480');sF('p-n7','Gastos anticipados');sF('p-c8','627');sF('p-n8','Publicidad, propaganda y relaciones públicas');sF('p-h4',1500);
+  sF('p-d5',1800);sF('p-c9','480');sF('p-n9','Gastos anticipados');sF('p-c10','623');sF('p-n10','Reparaciones y conservación');sF('p-h5',1800);
+  sF('p-d6',4000);sF('p-c11','705');sF('p-n11','Prestaciones de servicios');sF('p-c12','485');sF('p-n12','Ingresos anticipados');sF('p-h6',4000);
+  sfb('fb2',true,'👁 Solución completa.');
+}
+
+// ══ BLOQUE 4 ══
+// drag: CP=[8000,intereses,proveedorInmov]; LP=[credito15000,prestamo30000,creditoEnajenacion,fianza]
+// As1: 8000 D(170)/H(520)
+// As2: 750 D(546)/H(769)
+// As3: 12000 D(173)/H(523)
+function chk3(){
+  var all=[
+    cDZ('dz4a1'),cDZ('dz4a2'),cDZ('dz4a3'),cDZ('dz4a4'),cDZ('dz4a5'),cDZ('dz4a6'),cDZ('dz4a7'),
+    cN('r-d1',8000),cT('r-c1','170'),cT('r-n1','deuda'),cT('r-c2','520'),cT('r-n2','deuda'),cN('r-h1',8000),
+    cN('r-d2',750),cT('r-c3','546'),cT('r-n3','inter'),cT('r-c4','769'),cT('r-n4','ingreso'),cN('r-h2',750),
+    cN('r-d3',12000),cT('r-c5','173'),cT('r-n5','proveedor'),cT('r-c6','523'),cT('r-n6','proveedor'),cN('r-h3',12000)
+  ];
+  var c=all.filter(Boolean).length;prc(3,c,all.length);
+  sfb('fb3',c===all.length,
+    c===all.length?'✅ Correcto. Préstamo→(170)/(520). Intereses→(546)/(769). Prov.inmovilizado→(173)/(523). Crédito enajenación y fianza permanecen en L/P.':
+    '⚠ '+c+'/'+all.length+' correctos. Solo C/P generan asiento. Prov.inmovilizado: (173)→(523). Crédito enajenación (2 años) y fianza (4 años) → L/P, sin asiento.');
+}
+function rev3(){
+  [['dz4a1','→ Corto plazo (C/P)'],['dz4a2','→ Largo plazo (L/P)'],['dz4a3','→ Largo plazo (L/P)'],['dz4a4','→ Corto plazo (C/P)'],['dz4a5','→ Corto plazo (C/P)'],['dz4a6','→ Largo plazo (L/P)'],['dz4a7','→ Largo plazo (L/P)']].forEach(function(d){var e=document.getElementById(d[0]);if(e){e.textContent=d[1];e.className='dz filled';}});
+  sF('r-d1',8000);sF('r-c1','170');sF('r-n1','Deudas a l/p con entidades de crédito');sF('r-c2','520');sF('r-n2','Deudas a c/p con entidades de crédito');sF('r-h1',8000);
+  sF('r-d2',750);sF('r-c3','546');sF('r-n3','Intereses a c/p de créditos');sF('r-c4','769');sF('r-n4','Otros ingresos financieros');sF('r-h2',750);
+  sF('r-d3',12000);sF('r-c5','173');sF('r-n5','Proveedores de inmovilizado a l/p');sF('r-c6','523');sF('r-n6','Proveedores de inmovilizado a c/p');sF('r-h3',12000);
+  sfb('fb3',true,'👁 Solución completa. Crédito enajenación (253) y fianza (180) permanecen en L/P — sin asiento.');
+}
+
+// ══ BLOQUE 5 ══ (sin cambios)
+function chk4(){
+  var all=[cS('c-t1','B'),cS('c-a1','Sí'),cS('c-t2','B'),cS('c-a2','Sí'),cS('c-t3','B'),cS('c-a3','Sí'),cS('c-t4','A'),cS('c-a4','No'),cS('c-t5','A'),cS('c-a5','No'),cN('c-d1',320),cT('c-c1','625'),cT('c-n1','segur'),cT('c-c2','572'),cT('c-n2','banco'),cN('c-h1',320),cN('c-d2',75),cT('c-c3','626'),cT('c-n3','bancari'),cT('c-c4','572'),cT('c-n4','banco'),cN('c-h2',75),cN('c-d3',95),cT('c-c5','572'),cT('c-n5','banco'),cT('c-c6','769'),cT('c-n6','ingreso'),cN('c-h3',95),cN('c-aj',12340)];
+  var c=all.filter(Boolean).length;prc(4,c,all.length);
+  sfb('fb4',c===all.length,c===all.length?'✅ Excelente. Tipo B: seguro(625), comisiones(626), intereses(769). Saldo ajustado=12.340€.':'⚠ '+c+'/'+all.length+' correctos. Solo Tipo B generan asiento. Saldo ajustado=12.340€.');
+}
+function rev4(){
+  ['c-t1','c-t2','c-t3'].forEach(function(id){sS(id,'B');});['c-a1','c-a2','c-a3'].forEach(function(id){sS(id,'Sí');});
+  ['c-t4','c-t5'].forEach(function(id){sS(id,'A');});['c-a4','c-a5'].forEach(function(id){sS(id,'No');});
+  sF('c-d1',320);sF('c-c1','625');sF('c-n1','Primas de seguros');sF('c-c2','572');sF('c-n2','Bancos c/c');sF('c-h1',320);
+  sF('c-d2',75);sF('c-c3','626');sF('c-n3','Servicios bancarios y similares');sF('c-c4','572');sF('c-n4','Bancos c/c');sF('c-h2',75);
+  sF('c-d3',95);sF('c-c5','572');sF('c-n5','Bancos c/c');sF('c-c6','769');sF('c-n6','Otros ingresos financieros');sF('c-h3',95);
+  sF('c-aj',12340);
+  sfb('fb4',true,'👁 Solución completa. Transfer 980 y cobro 550 son Tipo A — sin asiento.');
+}
+
+// ══ RESULTADO ══
+function finalizar(){
+  var bruto=scores.reduce(function(a,b){return a+b;},0);
+  var f=FAC[intento-1],nf=Math.round(bruto*f*100)/100;
+  var ne=document.getElementById('nfin');
+  ne.textContent=nf.toFixed(2).replace('.',',');
+  ne.className='nb '+(nf>=7?'nt':nf<5?'su':'');
+  document.getElementById('int-lbl').textContent='Intento '+intento+' de 3';
+  document.getElementById('int-exp').textContent=intento===1?'Sin penalización — nota completa':intento===2?'Penalización del 20% · nota bruta × 0,8':'Penalización del 40% · nota bruta × 0,6';
+  for(var i=0;i<5;i++){var a=Math.round(scores[i]*f*100)/100;document.getElementById('r'+i+'b').textContent=scores[i].toFixed(2);document.getElementById('r'+i+'a').textContent=a.toFixed(2);}
+  document.getElementById('rtb').textContent=bruto.toFixed(2);document.getElementById('rta').textContent=nf.toFixed(2);
+  document.getElementById('nv-int').textContent=intento;
+  document.getElementById('div-ri').style.display=intento<3?'block':'none';
+  document.getElementById('div-ag').style.display=intento>=3?'block':'none';
+  goS(5);
+}
+function nuevoInt(){
+  intento++;scores=[0,0,0,0,0];
+  document.querySelectorAll('.ii').forEach(function(e){e.value='';e.classList.remove('ok','er');e.style.cssText='';});
+  document.querySelectorAll('.is').forEach(function(e){e.value='';e.classList.remove('ok','er');});
+  document.querySelectorAll('.dz').forEach(function(e){e.textContent='suelta aquí';e.className='dz';});
+  document.querySelectorAll('.di').forEach(function(e){e.classList.remove('used');});
+  document.querySelectorAll('.fb').forEach(function(e){e.className='fb';});
+  document.querySelectorAll('.ps').forEach(function(e){e.classList.remove('done');});
+  upNav();document.getElementById('nv-int').textContent=intento;goS(0);
+}
+
+// ══ PDF ══
+function hacerPDF(){
+  var nom=document.getElementById('sn').value||'Alumno/a';
+  var grp=document.getElementById('sg').value||'—';
+  var sdv=document.getElementById('sd').value;
+  var fch=sdv?new Date(sdv+'T12:00:00').toLocaleDateString('es-ES'):new Date().toLocaleDateString('es-ES');
+  var f=FAC[intento-1],bruto=scores.reduce(function(a,b){return a+b;},0),nf=Math.round(bruto*f*100)/100;
+  var penTxt=intento===1?'Sin penalización':intento===2?'Penalización ×0,8 (−20%)':'Penalización ×0,6 (−40%)';
+  var temas=['Variación de existencias','Arqueo de caja','Periodificación','Reclasificación','Conciliación bancaria'];
+  var {jsPDF}=window.jspdf;var doc=new jsPDF();
+  doc.setFillColor(15,45,107);doc.rect(0,0,210,34,'F');
+  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(14);
+  doc.text('Examen · Operaciones de Cierre del Ejercicio',14,13);
+  doc.setFont('helvetica','normal');doc.setFontSize(9);
+  doc.text('TDC · CFGM Gestión Administrativa · Salesianos Juan XXIII · Alcoy',14,20);
+  doc.text('Generado: '+new Date().toLocaleString('es-ES'),14,27);
+  doc.setFillColor(238,243,251);doc.rect(0,36,210,20,'F');
+  doc.setTextColor(26,35,64);doc.setFont('helvetica','bold');doc.setFontSize(11);
+  doc.text('Alumno/a: '+nom,14,47);doc.text('Grupo: '+grp,135,47);
+  doc.setFont('helvetica','normal');doc.setFontSize(10);
+  doc.text('Fecha: '+fch+'   |   Intento: '+intento+'/3   |   '+penTxt,14,55);
+  var nr=nf>=7?[26,122,69]:nf>=5?[180,90,10]:[176,28,28];
+  doc.setFillColor(nr[0],nr[1],nr[2]);doc.roundedRect(14,61,182,22,4,4,'F');
+  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(17);
+  doc.text('NOTA FINAL: '+nf.toFixed(2).replace('.',',')+' / 10',105,76,{align:'center'});
+  doc.setTextColor(26,35,64);doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text('Desglose por bloques',14,97);
+  doc.setFillColor(238,243,251);doc.rect(14,100,182,9,'F');doc.setFontSize(10);
+  doc.text('Blq.',16,107);doc.text('Tema',30,107);doc.text('Bruto',140,107,{align:'right'});doc.text('Ajustado',165,107,{align:'right'});doc.text('Máx.',191,107,{align:'right'});
+  var y=115;doc.setFont('helvetica','normal');
+  for(var i=0;i<5;i++){
+    if(i%2===0){doc.setFillColor(248,250,255);doc.rect(14,y-5,182,9,'F');}
+    var adj=Math.round(scores[i]*f*100)/100;
+    doc.text(''+(i+1),18,y);doc.text(temas[i],30,y);
+    doc.text(scores[i].toFixed(2),140,y,{align:'right'});doc.text(adj.toFixed(2),165,y,{align:'right'});doc.text('2,00',191,y,{align:'right'});
+    y+=10;
+  }
+  doc.setFillColor(15,45,107);doc.rect(14,y-4,182,10,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');
+  doc.text('TOTAL',30,y+3);doc.text(bruto.toFixed(2),140,y+3,{align:'right'});doc.text(nf.toFixed(2),165,y+3,{align:'right'});doc.text('10,00',191,y+3,{align:'right'});
+  y+=18;doc.setTextColor(26,35,64);doc.setFont('helvetica','normal');doc.setFontSize(9);
+  var obs=intento===1?'Primer intento: nota completa sin penalización.':intento===2?'Segundo intento: nota bruta ('+bruto.toFixed(2)+') × 0,8 = '+nf.toFixed(2)+' puntos.':'Tercer intento: nota bruta ('+bruto.toFixed(2)+') × 0,6 = '+nf.toFixed(2)+' puntos.';
+  doc.text(obs,14,y,{maxWidth:182});
+  y+=12;doc.setDrawColor(200,210,230);doc.line(14,y,196,y);y+=7;
+  doc.setFontSize(8);doc.setTextColor(120,130,160);
+  doc.text('Salesianos Juan XXIII · Alcoy · TDC · CFGM Gestión Administrativa',14,y);
+  doc.text(new Date().toLocaleString('es-ES'),196,y,{align:'right'});
+  doc.save('Examen_Cierre_'+nom.replace(/\s+/g,'_')+'_Intento'+intento+'.pdf');
+}
+</script>
+</body>
+</html>

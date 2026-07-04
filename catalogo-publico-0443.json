@@ -63,7 +63,7 @@
         {
           "codigo": "A3",
           "titulo": "El archivo de enero",
-          "tipo": "actividad",
+          "tipo": "calificable",
           "archivo": "010 Actividades_alumno/0443_SA01_A3_ficha.pdf",
           "visible": true
         },

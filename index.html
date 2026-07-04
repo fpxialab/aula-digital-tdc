@@ -158,7 +158,12 @@
                 </div>
               </div>
               <div style="display:flex; gap:8px; margin-top:13px; flex-wrap:wrap;">
-                <a href="{{ a.fichaUrl }}" target="_blank" style="flex:1; min-width:120px; display:inline-flex; align-items:center; justify-content:center; gap:6px; background:#0c3f57; color:#fff; font-weight:700; font-size:12.5px; padding:10px; border-radius:9px;" style-hover="background:#082e3f;" style-focus="outline:none; box-shadow:0 0 0 3px rgba(12,63,87,.30);">{{ ico.downloadW }} Descargar ficha</a>
+                <sc-if value="{{ a.fichaActiva }}" hint-placeholder-val="{{ false }}">
+                  <a href="{{ a.fichaUrl }}" target="_blank" style="flex:1; min-width:120px; display:inline-flex; align-items:center; justify-content:center; gap:6px; background:#0c3f57; color:#fff; font-weight:700; font-size:12.5px; padding:10px; border-radius:9px;" style-hover="background:#082e3f;" style-focus="outline:none; box-shadow:0 0 0 3px rgba(12,63,87,.30);">{{ ico.downloadW }} Descargar ficha</a>
+                </sc-if>
+                <sc-if value="{{ a.fichaBloqueada }}" hint-placeholder-val="{{ false }}">
+                  <span style="flex:1; min-width:120px; display:inline-flex; align-items:center; justify-content:center; gap:6px; background:#d1d5db; color:#9ca3af; font-weight:700; font-size:12.5px; padding:10px; border-radius:9px; cursor:not-allowed;">{{ ico.downloadW }} Próximamente</span>
+                </sc-if>
                 <a href="{{ cur.rubUrl }}" target="_blank" style="flex:1; min-width:110px; display:inline-flex; align-items:center; justify-content:center; gap:6px; border:1px solid #c7e6f0; background:#eaf6fa; color:#0e7ea8; font-weight:700; font-size:12.5px; padding:10px; border-radius:9px;" style-hover="background:#cfeaf3;" style-focus="outline:none; box-shadow:0 0 0 3px rgba(14,126,168,.25);">{{ ico.rubSm }} Ver rúbrica</a>
                 <a href="{{ cur.moodleEntregaUrl }}" target="_blank" style="flex:1; min-width:110px; display:inline-flex; align-items:center; justify-content:center; gap:6px; background:#c2540e; color:#fff; font-weight:700; font-size:12.5px; padding:10px; border-radius:9px;" style-hover="background:#a8480b;" style-focus="outline:none; box-shadow:0 0 0 3px rgba(194,84,14,.35);">{{ ico.uploadW }} Entregar</a>
               </div>
@@ -390,6 +395,8 @@ class Component extends DCLogic {
           tipoDot: (tipoMap[a.tipo] || tipoMap.actividad).dot,
           fichaUrl: this.resolveUrl(a.archivo),
           formatLabel: 'Ficha (' + ((a.archivo || '').split('.').pop() || 'pdf').toUpperCase() + ')',
+          fichaActiva: !a.bloqueada,
+          fichaBloqueada: !!a.bloqueada,
         })),
         pdfs, interactivos,
         hasPdfs: pdfs.length > 0, hasInteractivos: interactivos.length > 0,

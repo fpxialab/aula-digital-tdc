@@ -86,7 +86,8 @@
           "titulo": "¿Está todo en orden? — Supuesto integrador",
           "tipo": "calificable",
           "archivo": "010 Actividades_alumno/0443_SA01_AC1_ficha.pdf",
-          "visible": false
+          "visible": true,
+          "bloqueada": true
         }
       ],
       "materiales": [],
@@ -166,7 +167,8 @@
           "titulo": "El cierre del trimestre — Supuesto integrador Q1 2027",
           "tipo": "calificable",
           "archivo": "010 Actividades_alumno/0443_SA02_AC1_ficha.pdf",
-          "visible": false
+          "visible": true,
+          "bloqueada": true
         }
       ],
       "materiales": [
@@ -343,7 +345,8 @@
           "titulo": "Las cuentas anuales de L'Alcoià i el Comtat — Ejercicio completo 2027",
           "tipo": "calificable",
           "archivo": "010 Actividades_alumno/0443_SA03_AC1_ficha.pdf",
-          "visible": false
+          "visible": true,
+          "bloqueada": true
         }
       ],
       "materiales": [
@@ -436,7 +439,8 @@
           "titulo": "Todo cuadra (o no) en L'Alcoià i el Comtat — Verificación y nota interna",
           "tipo": "calificable",
           "archivo": "010 Actividades_alumno/0443_SA04_AC1_ficha.pdf",
-          "visible": false
+          "visible": true,
+          "bloqueada": true
         }
       ],
       "materiales": [
